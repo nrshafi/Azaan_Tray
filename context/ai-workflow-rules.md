@@ -106,6 +106,6 @@ Update the relevant context file whenever implementation changes:
 3. `progress-tracker.md` reflects the completed work, with date and time,
    and API Verification Log entries for any new API patterns.
 4. All of these pass: `make -C native test`,
-   `npm --prefix ui run typecheck`, `npm --prefix ui run test`,
-   `npm --prefix ui run build`. Commands that don't exist yet in early
+   `bun --cwd ui run typecheck`, `bun --cwd ui run test`,
+   `bun --cwd ui run build`. Commands that don't exist yet in early
    phases are skipped and noted.

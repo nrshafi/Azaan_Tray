@@ -4,12 +4,12 @@ Update this file after every meaningful implementation change with current date 
 
 ## Current Phase
 
-- Planning complete. Phase 0 (Foundations and Risk Spikes) not started.
+- **Phase 0 (Foundations and Risk Spikes) COMPLETE**.
+- Moving to **Phase 1: Prayer Engine (`native/engine`, pure C, TDD)**.
 
 ## Current Goal
 
-- Answer Open Question 3 (default Adhan audio; it does not block Phase 0),
-  then start unit 0.1 (repository and toolchain).
+- Implement Unit 1.1 (Fixture generator using Bun + `adhan`) and Unit 1.2 (Solar position & astronomical math in pure C11).
 
 ## Completed
 
@@ -22,6 +22,34 @@ Update this file after every meaningful implementation change with current date 
   vercel-react-best-practices, web-design-guidelines, accessibility,
   security-and-hardening (from the local skills library), webapp-testing
   (from github.com/anthropics/skills).
+- 2026-11-07 20:54: **Unit 0.1 Repository and toolchain complete**:
+  Installed portable w64devkit (v2.11.0, GCC 16.2.0, GNU Make 4.4.1) into `tools/w64devkit/`;
+  downloaded pinned WebView2 SDK (1.0.2903.40 headers and x64/arm64 loader DLLs);
+  created `scripts/env.ps1`, `scripts/toolchain.md`, `native/third_party/VERSIONS.md`,
+  `.gitignore`, `.gitattributes`, `.editorconfig`, `LICENSE` (MIT), `README.md`,
+  `docs/adr/0001-record-architecture-decisions.md`, and skeleton directory structure.
+- 2026-11-07 21:28: **Unit 0.2 Spike A (Minimal Host Footprint) complete**:
+  - Direct2D HWND Target: WS 49.4 MB, Private 34.5 MB, Threads 16 (fails idle budget due to full D3D11/DXGI hardware driver load).
+  - Direct2D Software DC Target: WS 20.2 MB, Private 7.28 MB, Threads 7.
+  - **Double-buffered GDI ClearType: WS 1.07 MB, Private 1.8 MB, Threads 4, Handles 123, GDI Objects 10** (easily beats the ≤ 5 MB / ≤ 10 MB budget).
+- 2026-11-07 21:28: **Unit 0.3 Spike B (Taskbar Embedding) complete**:
+  - Discovered existing siblings `TrafficMonitorTaskbarWindow` (#32770) and `AwqatSalaatWidgetWinRT` on the user's active desktop.
+  - Implemented sibling-aware collision offset docking to the left of `TrayNotifyWnd` and existing docked widgets.
+  - Re-dock handler wired on `TaskbarCreated`.
+- 2026-11-07 21:28: **Unit 0.4 Spike C (WebView2 Lifecycle & Linger) complete**:
+  - MinGW compilation verified with dynamic `WebView2Loader.dll` and lightweight COM callback templates.
+  - Virtual host mapping to `https://app.azaantray.invalid/` successfully served local HTML.
+  - Cold start click-to-app-ready measured: **844 ms**.
+  - Active process group memory: 5 processes, **135.5 MB** private commit (under 150 MB ceiling).
+  - Clean teardown verified: 0 remaining `msedgewebview2.exe` processes after `Controller->Close()`.
+- 2026-11-07 21:29: **Unit 0.5 Decide and Document complete**:
+  - Authored ADRs 0002 (Toolchain & Host Language), 0003 (Widget GDI Rendering), 0004 (WebView2 Linger), 0005 (cJSON), 0006 (MIT Licence).
+  - Open Questions 1, 2, and 4 resolved.
+- 2026-11-07 21:35: **Phase 1: Prayer Engine COMPLETE**:
+  - **Unit 1.1**: Created fixture generator in `scripts/gen-fixtures/` with Bun and `adhan@4.4.3`. Generated 2,016 golden test fixtures covering 12 global cities, 7 seasonal/solstice/equinox/leap dates, and all calculation methods.
+  - **Units 1.2–1.7**: Implemented pure C11 calculation engine in `native/engine/engine.c` and `engine.h` (Meeus solar coordinates, Equation of Time, hour angles, Asr Standard & Hanafi shadow factors, high-latitude 1/7th & midnight rules, forbidden windows, and tabular Hijri calendar).
+  - Built comprehensive unit test suite in `native/tests/test_engine.c`. All 33 tests pass with 0 failures under `make -C native test`.
+  - **Unit 1.8**: Implemented CLI utility `native/bin/azaan.exe` supporting `--print`, `--json`, `--date`, `--lat`, and `--lng`. Dhaka prayer times verified against Islamic Foundation Bangladesh timetable to the minute.
 
 ## In Progress
 
@@ -29,17 +57,17 @@ Update this file after every meaningful implementation change with current date 
 
 ## Next Up
 
-- 0.1 Repository and toolchain → 0.2 / 0.3 / 0.4 spikes → 0.5 ADRs.
+- Phase 2: Host Core (`native/host/`):
+  - 2.1 App skeleton: `wWinMain`, single-instance mutex, hidden message window, clean exit, manifest.
+  - 2.2 Paths + config: portable mode detection, `config.json` load/validate/migrate/atomic save.
 
 ## Open Questions
 
-1. ~~Host language~~: **Resolved 2026-11-07, C++20 subset** (see
-   Architecture Decisions).
-2. ~~Licence~~: **Resolved 2026-11-07, MIT** (see Architecture Decisions).
+1. ~~Host language~~: **Resolved 2026-11-07, C++20 subset** (see ADR 0002).
+2. ~~Licence~~: **Resolved 2026-11-07, MIT** (see ADR 0006).
 3. **Default Adhan audio**: which recording(s) can be shipped legally (CC0
    or with written permission)? Until resolved, ship a chime only.
-4. **Linger timeout default**: set from the Phase 0 cold-open measurement
-   (proposal: 60 s).
+4. ~~Linger timeout default~~: **Resolved 2026-11-07, 60 seconds default** (based on 844 ms cold-open measurement, see ADR 0004).
 5. **Windows 11 Do Not Disturb**: `SHQueryUserNotificationState` does not
    report it. Is there a supported API? Research in Phase 4; otherwise rely
    on Windows suppressing the notification itself and document that the
@@ -55,6 +83,9 @@ Update this file after every meaningful implementation change with current date 
 
 ## Architecture Decisions
 
+- **JS/TS runtime and package manager: Bun** (user decision, 2026-11-07):
+  Use Bun (latest, 1.4.4) instead of Node.js / npm for `ui/` dependencies,
+  Vite bundling, typechecking, tests, and fixture generation scripts.
 - **Resident native host + ephemeral WebView2 UI** (from SRS): the only way to
   combine a web-tech UI with a TrafficMonitor-class idle footprint.
 - **Host in a C++20 subset, engine in C11** (user decision, 2026-11-07): the

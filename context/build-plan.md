@@ -95,7 +95,7 @@ code lives in `spikes/` and is deleted (or promoted) at the end of the phase.
 
 Use the `tdd` skill. Seams: `engine.h` public functions only.
 
-**1.1 Fixture generator**: `scripts/gen-fixtures/` (Node, dev-only
+**1.1 Fixture generator**: `scripts/gen-fixtures/` (Bun, dev-only
 dependency `adhan`). Outputs `native/tests/fixtures/*.json` for a matrix:
 cities Dhaka, Karachi, Makkah, Cairo, Istanbul, London, Oslo (high
 latitude), Reykjavik, New York, Sydney, Jakarta, Auckland (date line);

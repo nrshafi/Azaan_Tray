@@ -28,7 +28,7 @@
 | JSON | Small vendored C JSON library (cJSON or equivalent, chosen in Phase 0) | Config file and bridge messages. |
 | UI embedding | Microsoft Edge WebView2 (Evergreen runtime), `WebView2Loader.dll` shipped beside the exe | Renders the React UI. The static loader lib does not link with MinGW. |
 | UI | React + TypeScript (strict) + Vite + Tailwind CSS + shadcn/ui (Radix) restyled to Fluent tokens + Lucide icons | Today, Month and Settings views. |
-| Test oracle (dev only) | adhan-js (Node script, never shipped) | Generates golden fixtures for the C engine. |
+| Test oracle (dev only) | adhan-js (Bun script, never shipped) | Generates golden fixtures for the C engine. |
 | Packaging | MSIX (`runFullTrust`, `StartupTask`), portable zip, winget manifest | Built by GitHub Actions on `windows-latest`. |
 
 Exact versions are pinned in manifests (`ui/package.json`,
@@ -59,7 +59,7 @@ Exact versions are pinned in manifests (`ui/package.json`,
 - `native/tests/` — engine unit tests and golden tests; host logic tests for
   scheduler and alerts with a fake clock.
 - `ui/` — React app. Talks to the host **only** through `ui/src/bridge/`.
-  Includes a mock bridge so the UI runs in a normal browser (`npm run dev`).
+  Includes a mock bridge so the UI runs in a normal browser (`bun run dev`).
 - `shared/protocol/` — Bridge message schema (JSON Schema + docs). The source
   of truth for both the TS types and the C++ handlers.
 - `packaging/` — MSIX manifest and assets, winget manifests, zip layout.

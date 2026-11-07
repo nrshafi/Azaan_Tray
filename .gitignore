@@ -1,0 +1,32 @@
+# Tools
+/tools/
+
+# Build artifacts
+/build/
+/bin/
+/dist/
+*.o
+*.obj
+*.exe
+*.dll
+!native/third_party/**/WebView2Loader.dll
+*.pdb
+*.ilk
+
+# Bun & Node
+node_modules/
+bun.lockb
+bun.lock
+
+# App runtime data (portable mode & spikes)
+data/
+**/data/
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.user
