@@ -613,116 +613,175 @@ static bool compute_day_prayers(
         solar_time = create_solar_time(year, month, day, lat_deg, lng_deg);
     }
 
-    double jd = engine_julian_day(year, month, day);
-    solar_coords_t next_tomorrow = compute_solar_coordinates(jd + 2.0);
-    solar_time_t tomorrow_solar_time = create_solar_time_with_coords(
-        lat_deg, lng_deg,
-        solar_time.solar,
-        solar_time.next_solar,
-        next_tomorrow
-    );
+    double fajr_sec = NAN;
+    if (out_fajr_min) {
+        fajr_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->fajr_angle_deg, false));
+    }
 
-    if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours) || isnan(tomorrow_solar_time.sunrise_hours)) &&
-        settings->polar_resolution != POLAR_UNRESOLVED) {
-        resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &tomorrow_solar_time);
+    bool need_tomorrow = (out_solar_tomorrow != NULL) ||
+                         (out_isha_min != NULL && settings->isha_interval_min == 0) ||
+                         (out_fajr_min != NULL && (
+                             isnan(fajr_sec) ||
+                             (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0) ||
+                             (settings->method != CALC_METHOD_MOONSIGHTING && settings->high_lat_rule != HIGH_LAT_MIDDLE_OF_NIGHT)
+                         ));
+
+    solar_time_t tomorrow_solar_time;
+    if (need_tomorrow) {
+        double jd = engine_julian_day(year, month, day);
+        solar_coords_t next_tomorrow = compute_solar_coordinates(jd + 2.0);
+        tomorrow_solar_time = create_solar_time_with_coords(
+            lat_deg, lng_deg,
+            solar_time.solar,
+            solar_time.next_solar,
+            next_tomorrow
+        );
+
+        if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours) || isnan(tomorrow_solar_time.sunrise_hours)) &&
+            settings->polar_resolution != POLAR_UNRESOLVED) {
+            resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &tomorrow_solar_time);
+        }
+
+        if (out_solar_tomorrow) *out_solar_tomorrow = tomorrow_solar_time;
+    } else {
+        if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours)) &&
+            settings->polar_resolution != POLAR_UNRESOLVED) {
+            solar_time_t dummy_tomorrow;
+            resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &dummy_tomorrow);
+        }
     }
 
     if (out_solar_today) *out_solar_today = solar_time;
-    if (out_solar_tomorrow) *out_solar_tomorrow = tomorrow_solar_time;
 
-    double dhuhr_sec = hours_to_truncated_seconds(solar_time.transit_hours);
-    double sunrise_sec = hours_to_truncated_seconds(solar_time.sunrise_hours);
-    double sunset_sec = hours_to_truncated_seconds(solar_time.sunset_hours);
-
-    double shadow_factor = (settings->madhab == MADHAB_HANAFI) ? 2.0 : 1.0;
-    double asr_sec = hours_to_truncated_seconds(solar_time_afternoon(&solar_time, shadow_factor));
-
-    /* Tomorrow's sunrise is on day + 1, so add 86400 seconds relative to today's 00:00:00 UTC */
-    double tomorrow_sunrise_sec = hours_to_truncated_seconds(tomorrow_solar_time.sunrise_hours) + 86400.0;
-    double night_sec = tomorrow_sunrise_sec - sunset_sec;
-
-    double fajr_portion = 0.5;
-    double isha_portion = 0.5;
-    if (settings->high_lat_rule == HIGH_LAT_SEVENTH_OF_NIGHT) {
-        fajr_portion = 1.0 / 7.0;
-        isha_portion = 1.0 / 7.0;
-    } else if (settings->high_lat_rule == HIGH_LAT_TWILIGHT_ANGLE) {
-        fajr_portion = settings->fajr_angle_deg / 60.0;
-        isha_portion = settings->isha_angle_deg / 60.0;
+    double dhuhr_sec = NAN;
+    if (out_dhuhr_min) {
+        dhuhr_sec = hours_to_truncated_seconds(solar_time.transit_hours);
     }
 
-    int doy = day_of_year(year, month, day);
-
-    /* Fajr */
-    double fajr_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->fajr_angle_deg, false));
-    if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunrise_sec) && !isnan(night_sec)) {
-        fajr_sec = sunrise_sec - (night_sec / 7.0);
+    double sunrise_sec = NAN;
+    if (out_sunrise_min || out_fajr_min) {
+        sunrise_sec = hours_to_truncated_seconds(solar_time.sunrise_hours);
     }
 
-    double safe_fajr_sec = NAN;
-    if (!isnan(sunrise_sec)) {
-        if (settings->method == CALC_METHOD_MOONSIGHTING) {
-            safe_fajr_sec = season_adjusted_morning_twilight_sec(lat_deg, doy, year, sunrise_sec);
-        } else if (!isnan(night_sec)) {
-            safe_fajr_sec = sunrise_sec - (fajr_portion * night_sec);
-        }
-    }
-    if (isnan(fajr_sec) || (!isnan(safe_fajr_sec) && safe_fajr_sec > fajr_sec)) {
-        fajr_sec = safe_fajr_sec;
+    double sunset_sec = NAN;
+    if (out_sunset_min || out_maghrib_min || out_isha_min || need_tomorrow) {
+        sunset_sec = hours_to_truncated_seconds(solar_time.sunset_hours);
     }
 
-    /* Isha */
-    double isha_sec = NAN;
-    if (settings->isha_interval_min > 0) {
-        if (!isnan(sunset_sec)) {
-            isha_sec = sunset_sec + (double)settings->isha_interval_min * 60.0;
-        }
-    } else {
-        isha_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->isha_angle_deg, true));
-        if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunset_sec) && !isnan(night_sec)) {
-            isha_sec = sunset_sec + (night_sec / 7.0);
+    double asr_sec = NAN;
+    if (out_asr_min) {
+        double shadow_factor = (settings->madhab == MADHAB_HANAFI) ? 2.0 : 1.0;
+        asr_sec = hours_to_truncated_seconds(solar_time_afternoon(&solar_time, shadow_factor));
+    }
+
+    double night_sec = NAN;
+    if (need_tomorrow) {
+        double tomorrow_sunrise_sec = hours_to_truncated_seconds(tomorrow_solar_time.sunrise_hours) + 86400.0;
+        night_sec = tomorrow_sunrise_sec - sunset_sec;
+    }
+
+    int doy = (out_fajr_min || out_isha_min) ? day_of_year(year, month, day) : 0;
+
+    /* Finalize Fajr */
+    if (out_fajr_min) {
+        if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunrise_sec) && !isnan(night_sec)) {
+            fajr_sec = sunrise_sec - (night_sec / 7.0);
         }
 
-        double safe_isha_sec = NAN;
-        if (!isnan(sunset_sec)) {
+        double safe_fajr_sec = NAN;
+        if (!isnan(sunrise_sec)) {
             if (settings->method == CALC_METHOD_MOONSIGHTING) {
-                safe_isha_sec = season_adjusted_evening_twilight_sec(lat_deg, doy, year, sunset_sec, settings->shafaq);
+                safe_fajr_sec = season_adjusted_morning_twilight_sec(lat_deg, doy, year, sunrise_sec);
             } else if (!isnan(night_sec)) {
-                safe_isha_sec = sunset_sec + (isha_portion * night_sec);
+                double fajr_portion = 0.5;
+                if (settings->high_lat_rule == HIGH_LAT_SEVENTH_OF_NIGHT) {
+                    fajr_portion = 1.0 / 7.0;
+                } else if (settings->high_lat_rule == HIGH_LAT_TWILIGHT_ANGLE) {
+                    fajr_portion = settings->fajr_angle_deg / 60.0;
+                }
+                safe_fajr_sec = sunrise_sec - (fajr_portion * night_sec);
             }
         }
-        if (isnan(isha_sec) || (!isnan(safe_isha_sec) && safe_isha_sec < isha_sec)) {
-            isha_sec = safe_isha_sec;
+        if (isnan(fajr_sec) || (!isnan(safe_fajr_sec) && safe_fajr_sec > fajr_sec)) {
+            fajr_sec = safe_fajr_sec;
         }
     }
 
-    /* Maghrib */
-    double maghrib_sec = sunset_sec;
-    if (settings->maghrib_angle_deg > 0.0) {
-        double angle_maghrib_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->maghrib_angle_deg, true));
-        if (!isnan(angle_maghrib_sec) && !isnan(sunset_sec) && !isnan(isha_sec)) {
-            if (sunset_sec < angle_maghrib_sec && isha_sec > angle_maghrib_sec) {
-                maghrib_sec = angle_maghrib_sec;
+    /* Finalize Isha */
+    double isha_sec = NAN;
+    if (out_isha_min) {
+        if (settings->isha_interval_min > 0) {
+            if (!isnan(sunset_sec)) {
+                isha_sec = sunset_sec + (double)settings->isha_interval_min * 60.0;
+            }
+        } else {
+            isha_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->isha_angle_deg, true));
+            if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunset_sec) && !isnan(night_sec)) {
+                isha_sec = sunset_sec + (night_sec / 7.0);
+            }
+
+            double safe_isha_sec = NAN;
+            if (!isnan(sunset_sec)) {
+                if (settings->method == CALC_METHOD_MOONSIGHTING) {
+                    safe_isha_sec = season_adjusted_evening_twilight_sec(lat_deg, doy, year, sunset_sec, settings->shafaq);
+                } else if (!isnan(night_sec)) {
+                    double isha_portion = 0.5;
+                    if (settings->high_lat_rule == HIGH_LAT_SEVENTH_OF_NIGHT) {
+                        isha_portion = 1.0 / 7.0;
+                    } else if (settings->high_lat_rule == HIGH_LAT_TWILIGHT_ANGLE) {
+                        isha_portion = settings->isha_angle_deg / 60.0;
+                    }
+                    safe_isha_sec = sunset_sec + (isha_portion * night_sec);
+                }
+            }
+            if (isnan(isha_sec) || (!isnan(safe_isha_sec) && safe_isha_sec < isha_sec)) {
+                isha_sec = safe_isha_sec;
             }
         }
     }
 
-    /* Combined adjustments (method + user) in seconds */
-    double fajr_adj_sec = (double)(settings->method_adjustments.fajr + settings->user_adjustments.fajr) * 60.0;
-    double sunrise_adj_sec = (double)(settings->method_adjustments.sunrise + settings->user_adjustments.sunrise) * 60.0;
-    double dhuhr_adj_sec = (double)(settings->method_adjustments.dhuhr + settings->user_adjustments.dhuhr) * 60.0;
-    double asr_adj_sec = (double)(settings->method_adjustments.asr + settings->user_adjustments.asr) * 60.0;
-    double sunset_adj_sec = (double)(settings->method_adjustments.sunset + settings->user_adjustments.sunset) * 60.0;
-    double maghrib_adj_sec = (double)(settings->method_adjustments.maghrib + settings->user_adjustments.maghrib) * 60.0;
-    double isha_adj_sec = (double)(settings->method_adjustments.isha + settings->user_adjustments.isha) * 60.0;
+    /* Finalize Maghrib */
+    double maghrib_sec = NAN;
+    if (out_maghrib_min) {
+        maghrib_sec = sunset_sec;
+        if (settings->maghrib_angle_deg > 0.0) {
+            double angle_maghrib_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->maghrib_angle_deg, true));
+            if (!isnan(angle_maghrib_sec) && !isnan(sunset_sec) && !isnan(isha_sec)) {
+                if (sunset_sec < angle_maghrib_sec && isha_sec > angle_maghrib_sec) {
+                    maghrib_sec = angle_maghrib_sec;
+                }
+            }
+        }
+    }
 
-    if (out_fajr_min) *out_fajr_min = round_seconds_to_minutes(fajr_sec + fajr_adj_sec, settings->rounding);
-    if (out_sunrise_min) *out_sunrise_min = round_seconds_to_minutes(sunrise_sec + sunrise_adj_sec, settings->rounding);
-    if (out_dhuhr_min) *out_dhuhr_min = round_seconds_to_minutes(dhuhr_sec + dhuhr_adj_sec, settings->rounding);
-    if (out_asr_min) *out_asr_min = round_seconds_to_minutes(asr_sec + asr_adj_sec, settings->rounding);
-    if (out_sunset_min) *out_sunset_min = round_seconds_to_minutes(sunset_sec + sunset_adj_sec, settings->rounding);
-    if (out_maghrib_min) *out_maghrib_min = round_seconds_to_minutes(maghrib_sec + maghrib_adj_sec, settings->rounding);
-    if (out_isha_min) *out_isha_min = round_seconds_to_minutes(isha_sec + isha_adj_sec, settings->rounding);
+    if (out_fajr_min) {
+        double fajr_adj_sec = (double)(settings->method_adjustments.fajr + settings->user_adjustments.fajr) * 60.0;
+        *out_fajr_min = round_seconds_to_minutes(fajr_sec + fajr_adj_sec, settings->rounding);
+    }
+    if (out_sunrise_min) {
+        double sunrise_adj_sec = (double)(settings->method_adjustments.sunrise + settings->user_adjustments.sunrise) * 60.0;
+        *out_sunrise_min = round_seconds_to_minutes(sunrise_sec + sunrise_adj_sec, settings->rounding);
+    }
+    if (out_dhuhr_min) {
+        double dhuhr_adj_sec = (double)(settings->method_adjustments.dhuhr + settings->user_adjustments.dhuhr) * 60.0;
+        *out_dhuhr_min = round_seconds_to_minutes(dhuhr_sec + dhuhr_adj_sec, settings->rounding);
+    }
+    if (out_asr_min) {
+        double asr_adj_sec = (double)(settings->method_adjustments.asr + settings->user_adjustments.asr) * 60.0;
+        *out_asr_min = round_seconds_to_minutes(asr_sec + asr_adj_sec, settings->rounding);
+    }
+    if (out_sunset_min) {
+        double sunset_adj_sec = (double)(settings->method_adjustments.sunset + settings->user_adjustments.sunset) * 60.0;
+        *out_sunset_min = round_seconds_to_minutes(sunset_sec + sunset_adj_sec, settings->rounding);
+    }
+    if (out_maghrib_min) {
+        double maghrib_adj_sec = (double)(settings->method_adjustments.maghrib + settings->user_adjustments.maghrib) * 60.0;
+        *out_maghrib_min = round_seconds_to_minutes(maghrib_sec + maghrib_adj_sec, settings->rounding);
+    }
+    if (out_isha_min) {
+        double isha_adj_sec = (double)(settings->method_adjustments.isha + settings->user_adjustments.isha) * 60.0;
+        *out_isha_min = round_seconds_to_minutes(isha_sec + isha_adj_sec, settings->rounding);
+    }
 
     return true;
 }
