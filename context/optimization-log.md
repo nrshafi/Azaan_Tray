@@ -45,3 +45,15 @@
 - Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
 - Commit: `7ec958d`
 - Notes / next idea it suggests: Day+2 solar elimination delivered a 25.1% latency cut. Test compiler math optimizations (-fno-math-errno) and struct pointer passing next.
+
+#### #3 Add -fno-math-errno to Makefile OPTFLAGS: REJECTED
+- Hypothesis: Adding -fno-math-errno to OPTFLAGS in native/Makefile allows GCC to inline math builtins without errno setting overhead, reducing calculation latency by >= 3% while remaining byte-identical.
+- Change: `native/Makefile`. Added `-fno-math-errno` to `OPTFLAGS`.
+- Result:
+  - `calculate_times`: 4371.62 -> 4347.22 ns/call (-0.56% iteration gain, second test: 4342.62 ns/call / -0.66%)
+  - `calculate_month`: 64760.48 -> 64563.28 ns/call (-0.30% iteration gain, second test: 64401.26 ns/call / -0.55%)
+  - `azaan.exe` size: 97280 -> 97280 bytes (0.00%)
+  - `test_engine.exe` size: 66560 -> 66560 bytes (0.00%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: reverted
+- Notes / next idea it suggests: Gain of ~0.6% was below the >= 3% threshold after 6 confirmation runs. On x86_64 mingw with -Os, standard math functions already use fast builtins or inline calls; errno checks do not dominate. Reverted cleanly.
