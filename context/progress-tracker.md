@@ -57,6 +57,7 @@ Update this file after every meaningful implementation change with current date 
   - **GDI Host & Power**: Implemented adaptive timer cadence (seconds vs minutes mode reducing wakeups 60x), `RegisterPowerSettingNotification` for `GUID_MONITOR_POWER_ON`, and `WTSRegisterSessionNotification` for workstation lock/unlock in `spike_a_gdi.cpp`. Timers are completely suspended during monitor sleep and session lock, achieving true 0.0% CPU and zero wakes.
   - **WebView2 Lifecycle**: Integrated `ICoreWebView2_3::TrySuspend` when entering linger and `Resume` on reopen; added speculative hover pre-warming (`WM_MOUSEHOVER`) reducing perceived cold-open latency; stripped Chromium background feature flags; added working set trimming on teardown in `spike_c_webview2.cpp`.
   - **Documentation**: Authored `docs/adr/0007-cross-cutting-optimizations-and-power-efficiency.md` recording motivations, measurements, decisions, and why alternative approaches were rejected.
+- 2026-11-09 00:32: **Autonomous optimization loop**: #1 Cached sin/cos(lat) and folded declination trig (-5.5% month, -4.0% times, golden MATCH).
 
 ## In Progress
 
