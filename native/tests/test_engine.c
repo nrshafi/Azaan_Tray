@@ -275,6 +275,19 @@ static void test_hour_angle_and_solar_times_pinning() {
     ASSERT_TRUE(!isnan(t2.sunset_utc_min));
     ASSERT_TRUE(!isnan(t2.asr_utc_min));
 
+    /* Dhaka 2024-03-20 */
+    prayer_times_t t3;
+    bool ok3 = engine_calculate_times(2024, 3, 20, 23.8103, 90.4125, &settings, &t3);
+    ASSERT_TRUE(ok3);
+    ASSERT_TRUE(!isnan(t3.fajr_utc_min));
+    ASSERT_TRUE(!isnan(t3.sunrise_utc_min));
+    ASSERT_TRUE(!isnan(t3.dhuhr_utc_min));
+    ASSERT_TRUE(!isnan(t3.asr_utc_min));
+    ASSERT_TRUE(!isnan(t3.sunset_utc_min));
+    ASSERT_TRUE(!isnan(t3.isha_utc_min));
+    ASSERT_TRUE(t3.sunrise_utc_min > t3.fajr_utc_min);
+    ASSERT_TRUE(t3.sunset_utc_min > t3.asr_utc_min);
+
     /* Assert astronomical progression */
     ASSERT_TRUE(t1.sunrise_utc_min > t1.fajr_utc_min);
     ASSERT_TRUE(t1.dhuhr_utc_min > t1.sunrise_utc_min);

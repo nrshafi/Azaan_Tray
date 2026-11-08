@@ -233,21 +233,6 @@ void engine_solar_coordinates(double jd, double* out_decl_deg, double* out_eot_m
     }
 }
 
-/* Meeus p. 24: 3-point interpolation */
-static double interpolate_value(double y2, double y1, double y3, double n) {
-    double a = y2 - y1;
-    double b = y3 - y2;
-    double c = b - a;
-    return y2 + (n / 2.0) * (a + b + n * c);
-}
-
-static double interpolate_angles(double y2, double y1, double y3, double n) {
-    double a = unwind_angle(y2 - y1);
-    double b = unwind_angle(y3 - y2);
-    double c = b - a;
-    return y2 + (n / 2.0) * (a + b + n * c);
-}
-
 /* Meeus p. 93: Altitude of celestial body */
 static inline double altitude_of_celestial_body(double sin_phi, double cos_phi, double dec_deg, double lha_deg) {
     double delta = deg2rad(dec_deg);
@@ -262,9 +247,16 @@ typedef struct {
     double cos_lat;
     double sin_dec;
     double cos_dec;
+    double sin_lat_sin_dec;
+    double cos_lat_cos_dec;
     solar_coords_t solar;
     solar_coords_t prev_solar;
     solar_coords_t next_solar;
+    /* Precomputed interpolation deltas for Right Ascension and Declination */
+    double ra_sum;   /* unwind_angle(a2 - a1) + unwind_angle(a3 - a2) */
+    double ra_diff;  /* unwind_angle(a3 - a2) - unwind_angle(a2 - a1) */
+    double dec_sum;  /* (d2 - d1) + (d3 - d2) */
+    double dec_diff; /* (d3 - d2) - (d2 - d1) */
     double approx_transit;
     double transit_hours;
     double sunrise_hours;
@@ -272,53 +264,41 @@ typedef struct {
 } solar_time_t;
 
 /* Meeus p. 102: Corrected transit in universal time (hours) */
-static double corrected_transit(double m0, double lng_deg, double theta0, double a2, double a1, double a3) {
-    double lw = -lng_deg;
-    double theta = unwind_angle(theta0 + 360.985647 * m0);
-    double a = unwind_angle(interpolate_angles(a2, a1, a3, m0));
+static double corrected_transit(double m0, const solar_time_t* st) {
+    double lw = -st->lng_deg;
+    double theta = unwind_angle(st->solar.apparent_sidereal_time_deg + 360.985647 * m0);
+    double a = unwind_angle(st->solar.right_ascension_deg + (m0 / 2.0) * (st->ra_sum + m0 * st->ra_diff));
     double h = quadrant_shift_angle(theta - lw - a);
     double dm = h / -360.0;
     return (m0 + dm) * 24.0;
 }
 
 /* Meeus p. 102: Corrected hour angle evaluation given transit offset m */
-static inline double corrected_hour_angle_from_m(
-    double m, double h0_deg, double sin_phi, double cos_phi,
-    double lng_deg,
-    double theta0, double a2, double a1, double a3, double d2, double d1, double d3
-) {
-    double lw = -lng_deg;
-    double theta = unwind_angle(theta0 + 360.985647 * m);
-    double a = unwind_angle(interpolate_angles(a2, a1, a3, m));
-    double delta = interpolate_value(d2, d1, d3, m);
+static inline double corrected_hour_angle_from_m(double m, double h0_deg, const solar_time_t* st) {
+    double lw = -st->lng_deg;
+    double theta = unwind_angle(st->solar.apparent_sidereal_time_deg + 360.985647 * m);
+    double a = unwind_angle(st->solar.right_ascension_deg + (m / 2.0) * (st->ra_sum + m * st->ra_diff));
+    double delta = st->solar.declination_deg + (m / 2.0) * (st->dec_sum + m * st->dec_diff);
     double h = theta - lw - a;
-    double alt = altitude_of_celestial_body(sin_phi, cos_phi, delta, h);
+    double alt = altitude_of_celestial_body(st->sin_lat, st->cos_lat, delta, h);
     double term3 = alt - h0_deg;
-    double term4 = 360.0 * cos(deg2rad(delta)) * cos_phi * sin(deg2rad(h));
+    double term4 = 360.0 * cos(deg2rad(delta)) * st->cos_lat * sin(deg2rad(h));
     if (fabs(term4) < 1e-12) return NAN;
     double dm = term3 / term4;
     return (m + dm) * 24.0;
 }
 
 /* Meeus p. 102: Corrected hour angle in universal time (hours) */
-static double corrected_hour_angle(
-    double m0, double h0_deg, double sin_phi, double cos_phi, double sin_d2, double cos_d2,
-    double lng_deg, bool after_transit,
-    double theta0, double a2, double a1, double a3, double d2, double d1, double d3
-) {
-    double term1 = sin(deg2rad(h0_deg)) - sin_phi * sin_d2;
-    double term2 = cos_phi * cos_d2;
-    double ratio = term1 / term2;
+static double corrected_hour_angle(double m0, double h0_deg, const solar_time_t* st, bool after_transit) {
+    double term1 = sin(deg2rad(h0_deg)) - st->sin_lat_sin_dec;
+    double ratio = term1 / st->cos_lat_cos_dec;
     if (ratio < -1.0 || ratio > 1.0) {
         return NAN;
     }
 
     double h0_angle = rad2deg(acos(ratio));
     double m = after_transit ? (m0 + h0_angle / 360.0) : (m0 - h0_angle / 360.0);
-    return corrected_hour_angle_from_m(
-        m, h0_deg, sin_phi, cos_phi, lng_deg,
-        theta0, a2, a1, a3, d2, d1, d3
-    );
+    return corrected_hour_angle_from_m(m, h0_deg, st);
 }
 
 static solar_time_t create_solar_time_with_coords(
@@ -332,38 +312,36 @@ static solar_time_t create_solar_time_with_coords(
     FAST_SINCOS(phi, &st.sin_lat, &st.cos_lat);
     double d2_rad = deg2rad(curr.declination_deg);
     FAST_SINCOS(d2_rad, &st.sin_dec, &st.cos_dec);
+    st.sin_lat_sin_dec = st.sin_lat * st.sin_dec;
+    st.cos_lat_cos_dec = st.cos_lat * st.cos_dec;
     st.solar = curr;
     st.prev_solar = prev;
     st.next_solar = next;
 
+    double ra_a = unwind_angle(curr.right_ascension_deg - prev.right_ascension_deg);
+    double ra_b = unwind_angle(next.right_ascension_deg - curr.right_ascension_deg);
+    st.ra_diff = ra_b - ra_a;
+    st.ra_sum = ra_a + ra_b;
+
+    double dec_a = curr.declination_deg - prev.declination_deg;
+    double dec_b = next.declination_deg - curr.declination_deg;
+    st.dec_diff = dec_b - dec_a;
+    st.dec_sum = dec_a + dec_b;
+
     double lw = -lng_deg;
     st.approx_transit = normalize_to_scale((st.solar.right_ascension_deg + lw - st.solar.apparent_sidereal_time_deg) / 360.0, 1.0);
-    st.transit_hours = corrected_transit(
-        st.approx_transit, lng_deg, st.solar.apparent_sidereal_time_deg,
-        st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg
-    );
+    st.transit_hours = corrected_transit(st.approx_transit, &st);
 
-    double term1 = sin(deg2rad(SOLAR_ALTITUDE_DEG)) - st.sin_lat * st.sin_dec;
-    double term2 = st.cos_lat * st.cos_dec;
-    double ratio = term1 / term2;
+    double term1 = sin(deg2rad(SOLAR_ALTITUDE_DEG)) - st.sin_lat_sin_dec;
+    double ratio = term1 / st.cos_lat_cos_dec;
     if (ratio < -1.0 || ratio > 1.0) {
         st.sunrise_hours = NAN;
         st.sunset_hours = NAN;
     } else {
         double h0_angle = rad2deg(acos(ratio));
         double delta_m = h0_angle / 360.0;
-        st.sunrise_hours = corrected_hour_angle_from_m(
-            st.approx_transit - delta_m, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg,
-            st.solar.apparent_sidereal_time_deg,
-            st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
-            st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
-        );
-        st.sunset_hours = corrected_hour_angle_from_m(
-            st.approx_transit + delta_m, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg,
-            st.solar.apparent_sidereal_time_deg,
-            st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
-            st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
-        );
+        st.sunrise_hours = corrected_hour_angle_from_m(st.approx_transit - delta_m, SOLAR_ALTITUDE_DEG, &st);
+        st.sunset_hours = corrected_hour_angle_from_m(st.approx_transit + delta_m, SOLAR_ALTITUDE_DEG, &st);
     }
     return st;
 }
@@ -376,12 +354,7 @@ static solar_time_t create_solar_time(double jd, double lat_deg, double lng_deg)
 }
 
 static double solar_time_hour_angle(const solar_time_t* st, double angle_deg, bool after_transit) {
-    return corrected_hour_angle(
-        st->approx_transit, angle_deg, st->sin_lat, st->cos_lat, st->sin_dec, st->cos_dec, st->lng_deg, after_transit,
-        st->solar.apparent_sidereal_time_deg,
-        st->solar.right_ascension_deg, st->prev_solar.right_ascension_deg, st->next_solar.right_ascension_deg,
-        st->solar.declination_deg, st->prev_solar.declination_deg, st->next_solar.declination_deg
-    );
+    return corrected_hour_angle(st->approx_transit, angle_deg, st, after_transit);
 }
 
 static double solar_time_afternoon(const solar_time_t* st, double shadow_length) {
