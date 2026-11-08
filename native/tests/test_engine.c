@@ -37,9 +37,17 @@ static void test_julian_day() {
     jd = engine_julian_day(1999, 12, 31);
     ASSERT_NEAR(jd, 2451543.5, 0.001);
 
+    /* Unix epoch 1970-01-01 00:00:00 UTC = 2440587.5 */
+    jd = engine_julian_day(1970, 1, 1);
+    ASSERT_NEAR(jd, 2440587.5, 0.001);
+
     /* Leap year 2024-02-29 00:00:00 UTC = 2460369.5 */
     jd = engine_julian_day(2024, 2, 29);
     ASSERT_NEAR(jd, 2460369.5, 0.001);
+
+    /* Reference date 2026-11-09 00:00:00 UTC = 2461353.5 */
+    jd = engine_julian_day(2026, 11, 9);
+    ASSERT_NEAR(jd, 2461353.5, 0.001);
 }
 
 static void test_solar_coordinates() {

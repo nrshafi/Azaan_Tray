@@ -56,8 +56,8 @@ double engine_julian_day(int year, int month, int day) {
     double d = (double)day;
     int a = y / 100;
     int b = 2 - a + (a / 4);
-    int i0 = (int)trunc(365.25 * (double)(y + 4716));
-    int i1 = (int)trunc(30.6001 * (double)(m + 1));
+    int i0 = (int)(365.25 * (double)(y + 4716));
+    int i1 = (int)(30.6001 * (double)(m + 1));
     return (double)i0 + (double)i1 + d + (double)b - 1524.5;
 }
 
@@ -250,7 +250,6 @@ typedef struct {
     double sin_lat_sin_dec;
     double cos_lat_cos_dec;
     solar_coords_t solar;
-    solar_coords_t prev_solar;
     solar_coords_t next_solar;
     /* Precomputed interpolation deltas for Right Ascension and Declination */
     double ra_sum;   /* unwind_angle(a2 - a1) + unwind_angle(a3 - a2) */
@@ -301,56 +300,54 @@ static double corrected_hour_angle(double m0, double h0_deg, const solar_time_t*
     return corrected_hour_angle_from_m(m, h0_deg, st);
 }
 
-static solar_time_t create_solar_time_with_coords(
+static void init_solar_time_with_coords(
+    solar_time_t* st,
     double lat_deg, double lng_deg,
-    solar_coords_t prev, solar_coords_t curr, solar_coords_t next
+    const solar_coords_t* prev, const solar_coords_t* curr, const solar_coords_t* next
 ) {
-    solar_time_t st;
-    st.lat_deg = lat_deg;
-    st.lng_deg = lng_deg;
+    st->lat_deg = lat_deg;
+    st->lng_deg = lng_deg;
     double phi = deg2rad(lat_deg);
-    FAST_SINCOS(phi, &st.sin_lat, &st.cos_lat);
-    double d2_rad = deg2rad(curr.declination_deg);
-    FAST_SINCOS(d2_rad, &st.sin_dec, &st.cos_dec);
-    st.sin_lat_sin_dec = st.sin_lat * st.sin_dec;
-    st.cos_lat_cos_dec = st.cos_lat * st.cos_dec;
-    st.solar = curr;
-    st.prev_solar = prev;
-    st.next_solar = next;
+    FAST_SINCOS(phi, &st->sin_lat, &st->cos_lat);
+    double d2_rad = deg2rad(curr->declination_deg);
+    FAST_SINCOS(d2_rad, &st->sin_dec, &st->cos_dec);
+    st->sin_lat_sin_dec = st->sin_lat * st->sin_dec;
+    st->cos_lat_cos_dec = st->cos_lat * st->cos_dec;
+    st->solar = *curr;
+    st->next_solar = *next;
 
-    double ra_a = unwind_angle(curr.right_ascension_deg - prev.right_ascension_deg);
-    double ra_b = unwind_angle(next.right_ascension_deg - curr.right_ascension_deg);
-    st.ra_diff = ra_b - ra_a;
-    st.ra_sum = ra_a + ra_b;
+    double ra_a = unwind_angle(curr->right_ascension_deg - prev->right_ascension_deg);
+    double ra_b = unwind_angle(next->right_ascension_deg - curr->right_ascension_deg);
+    st->ra_diff = ra_b - ra_a;
+    st->ra_sum = ra_a + ra_b;
 
-    double dec_a = curr.declination_deg - prev.declination_deg;
-    double dec_b = next.declination_deg - curr.declination_deg;
-    st.dec_diff = dec_b - dec_a;
-    st.dec_sum = dec_a + dec_b;
+    double dec_a = curr->declination_deg - prev->declination_deg;
+    double dec_b = next->declination_deg - curr->declination_deg;
+    st->dec_diff = dec_b - dec_a;
+    st->dec_sum = dec_a + dec_b;
 
     double lw = -lng_deg;
-    st.approx_transit = normalize_to_scale((st.solar.right_ascension_deg + lw - st.solar.apparent_sidereal_time_deg) / 360.0, 1.0);
-    st.transit_hours = corrected_transit(st.approx_transit, &st);
+    st->approx_transit = normalize_to_scale((st->solar.right_ascension_deg + lw - st->solar.apparent_sidereal_time_deg) / 360.0, 1.0);
+    st->transit_hours = corrected_transit(st->approx_transit, st);
 
-    double term1 = sin(deg2rad(SOLAR_ALTITUDE_DEG)) - st.sin_lat_sin_dec;
-    double ratio = term1 / st.cos_lat_cos_dec;
+    double term1 = sin(deg2rad(SOLAR_ALTITUDE_DEG)) - st->sin_lat_sin_dec;
+    double ratio = term1 / st->cos_lat_cos_dec;
     if (ratio < -1.0 || ratio > 1.0) {
-        st.sunrise_hours = NAN;
-        st.sunset_hours = NAN;
+        st->sunrise_hours = NAN;
+        st->sunset_hours = NAN;
     } else {
         double h0_angle = rad2deg(acos(ratio));
         double delta_m = h0_angle / 360.0;
-        st.sunrise_hours = corrected_hour_angle_from_m(st.approx_transit - delta_m, SOLAR_ALTITUDE_DEG, &st);
-        st.sunset_hours = corrected_hour_angle_from_m(st.approx_transit + delta_m, SOLAR_ALTITUDE_DEG, &st);
+        st->sunrise_hours = corrected_hour_angle_from_m(st->approx_transit - delta_m, SOLAR_ALTITUDE_DEG, st);
+        st->sunset_hours = corrected_hour_angle_from_m(st->approx_transit + delta_m, SOLAR_ALTITUDE_DEG, st);
     }
-    return st;
 }
 
-static solar_time_t create_solar_time(double jd, double lat_deg, double lng_deg) {
+static void init_solar_time(solar_time_t* st, double jd, double lat_deg, double lng_deg) {
     solar_coords_t prev = compute_solar_coordinates(jd - 1.0);
     solar_coords_t curr = compute_solar_coordinates(jd);
     solar_coords_t next = compute_solar_coordinates(jd + 1.0);
-    return create_solar_time_with_coords(lat_deg, lng_deg, prev, curr, next);
+    init_solar_time_with_coords(st, lat_deg, lng_deg, &prev, &curr, &next);
 }
 
 static double solar_time_hour_angle(const solar_time_t* st, double angle_deg, bool after_transit) {
@@ -489,8 +486,9 @@ static bool resolve_polar_circle(
                 int tmy, tmm, tmd;
                 add_one_day(ty, tm, td, &tmy, &tmm, &tmd);
 
-                solar_time_t st1 = create_solar_time(engine_julian_day(ty, tm, td), lat_deg, lng_deg);
-                solar_time_t st2 = create_solar_time(engine_julian_day(tmy, tmm, tmd), lat_deg, lng_deg);
+                solar_time_t st1, st2;
+                init_solar_time(&st1, engine_julian_day(ty, tm, td), lat_deg, lng_deg);
+                init_solar_time(&st2, engine_julian_day(tmy, tmm, tmd), lat_deg, lng_deg);
                 if (is_valid_solar_time(&st1) && is_valid_solar_time(&st2)) {
                     *io_solar_time = st1;
                     *io_tomorrow_solar_time = st2;
@@ -504,8 +502,9 @@ static bool resolve_polar_circle(
         double jd_day = engine_julian_day(year, month, day);
 
         while (fabs(test_lat) >= 65.0) {
-            solar_time_t st1 = create_solar_time(jd_day, test_lat, lng_deg);
-            solar_time_t st2 = create_solar_time(jd_day + 1.0, test_lat, lng_deg);
+            solar_time_t st1, st2;
+            init_solar_time(&st1, jd_day, test_lat, lng_deg);
+            init_solar_time(&st2, jd_day + 1.0, test_lat, lng_deg);
             if (is_valid_solar_time(&st1) && is_valid_solar_time(&st2)) {
                 *io_solar_time = st1;
                 *io_tomorrow_solar_time = st2;
@@ -629,7 +628,7 @@ static bool compute_day_prayers(
     if (opt_solar_today) {
         solar_time = *opt_solar_today;
     } else {
-        solar_time = create_solar_time(jd, lat_deg, lng_deg);
+        init_solar_time(&solar_time, jd, lat_deg, lng_deg);
     }
 
     double fajr_sec = NAN;
@@ -648,11 +647,12 @@ static bool compute_day_prayers(
     solar_time_t tomorrow_solar_time;
     if (need_tomorrow) {
         solar_coords_t next_tomorrow = compute_solar_coordinates(jd + 2.0);
-        tomorrow_solar_time = create_solar_time_with_coords(
+        init_solar_time_with_coords(
+            &tomorrow_solar_time,
             lat_deg, lng_deg,
-            solar_time.solar,
-            solar_time.next_solar,
-            next_tomorrow
+            &solar_time.solar,
+            &solar_time.next_solar,
+            &next_tomorrow
         );
 
         if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours) || isnan(tomorrow_solar_time.sunrise_hours)) &&
@@ -864,11 +864,11 @@ bool engine_calculate_times(
     if (lat_deg < -90.0 || lat_deg > 90.0 || lng_deg < -180.0 || lng_deg > 180.0) return false;
 
     double jd = engine_julian_day(year, month, day);
-    solar_time_t today_solar, tomorrow_solar;
+    solar_time_t tomorrow_solar;
     compute_day_prayers(
         year, month, day, jd, lat_deg, lng_deg, settings,
         NULL,
-        &today_solar,
+        NULL,
         &tomorrow_solar,
         &out_times->fajr_utc_min,
         &out_times->sunrise_utc_min,
@@ -915,7 +915,6 @@ bool engine_calculate_month(
         *out_day_count = num_days;
     }
 
-    solar_time_t today_solar;
     solar_time_t tomorrow_solar;
     double jd_start = engine_julian_day(year, month, 1);
 
@@ -927,7 +926,7 @@ bool engine_calculate_month(
         compute_day_prayers(
             year, month, day, jd, lat_deg, lng_deg, settings,
             opt_solar,
-            &today_solar,
+            NULL,
             &tomorrow_solar,
             &curr->fajr_utc_min,
             &curr->sunrise_utc_min,
