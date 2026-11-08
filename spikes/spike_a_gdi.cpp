@@ -1,11 +1,20 @@
 #define WIN32_LEAN_AND_MEAN
+#include <initguid.h>
 #include <windows.h>
 #include <shellapi.h>
+#include <wtsapi32.h>
 #include <stdio.h>
 
 #define WM_TRAYICON (WM_USER + 1)
 #define ID_TIMER_TICK 1001
-#define ID_TRAY_EXIT 2001
+#define ID_TRAY_TOGGLE_CADENCE 2000
+#define ID_TRAY_TRIM_WS 2001
+#define ID_TRAY_EXIT 2002
+
+enum TimerCadence {
+    CADENCE_SECONDS = 0,
+    CADENCE_MINUTES = 1
+};
 
 static HWND g_hwnd = nullptr;
 static NOTIFYICONDATAW g_nid = {};
@@ -19,13 +28,57 @@ static int g_bufHeight = 0;
 static wchar_t g_line1[64] = L"Asr in 24m";
 static wchar_t g_line2[64] = L"16:42 \x2022 Dhaka";
 
+static TimerCadence g_cadence = CADENCE_SECONDS;
+static HPOWERNOTIFY g_hPowerNotify = nullptr;
+static bool g_monitorOff = false;
+static bool g_sessionLocked = false;
+static bool g_suspended = false;
+
+// Trims the process working set by swapping memory pages out of physical RAM
+static void TrimWorkingSet() {
+    SetProcessWorkingSetSize(GetCurrentProcess(), (SIZE_T)-1, (SIZE_T)-1);
+}
+
+static UINT CalculateNextTimerDelay() {
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    if (g_cadence == CADENCE_MINUTES) {
+        UINT delay = (60 - st.wSecond) * 1000 - st.wMilliseconds;
+        if (delay < 50) delay += 60000;
+        return delay;
+    } else {
+        UINT delay = 1000 - st.wMilliseconds;
+        if (delay < 50) delay += 1000;
+        return delay;
+    }
+}
+
 static bool UpdateTimeText() {
     wchar_t prev[64];
     wcscpy_s(prev, g_line2);
     SYSTEMTIME st;
     GetLocalTime(&st);
-    swprintf_s(g_line2, 64, L"%02d:%02d:%02d \x2022 Dhaka", st.wHour, st.wMinute, st.wSecond);
+    if (g_cadence == CADENCE_MINUTES) {
+        swprintf_s(g_line2, 64, L"%02d:%02d \x2022 Dhaka", st.wHour, st.wMinute);
+    } else {
+        swprintf_s(g_line2, 64, L"%02d:%02d:%02d \x2022 Dhaka", st.wHour, st.wMinute, st.wSecond);
+    }
     return (wcscmp(prev, g_line2) != 0);
+}
+
+static void UpdateSuspensionState(HWND hwnd) {
+    bool should_suspend = g_monitorOff || g_sessionLocked;
+    if (should_suspend && !g_suspended) {
+        g_suspended = true;
+        KillTimer(hwnd, ID_TIMER_TICK);
+        TrimWorkingSet();
+    } else if (!should_suspend && g_suspended) {
+        g_suspended = false;
+        // When monitor turns on or workstation unlocks, recalculate immediately, invalidate window, and re-arm timer
+        UpdateTimeText();
+        InvalidateRect(hwnd, nullptr, FALSE);
+        SetTimer(hwnd, ID_TIMER_TICK, CalculateNextTimerDelay(), nullptr);
+    }
 }
 
 static void CleanupGdiCache() {
@@ -113,24 +166,41 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         wcscpy_s(g_nid.szTip, L"Azaan Tray (Spike A - GDI)");
         Shell_NotifyIconW(NIM_ADD, &g_nid);
 
-        SYSTEMTIME st;
-        GetLocalTime(&st);
-        UINT next_delay = 1000 - st.wMilliseconds;
-        if (next_delay < 50) next_delay += 1000;
-        SetTimer(hwnd, ID_TIMER_TICK, next_delay, nullptr);
+        // Register power & session notifications
+        g_hPowerNotify = RegisterPowerSettingNotification(hwnd, &GUID_MONITOR_POWER_ON, DEVICE_NOTIFY_WINDOW_HANDLE);
+        WTSRegisterSessionNotification(hwnd, NOTIFY_FOR_THIS_SESSION);
+
+        UpdateTimeText();
+        SetTimer(hwnd, ID_TIMER_TICK, CalculateNextTimerDelay(), nullptr);
         return 0;
     }
     case WM_TIMER:
-        if (wParam == ID_TIMER_TICK) {
+        if (wParam == ID_TIMER_TICK && !g_suspended) {
             bool changed = UpdateTimeText();
             if (changed) {
                 InvalidateRect(hwnd, nullptr, FALSE);
             }
-            SYSTEMTIME st;
-            GetLocalTime(&st);
-            UINT next_delay = 1000 - st.wMilliseconds;
-            if (next_delay < 50) next_delay += 1000;
-            SetTimer(hwnd, ID_TIMER_TICK, next_delay, nullptr);
+            SetTimer(hwnd, ID_TIMER_TICK, CalculateNextTimerDelay(), nullptr);
+        }
+        return 0;
+    case WM_POWERBROADCAST:
+        if (wParam == PBT_POWERSETTINGCHANGE && lParam) {
+            const POWERBROADCAST_SETTING* pbs = reinterpret_cast<const POWERBROADCAST_SETTING*>(lParam);
+            if (IsEqualGUID(pbs->PowerSetting, GUID_MONITOR_POWER_ON) && pbs->DataLength >= sizeof(DWORD)) {
+                DWORD val = *reinterpret_cast<const DWORD*>(pbs->Data);
+                // 0 = Monitor Off, 1 = Monitor On, 2 = Monitor Dimmed
+                g_monitorOff = (val == 0);
+                UpdateSuspensionState(hwnd);
+            }
+        }
+        return TRUE;
+    case WM_WTSSESSION_CHANGE:
+        if (wParam == WTS_SESSION_LOCK) {
+            g_sessionLocked = true;
+            UpdateSuspensionState(hwnd);
+        } else if (wParam == WTS_SESSION_UNLOCK) {
+            g_sessionLocked = false;
+            UpdateSuspensionState(hwnd);
         }
         return 0;
     case WM_PAINT:
@@ -141,6 +211,10 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             POINT pt;
             GetCursorPos(&pt);
             HMENU hMenu = CreatePopupMenu();
+            AppendMenuW(hMenu, MF_STRING | (g_cadence == CADENCE_MINUTES ? MF_CHECKED : MF_UNCHECKED),
+                        ID_TRAY_TOGGLE_CADENCE, L"Minutes Cadence Mode");
+            AppendMenuW(hMenu, MF_STRING, ID_TRAY_TRIM_WS, L"Trim Working Set");
+            AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
             AppendMenuW(hMenu, MF_STRING, ID_TRAY_EXIT, L"Exit Spike A");
             SetForegroundWindow(hwnd);
             TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, hwnd, NULL);
@@ -148,11 +222,29 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }
         return 0;
     case WM_COMMAND:
-        if (LOWORD(wParam) == ID_TRAY_EXIT) {
+        switch (LOWORD(wParam)) {
+        case ID_TRAY_TOGGLE_CADENCE:
+            g_cadence = (g_cadence == CADENCE_SECONDS) ? CADENCE_MINUTES : CADENCE_SECONDS;
+            UpdateTimeText();
+            InvalidateRect(hwnd, nullptr, FALSE);
+            if (!g_suspended) {
+                SetTimer(hwnd, ID_TIMER_TICK, CalculateNextTimerDelay(), nullptr);
+            }
+            break;
+        case ID_TRAY_TRIM_WS:
+            TrimWorkingSet();
+            break;
+        case ID_TRAY_EXIT:
             DestroyWindow(hwnd);
+            break;
         }
         return 0;
     case WM_DESTROY:
+        if (g_hPowerNotify) {
+            UnregisterPowerSettingNotification(g_hPowerNotify);
+            g_hPowerNotify = nullptr;
+        }
+        WTSUnRegisterSessionNotification(hwnd);
         CleanupGdiCache();
         Shell_NotifyIconW(NIM_DELETE, &g_nid);
         KillTimer(hwnd, ID_TIMER_TICK);

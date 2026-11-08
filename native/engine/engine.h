@@ -138,6 +138,18 @@ bool engine_calculate_times(
     prayer_times_t* out_times
 );
 
+/* Calculate prayer times for an entire Gregorian month (days 1..days_in_month) with sliding window reuse.
+ * out_times must point to an array with capacity for at least 31 prayer_times_t elements.
+ * If out_day_count is non-NULL, receives the number of days in that month (28, 29, 30, or 31).
+ */
+bool engine_calculate_month(
+    int year, int month,
+    double lat_deg, double lng_deg,
+    const engine_settings_t* settings,
+    prayer_times_t* out_times,
+    int* out_day_count
+);
+
 /* Convert a Gregorian date + relative UTC minutes into Unix epoch milliseconds */
 int64_t engine_utc_minutes_to_epoch_ms(int year, int month, int day, double utc_min);
 

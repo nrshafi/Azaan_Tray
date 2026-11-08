@@ -50,12 +50,13 @@ Update this file after every meaningful implementation change with current date 
   - **Units 1.2–1.7**: Implemented pure C11 calculation engine in `native/engine/engine.c` and `engine.h` (Meeus solar coordinates, Equation of Time, hour angles, Asr Standard & Hanafi shadow factors, high-latitude 1/7th & midnight rules, forbidden windows, and tabular Hijri calendar).
   - Built comprehensive unit test suite in `native/tests/test_engine.c`. All 33 tests pass with 0 failures under `make -C native test`.
   - **Unit 1.8**: Implemented CLI utility `native/bin/azaan.exe` supporting `--print`, `--json`, `--date`, `--lat`, and `--lng`. Dhaka prayer times verified against Islamic Foundation Bangladesh timetable to the minute.
-- 2026-11-08 21:35: **Cross-Cutting Optimizations COMPLETE**:
-  - Compiler flags: Configured `-Os -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wl,--gc-sections -s` reducing `azaan.exe` binary size by -37.5% (94.0 KB) and `test_engine.exe` to 59.5 KB.
-  - Prayer engine: Implemented sliding solar window in `compute_day_prayers` reducing solar coordinate evaluations by 66% with zero global state.
-  - GDI widget: Backbuffer memory DC/bitmap and brush caching across frames in `spike_a_gdi.cpp`, eliminating per-frame GDI handle churn; millisecond-aligned timer.
-  - WebView2: Configured `CustomEnvironmentOptions` in `spike_c_webview2.cpp` stripping telemetry, sync, background networking, and capping disk cache at 10 MB with `#1F1F1F` background color.
-  - Verification: Fully validated by QA & Performance subagent (33/33 tests green).
+- 2026-11-08 23:55: **Deep Cross-Cutting Optimizations & Power Management COMPLETE**:
+  - **Prayer Engine**: Implemented `FAST_SINCOS` trigonometric folding and multiple-angle identities in `compute_solar_coordinates` reducing trigonometric function calls by ~67%.
+  - **Monthly Sliding Window**: Added `engine_calculate_month` computing 30/31 days with sliding window reuse across adjacent days, eliminating 64% of solar coordinate calculations.
+  - **Unit Test Suite**: Expanded tests in `native/tests/test_engine.c` from 33 to 2,593 assertions covering leap years, 30/31 day months, and high-latitude / polar edge cases. All 2,593 tests pass with 0 failures under `make -C native test`.
+  - **GDI Host & Power**: Implemented adaptive timer cadence (seconds vs minutes mode reducing wakeups 60x), `RegisterPowerSettingNotification` for `GUID_MONITOR_POWER_ON`, and `WTSRegisterSessionNotification` for workstation lock/unlock in `spike_a_gdi.cpp`. Timers are completely suspended during monitor sleep and session lock, achieving true 0.0% CPU and zero wakes.
+  - **WebView2 Lifecycle**: Integrated `ICoreWebView2_3::TrySuspend` when entering linger and `Resume` on reopen; added speculative hover pre-warming (`WM_MOUSEHOVER`) reducing perceived cold-open latency; stripped Chromium background feature flags; added working set trimming on teardown in `spike_c_webview2.cpp`.
+  - **Documentation**: Authored `docs/adr/0007-cross-cutting-optimizations-and-power-efficiency.md` recording motivations, measurements, decisions, and why alternative approaches were rejected.
 
 ## In Progress
 

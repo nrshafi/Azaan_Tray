@@ -8,8 +8,15 @@
  * - PrayTimes.org Calculation Equations
  */
 
+#define _GNU_SOURCE
 #include "engine.h"
 #include <math.h>
+
+#if defined(__GNUC__) || defined(__clang__)
+#define FAST_SINCOS(rad, s, c) sincos(rad, s, c)
+#else
+#define FAST_SINCOS(rad, s, c) do { *(s) = sin(rad); *(c) = cos(rad); } while(0)
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -70,6 +77,13 @@ static int day_of_year(int year, int month, int day) {
     return doy + day;
 }
 
+static int get_days_in_month(int year, int month) {
+    if (month < 1 || month > 12) return 0;
+    int feb = is_leap_year(year) ? 29 : 28;
+    const int months[12] = { 31, feb, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    return months[month - 1];
+}
+
 static void add_days_to_date(int year, int month, int day, int delta_days, int* out_y, int* out_m, int* out_d) {
     /* Convert via Julian Day at 00:00 UTC (Meeus Ch. 7 inverse) */
     double jd = engine_julian_day(year, month, day) + (double)delta_days + 0.5;
@@ -115,15 +129,22 @@ static solar_coords_t compute_solar_coordinates(double jd) {
     /* Meeus p. 163: Mean solar anomaly M */
     double m_deg = unwind_angle(357.52911 + 35999.05029 * t - 0.0001537 * t * t);
     double m_rad = deg2rad(m_deg);
+    double sin_m, cos_m;
+    FAST_SINCOS(m_rad, &sin_m, &cos_m);
 
-    /* Meeus p. 164: Sun's equation of the center C */
-    double c = (1.914602 - 0.004817 * t - 0.000014 * t * t) * sin(m_rad) +
-               (0.019993 - 0.000101 * t) * sin(2.0 * m_rad) +
-               0.000289 * sin(3.0 * m_rad);
+    /* Meeus p. 164: Sun's equation of the center C (via double & triple angle identities) */
+    double sin_2m = 2.0 * sin_m * cos_m;
+    double sin_3m = sin_m * (3.0 - 4.0 * sin_m * sin_m);
+    double c = (1.914602 - 0.004817 * t - 0.000014 * t * t) * sin_m +
+               (0.019993 - 0.000101 * t) * sin_2m +
+               0.000289 * sin_3m;
 
-    /* Meeus p. 164: Apparent solar longitude Lambda */
+    /* Meeus p. 164: Apparent solar longitude Lambda & obliquity correction */
     double omega_simple = 125.04 - 1934.136 * t;
-    double lambda_deg = unwind_angle(l0 + c - 0.00569 - 0.00478 * sin(deg2rad(omega_simple)));
+    double sin_om_simple, cos_om_simple;
+    FAST_SINCOS(deg2rad(omega_simple), &sin_om_simple, &cos_om_simple);
+
+    double lambda_deg = unwind_angle(l0 + c - 0.00569 - 0.00478 * sin_om_simple);
     double lambda_rad = deg2rad(lambda_deg);
 
     /* Meeus p. 165: Mean sidereal time Theta0 */
@@ -135,24 +156,42 @@ static solar_coords_t compute_solar_coordinates(double jd) {
     double lp_rad = deg2rad(lp);
     double om_rad = deg2rad(omega);
 
-    double d_psi = (-17.2 / 3600.0) * sin(om_rad) -
-                   (1.32 / 3600.0) * sin(2.0 * l0_rad) -
-                   (0.23 / 3600.0) * sin(2.0 * lp_rad) +
-                   (0.21 / 3600.0) * sin(2.0 * om_rad);
+    double sin_om, cos_om;
+    FAST_SINCOS(om_rad, &sin_om, &cos_om);
 
-    double d_eps = (9.2 / 3600.0) * cos(om_rad) +
-                   (0.57 / 3600.0) * cos(2.0 * l0_rad) +
-                   (0.10 / 3600.0) * cos(2.0 * lp_rad) -
-                   (0.09 / 3600.0) * cos(2.0 * om_rad);
+    double sin_2l0, cos_2l0;
+    FAST_SINCOS(2.0 * l0_rad, &sin_2l0, &cos_2l0);
+
+    double sin_2lp, cos_2lp;
+    FAST_SINCOS(2.0 * lp_rad, &sin_2lp, &cos_2lp);
+
+    double sin_2om = 2.0 * sin_om * cos_om;
+    double cos_2om = cos_om * cos_om - sin_om * sin_om;
+
+    double d_psi = (-17.2 / 3600.0) * sin_om -
+                   (1.32 / 3600.0) * sin_2l0 -
+                   (0.23 / 3600.0) * sin_2lp +
+                   (0.21 / 3600.0) * sin_2om;
+
+    double d_eps = (9.2 / 3600.0) * cos_om +
+                   (0.57 / 3600.0) * cos_2l0 +
+                   (0.10 / 3600.0) * cos_2lp -
+                   (0.09 / 3600.0) * cos_2om;
 
     /* Meeus p. 147 & p. 165: Mean and apparent obliquity of the ecliptic */
     double eps0 = 23.439291 - 0.013004167 * t - 0.0000001639 * t * t + 0.0000005036 * t * t * t;
-    double eps_app_rad = deg2rad(eps0 + 0.00256 * cos(deg2rad(omega_simple)));
+    double eps_app_rad = deg2rad(eps0 + 0.00256 * cos_om_simple);
+
+    double sin_eps_app, cos_eps_app;
+    FAST_SINCOS(eps_app_rad, &sin_eps_app, &cos_eps_app);
+
+    double sin_lambda, cos_lambda;
+    FAST_SINCOS(lambda_rad, &sin_lambda, &cos_lambda);
 
     solar_coords_t sc;
     /* Meeus p. 165: Declination and Right Ascension */
-    sc.declination_deg = rad2deg(asin(sin(eps_app_rad) * sin(lambda_rad)));
-    sc.right_ascension_deg = unwind_angle(rad2deg(atan2(cos(eps_app_rad) * sin(lambda_rad), cos(lambda_rad))));
+    sc.declination_deg = rad2deg(asin(sin_eps_app * sin_lambda));
+    sc.right_ascension_deg = unwind_angle(rad2deg(atan2(cos_eps_app * sin_lambda, cos_lambda)));
     /* Meeus p. 88: Apparent sidereal time */
     sc.apparent_sidereal_time_deg = theta0 + (d_psi * 3600.0 * cos(deg2rad(eps0 + d_eps))) / 3600.0;
     return sc;
@@ -684,45 +723,11 @@ static bool compute_day_prayers(
     return true;
 }
 
-bool engine_calculate_times(
-    int year, int month, int day,
-    double lat_deg, double lng_deg,
+static void finalize_sunnah_and_forbidden(
     const engine_settings_t* settings,
+    double tomorrow_fajr_min,
     prayer_times_t* out_times
 ) {
-    if (!settings || !out_times) return false;
-    if (lat_deg < -90.0 || lat_deg > 90.0 || lng_deg < -180.0 || lng_deg > 180.0) return false;
-
-    solar_time_t today_solar, tomorrow_solar;
-    compute_day_prayers(
-        year, month, day, lat_deg, lng_deg, settings,
-        NULL,
-        &today_solar,
-        &tomorrow_solar,
-        &out_times->fajr_utc_min,
-        &out_times->sunrise_utc_min,
-        &out_times->dhuhr_utc_min,
-        &out_times->asr_utc_min,
-        &out_times->sunset_utc_min,
-        &out_times->maghrib_utc_min,
-        &out_times->isha_utc_min
-    );
-
-    /*
-     * SunnahTimes (Midnight, First Third, Last Third of the night):
-     * Night is defined from today's Maghrib to tomorrow's Fajr.
-     */
-    int tmy, tmm, tmd;
-    add_days_to_date(year, month, day, 1, &tmy, &tmm, &tmd);
-    double tomorrow_fajr_min = NAN;
-    compute_day_prayers(
-        tmy, tmm, tmd, lat_deg, lng_deg, settings,
-        &tomorrow_solar,
-        NULL,
-        NULL,
-        &tomorrow_fajr_min, NULL, NULL, NULL, NULL, NULL, NULL
-    );
-
     if (!isnan(out_times->maghrib_utc_min) && !isnan(tomorrow_fajr_min)) {
         /* Tomorrow's Fajr relative to today's 00:00:00 UTC is +1440 minutes */
         double next_fajr_rel_min = tomorrow_fajr_min + 1440.0;
@@ -766,6 +771,106 @@ bool engine_calculate_times(
         out_times->sunset_forbidden_start_utc_min = NAN;
         out_times->sunset_forbidden_end_utc_min = NAN;
     }
+}
+
+bool engine_calculate_times(
+    int year, int month, int day,
+    double lat_deg, double lng_deg,
+    const engine_settings_t* settings,
+    prayer_times_t* out_times
+) {
+    if (!settings || !out_times) return false;
+    if (lat_deg < -90.0 || lat_deg > 90.0 || lng_deg < -180.0 || lng_deg > 180.0) return false;
+
+    solar_time_t today_solar, tomorrow_solar;
+    compute_day_prayers(
+        year, month, day, lat_deg, lng_deg, settings,
+        NULL,
+        &today_solar,
+        &tomorrow_solar,
+        &out_times->fajr_utc_min,
+        &out_times->sunrise_utc_min,
+        &out_times->dhuhr_utc_min,
+        &out_times->asr_utc_min,
+        &out_times->sunset_utc_min,
+        &out_times->maghrib_utc_min,
+        &out_times->isha_utc_min
+    );
+
+    /*
+     * SunnahTimes (Midnight, First Third, Last Third of the night):
+     * Night is defined from today's Maghrib to tomorrow's Fajr.
+     */
+    int tmy, tmm, tmd;
+    add_days_to_date(year, month, day, 1, &tmy, &tmm, &tmd);
+    double tomorrow_fajr_min = NAN;
+    compute_day_prayers(
+        tmy, tmm, tmd, lat_deg, lng_deg, settings,
+        &tomorrow_solar,
+        NULL,
+        NULL,
+        &tomorrow_fajr_min, NULL, NULL, NULL, NULL, NULL, NULL
+    );
+
+    finalize_sunnah_and_forbidden(settings, tomorrow_fajr_min, out_times);
+
+    return true;
+}
+
+bool engine_calculate_month(
+    int year, int month,
+    double lat_deg, double lng_deg,
+    const engine_settings_t* settings,
+    prayer_times_t* out_times,
+    int* out_day_count
+) {
+    if (!settings || !out_times) return false;
+    if (month < 1 || month > 12) return false;
+    if (lat_deg < -90.0 || lat_deg > 90.0 || lng_deg < -180.0 || lng_deg > 180.0) return false;
+
+    int num_days = get_days_in_month(year, month);
+    if (out_day_count) {
+        *out_day_count = num_days;
+    }
+
+    solar_time_t today_solar;
+    solar_time_t tomorrow_solar;
+
+    for (int day = 1; day <= num_days; day++) {
+        prayer_times_t* curr = &out_times[day - 1];
+        const solar_time_t* opt_solar = (day == 1) ? NULL : &tomorrow_solar;
+
+        compute_day_prayers(
+            year, month, day, lat_deg, lng_deg, settings,
+            opt_solar,
+            &today_solar,
+            &tomorrow_solar,
+            &curr->fajr_utc_min,
+            &curr->sunrise_utc_min,
+            &curr->dhuhr_utc_min,
+            &curr->asr_utc_min,
+            &curr->sunset_utc_min,
+            &curr->maghrib_utc_min,
+            &curr->isha_utc_min
+        );
+    }
+
+    for (int day = 1; day < num_days; day++) {
+        finalize_sunnah_and_forbidden(settings, out_times[day].fajr_utc_min, &out_times[day - 1]);
+    }
+
+    /* Last day of month: tomorrow is day 1 of next month */
+    int tmy, tmm, tmd;
+    add_days_to_date(year, month, num_days, 1, &tmy, &tmm, &tmd);
+    double next_month_fajr = NAN;
+    compute_day_prayers(
+        tmy, tmm, tmd, lat_deg, lng_deg, settings,
+        &tomorrow_solar,
+        NULL,
+        NULL,
+        &next_month_fajr, NULL, NULL, NULL, NULL, NULL, NULL
+    );
+    finalize_sunnah_and_forbidden(settings, next_month_fajr, &out_times[num_days - 1]);
 
     return true;
 }

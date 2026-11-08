@@ -135,6 +135,124 @@ static void test_high_latitude_oslo() {
     ASSERT_TRUE(!isnan(times.isha_utc_min));
 }
 
+static void assert_time_equal(double a, double b) {
+    if (isnan(a) && isnan(b)) {
+        g_tests_run++;
+        g_tests_passed++;
+    } else {
+        ASSERT_NEAR(a, b, 0.0001);
+    }
+}
+
+static void assert_prayer_times_equal(const prayer_times_t* a, const prayer_times_t* b) {
+    assert_time_equal(a->fajr_utc_min, b->fajr_utc_min);
+    assert_time_equal(a->sunrise_utc_min, b->sunrise_utc_min);
+    assert_time_equal(a->dhuhr_utc_min, b->dhuhr_utc_min);
+    assert_time_equal(a->asr_utc_min, b->asr_utc_min);
+    assert_time_equal(a->sunset_utc_min, b->sunset_utc_min);
+    assert_time_equal(a->maghrib_utc_min, b->maghrib_utc_min);
+    assert_time_equal(a->isha_utc_min, b->isha_utc_min);
+    assert_time_equal(a->midnight_utc_min, b->midnight_utc_min);
+    assert_time_equal(a->first_third_utc_min, b->first_third_utc_min);
+    assert_time_equal(a->last_third_utc_min, b->last_third_utc_min);
+    assert_time_equal(a->sunrise_forbidden_start_utc_min, b->sunrise_forbidden_start_utc_min);
+    assert_time_equal(a->sunrise_forbidden_end_utc_min, b->sunrise_forbidden_end_utc_min);
+    assert_time_equal(a->zawal_forbidden_start_utc_min, b->zawal_forbidden_start_utc_min);
+    assert_time_equal(a->zawal_forbidden_end_utc_min, b->zawal_forbidden_end_utc_min);
+    assert_time_equal(a->sunset_forbidden_start_utc_min, b->sunset_forbidden_start_utc_min);
+    assert_time_equal(a->sunset_forbidden_end_utc_min, b->sunset_forbidden_end_utc_min);
+}
+
+static void test_calculate_month_leap_year_february() {
+    engine_settings_t settings;
+    engine_get_default_settings(CALC_METHOD_KARACHI, &settings);
+    settings.madhab = MADHAB_HANAFI;
+
+    prayer_times_t month_times[31];
+    int day_count = 0;
+    bool ok = engine_calculate_month(2024, 2, 23.8103, 90.4125, &settings, month_times, &day_count);
+    ASSERT_TRUE(ok);
+    ASSERT_TRUE(day_count == 29);
+
+    for (int d = 1; d <= 29; d++) {
+        prayer_times_t single_day;
+        bool single_ok = engine_calculate_times(2024, 2, d, 23.8103, 90.4125, &settings, &single_day);
+        ASSERT_TRUE(single_ok);
+        assert_prayer_times_equal(&month_times[d - 1], &single_day);
+    }
+}
+
+static void test_calculate_month_30_days() {
+    engine_settings_t settings;
+    engine_get_default_settings(CALC_METHOD_NORTH_AMERICA, &settings);
+
+    prayer_times_t month_times[31];
+    int day_count = 0;
+    /* New York in April (30 days) */
+    bool ok = engine_calculate_month(2024, 4, 40.7128, -74.0060, &settings, month_times, &day_count);
+    ASSERT_TRUE(ok);
+    ASSERT_TRUE(day_count == 30);
+
+    for (int d = 1; d <= 30; d++) {
+        prayer_times_t single_day;
+        bool single_ok = engine_calculate_times(2024, 4, d, 40.7128, -74.0060, &settings, &single_day);
+        ASSERT_TRUE(single_ok);
+        assert_prayer_times_equal(&month_times[d - 1], &single_day);
+    }
+}
+
+static void test_calculate_month_31_days() {
+    engine_settings_t settings;
+    engine_get_default_settings(CALC_METHOD_MWL, &settings);
+
+    prayer_times_t month_times[31];
+    int day_count = 0;
+    /* London in January (31 days) */
+    bool ok = engine_calculate_month(2024, 1, 51.5074, -0.1278, &settings, month_times, &day_count);
+    ASSERT_TRUE(ok);
+    ASSERT_TRUE(day_count == 31);
+
+    for (int d = 1; d <= 31; d++) {
+        prayer_times_t single_day;
+        bool single_ok = engine_calculate_times(2024, 1, d, 51.5074, -0.1278, &settings, &single_day);
+        ASSERT_TRUE(single_ok);
+        assert_prayer_times_equal(&month_times[d - 1], &single_day);
+    }
+}
+
+static void test_calculate_month_polar_high_lat() {
+    /* High latitude: Oslo (59.91 N) with 1/7th rule */
+    engine_settings_t settings;
+    engine_get_default_settings(CALC_METHOD_MWL, &settings);
+    settings.high_lat_rule = HIGH_LAT_SEVENTH_OF_NIGHT;
+
+    prayer_times_t month_times[31];
+    int day_count = 0;
+    bool ok = engine_calculate_month(2024, 6, 59.9139, 10.7522, &settings, month_times, &day_count);
+    ASSERT_TRUE(ok);
+    ASSERT_TRUE(day_count == 30);
+
+    for (int d = 1; d <= 30; d++) {
+        prayer_times_t single_day;
+        bool single_ok = engine_calculate_times(2024, 6, d, 59.9139, 10.7522, &settings, &single_day);
+        ASSERT_TRUE(single_ok);
+        assert_prayer_times_equal(&month_times[d - 1], &single_day);
+    }
+
+    /* Polar location: Tromso (69.65 N) with POLAR_AQRAB_BALAD */
+    settings.polar_resolution = POLAR_AQRAB_BALAD;
+    ok = engine_calculate_month(2024, 6, 69.6492, 18.9553, &settings, month_times, &day_count);
+    ASSERT_TRUE(ok);
+    ASSERT_TRUE(day_count == 30);
+
+    for (int d = 1; d <= 30; d++) {
+        prayer_times_t single_day;
+        bool single_ok = engine_calculate_times(2024, 6, d, 69.6492, 18.9553, &settings, &single_day);
+        ASSERT_TRUE(single_ok);
+        assert_prayer_times_equal(&month_times[d - 1], &single_day);
+    }
+}
+
 int main() {
     printf("--- Running Azaan Tray Engine Tests ---\n");
 
@@ -143,6 +261,10 @@ int main() {
     test_hijri_dates();
     test_dhaka_prayer_times();
     test_high_latitude_oslo();
+    test_calculate_month_leap_year_february();
+    test_calculate_month_30_days();
+    test_calculate_month_31_days();
+    test_calculate_month_polar_high_lat();
 
     printf("\nTests run: %d, Passed: %d, Failed: %d\n",
            g_tests_run, g_tests_passed, g_tests_run - g_tests_passed);
