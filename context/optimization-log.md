@@ -69,3 +69,15 @@
 - Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
 - Commit: `307050c`
 - Notes / next idea it suggests: Monthly calculation improved by 5.5% and single-day times by 4.1%. Test passing solar_time_t via pointers next.
+
+#### #5 Pair FAST_SINCOS for delta and h in corrected_hour_angle: REJECTED
+- Hypothesis: In corrected_hour_angle, evaluating delta and h using paired FAST_SINCOS eliminates redundant cos(delta) and deg2rad evaluations between altitude calculation and Newton-Raphson term4, improving calculation time by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`. Replaced isolated `sin()`/`cos()` calls for `delta` and `h` with `FAST_SINCOS`, passing trigonometric outputs directly to `altitude_of_celestial_body` and `term4`.
+- Result:
+  - `calculate_times`: 4192.21 -> 4204.94 ns/call (+0.30% noise, confirmation 4230.85 ns/call / +0.92%)
+  - `calculate_month`: 61185.30 -> 60923.84 ns/call (-0.43% noise, confirmation 61305.14 ns/call / +0.20%)
+  - `azaan.exe` size: 97280 -> 97280 bytes (0.00%)
+  - `test_engine.exe` size: 66560 -> 66560 bytes (0.00%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: reverted
+- Notes / next idea it suggests: Results were within +/-0.5% noise across 6 runs (< 3% threshold). x86_64 GCC already optimizes paired trig registers in this basic block. Reverted cleanly.
