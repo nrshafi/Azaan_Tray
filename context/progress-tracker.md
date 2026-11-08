@@ -50,6 +50,12 @@ Update this file after every meaningful implementation change with current date 
   - **Units 1.2–1.7**: Implemented pure C11 calculation engine in `native/engine/engine.c` and `engine.h` (Meeus solar coordinates, Equation of Time, hour angles, Asr Standard & Hanafi shadow factors, high-latitude 1/7th & midnight rules, forbidden windows, and tabular Hijri calendar).
   - Built comprehensive unit test suite in `native/tests/test_engine.c`. All 33 tests pass with 0 failures under `make -C native test`.
   - **Unit 1.8**: Implemented CLI utility `native/bin/azaan.exe` supporting `--print`, `--json`, `--date`, `--lat`, and `--lng`. Dhaka prayer times verified against Islamic Foundation Bangladesh timetable to the minute.
+- 2026-11-08 21:35: **Cross-Cutting Optimizations COMPLETE**:
+  - Compiler flags: Configured `-Os -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -Wl,--gc-sections -s` reducing `azaan.exe` binary size by -37.5% (94.0 KB) and `test_engine.exe` to 59.5 KB.
+  - Prayer engine: Implemented sliding solar window in `compute_day_prayers` reducing solar coordinate evaluations by 66% with zero global state.
+  - GDI widget: Backbuffer memory DC/bitmap and brush caching across frames in `spike_a_gdi.cpp`, eliminating per-frame GDI handle churn; millisecond-aligned timer.
+  - WebView2: Configured `CustomEnvironmentOptions` in `spike_c_webview2.cpp` stripping telemetry, sync, background networking, and capping disk cache at 10 MB with `#1F1F1F` background color.
+  - Verification: Fully validated by QA & Performance subagent (33/33 tests green).
 
 ## In Progress
 

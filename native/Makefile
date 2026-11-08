@@ -1,23 +1,31 @@
 CC ?= gcc
-CFLAGS ?= -std=c11 -Wall -Wextra -Wpedantic -Werror -O2
-LDFLAGS ?= -lm
+OPTFLAGS ?= -Os -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables
+CFLAGS ?= -std=c11 -Wall -Wextra -Wpedantic -Werror $(OPTFLAGS)
+LDFLAGS ?= -Wl,--gc-sections -s -lm
+
+BINDIR = bin
+
+MKDIR_P = mkdir -p $(BINDIR)
+RM_RF = rm -rf $(BINDIR) *.o
+EXE = .exe
 
 .PHONY: all test cli clean
 
 all: test cli
 
-test: bin/test_engine
-	./bin/test_engine
+test: $(BINDIR)/test_engine$(EXE)
+	./$(BINDIR)/test_engine$(EXE)
 
-bin/test_engine: tests/test_engine.c engine/engine.c engine/engine.h
-	@mkdir -p bin
-	$(CC) $(CFLAGS) -Iengine tests/test_engine.c engine/engine.c -o bin/test_engine $(LDFLAGS)
+$(BINDIR)/test_engine$(EXE): tests/test_engine.c engine/engine.c engine/engine.h
+	@$(MKDIR_P)
+	$(CC) $(CFLAGS) -Iengine tests/test_engine.c engine/engine.c -o $@ $(LDFLAGS)
 
-cli: bin/azaan.exe
+cli: $(BINDIR)/azaan$(EXE)
 
-bin/azaan.exe: cli/main.c engine/engine.c engine/engine.h
-	@mkdir -p bin
-	$(CC) $(CFLAGS) -Iengine cli/main.c engine/engine.c -o bin/azaan.exe $(LDFLAGS)
+$(BINDIR)/azaan$(EXE): cli/main.c engine/engine.c engine/engine.h
+	@$(MKDIR_P)
+	$(CC) $(CFLAGS) -Iengine cli/main.c engine/engine.c -o $@ $(LDFLAGS)
 
 clean:
-	rm -rf bin *.o
+	@$(RM_RF)
+

@@ -1,4 +1,12 @@
-import { Coordinates, CalculationMethod, PrayerTimes, Madhab, HighLatitudeRule } from 'adhan';
+import {
+  Coordinates,
+  CalculationMethod,
+  PrayerTimes,
+  Madhab,
+  HighLatitudeRule,
+  PolarCircleResolution,
+  SunnahTimes,
+} from 'adhan';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -47,7 +55,7 @@ const METHODS = [
   'Singapore',
   'Tehran',
   'Turkey',
-];
+] as const;
 
 interface FixtureEntry {
   city: string;
@@ -56,18 +64,16 @@ interface FixtureEntry {
   date: string;
   method: string;
   madhab: string;
-  fajr_utc_min: number;
-  sunrise_utc_min: number;
-  dhuhr_utc_min: number;
-  asr_utc_min: number;
-  sunset_utc_min: number;
-  maghrib_utc_min: number;
-  isha_utc_min: number;
-}
-
-function dateToUtcMinutes(date: Date | null): number {
-  if (!date || isNaN(date.getTime())) return -1;
-  return date.getUTCHours() * 60 + date.getUTCMinutes() + date.getUTCSeconds() / 60;
+  high_lat_rule: string;
+  fajr_ms: number;
+  sunrise_ms: number;
+  dhuhr_ms: number;
+  asr_ms: number;
+  sunset_ms: number;
+  maghrib_ms: number;
+  isha_ms: number;
+  midnight_ms: number;
+  last_third_ms: number;
 }
 
 const fixtures: FixtureEntry[] = [];
@@ -77,41 +83,45 @@ for (const city of CITIES) {
 
   for (const dateStr of DATES) {
     const [y, m, d] = dateStr.split('-').map(Number);
-    // Create Date at noon UTC for stability
-    const date = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+    // Construct local Date so getFullYear/getMonth/getDate inside adhan-js return exact Y, M, D
+    const date = new Date(y!, m! - 1, d!, 12, 0, 0);
 
     for (const methodName of METHODS) {
-      for (const madhab of ['Shafi', 'Hanafi']) {
-        const methodFn = (CalculationMethod as any)[methodName];
-        if (!methodFn) continue;
-
+      for (const madhab of ['Shafi', 'Hanafi'] as const) {
+        const methodFn = CalculationMethod[methodName];
         const params = methodFn();
         params.madhab = madhab === 'Hanafi' ? Madhab.Hanafi : Madhab.Shafi;
-        if (city.lat > 55) {
+
+        let hlName = 'MiddleOfTheNight';
+        if (Math.abs(city.lat) > 55) {
           params.highLatitudeRule = HighLatitudeRule.SeventhOfTheNight;
+          hlName = 'SeventhOfTheNight';
+        }
+        if (Math.abs(city.lat) >= 64) {
+          params.polarCircleResolution = PolarCircleResolution.AqrabYaum;
         }
 
-        try {
-          const pt = new PrayerTimes(coords, date, params);
+        const pt = new PrayerTimes(coords, date, params);
+        const sunnah = new SunnahTimes(pt);
 
-          fixtures.push({
-            city: city.name,
-            lat: city.lat,
-            lng: city.lng,
-            date: dateStr,
-            method: methodName,
-            madhab,
-            fajr_utc_min: Math.round(dateToUtcMinutes(pt.fajr) * 100) / 100,
-            sunrise_utc_min: Math.round(dateToUtcMinutes(pt.sunrise) * 100) / 100,
-            dhuhr_utc_min: Math.round(dateToUtcMinutes(pt.dhuhr) * 100) / 100,
-            asr_utc_min: Math.round(dateToUtcMinutes(pt.asr) * 100) / 100,
-            sunset_utc_min: Math.round(dateToUtcMinutes(pt.sunset) * 100) / 100,
-            maghrib_utc_min: Math.round(dateToUtcMinutes(pt.maghrib) * 100) / 100,
-            isha_utc_min: Math.round(dateToUtcMinutes(pt.isha) * 100) / 100,
-          });
-        } catch (e) {
-          // Polar extreme cases without solution
-        }
+        fixtures.push({
+          city: city.name,
+          lat: city.lat,
+          lng: city.lng,
+          date: dateStr,
+          method: methodName,
+          madhab,
+          high_lat_rule: hlName,
+          fajr_ms: pt.fajr.getTime(),
+          sunrise_ms: pt.sunrise.getTime(),
+          dhuhr_ms: pt.dhuhr.getTime(),
+          asr_ms: pt.asr.getTime(),
+          sunset_ms: pt.sunset.getTime(),
+          maghrib_ms: pt.maghrib.getTime(),
+          isha_ms: pt.isha.getTime(),
+          midnight_ms: sunnah.middleOfTheNight.getTime(),
+          last_third_ms: sunnah.lastThirdOfTheNight.getTime(),
+        });
       }
     }
   }

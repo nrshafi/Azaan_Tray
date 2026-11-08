@@ -160,6 +160,55 @@ HRESULT STDMETHODCALLTYPE WebMessageReceivedHandler::Invoke(ICoreWebView2*, ICor
     return S_OK;
 }
 
+class CustomEnvironmentOptions : public ICoreWebView2EnvironmentOptions {
+    std::atomic<ULONG> ref_{1};
+    const wchar_t* args_;
+public:
+    explicit CustomEnvironmentOptions(const wchar_t* args) : args_(args) {}
+    virtual ~CustomEnvironmentOptions() = default;
+
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override {
+        if (!ppv) return E_POINTER;
+        if (riid == IID_IUnknown || riid == IID_ICoreWebView2EnvironmentOptions) {
+            *ppv = static_cast<ICoreWebView2EnvironmentOptions*>(this);
+            AddRef();
+            return S_OK;
+        }
+        *ppv = nullptr;
+        return E_NOINTERFACE;
+    }
+    ULONG STDMETHODCALLTYPE AddRef() override { return ++ref_; }
+    ULONG STDMETHODCALLTYPE Release() override {
+        ULONG c = --ref_;
+        if (c == 0) delete this;
+        return c;
+    }
+    HRESULT STDMETHODCALLTYPE get_AdditionalBrowserArguments(LPWSTR* value) override {
+        if (!value) return E_POINTER;
+        size_t len = wcslen(args_);
+        *value = static_cast<LPWSTR>(CoTaskMemAlloc((len + 1) * sizeof(wchar_t)));
+        if (!*value) return E_OUTOFMEMORY;
+        wcscpy_s(*value, len + 1, args_);
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE put_AdditionalBrowserArguments(LPCWSTR) override { return S_OK; }
+    HRESULT STDMETHODCALLTYPE get_Language(LPWSTR* value) override {
+        if (value) *value = nullptr;
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE put_Language(LPCWSTR) override { return S_OK; }
+    HRESULT STDMETHODCALLTYPE get_TargetCompatibleBrowserVersion(LPWSTR* value) override {
+        if (value) *value = nullptr;
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE put_TargetCompatibleBrowserVersion(LPCWSTR) override { return S_OK; }
+    HRESULT STDMETHODCALLTYPE get_AllowSingleSignOnUsingOSPrimaryAccount(BOOL* allow) override {
+        if (allow) *allow = FALSE;
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE put_AllowSingleSignOnUsingOSPrimaryAccount(BOOL) override { return S_OK; }
+};
+
 HRESULT STDMETHODCALLTYPE ControllerCompletedHandler::Invoke(HRESULT errorCode, ICoreWebView2Controller* createdController) {
     if (FAILED(errorCode) || !createdController) {
         wprintf(L"[Spike C] Failed to create controller: 0x%08lX\n", errorCode);
@@ -169,6 +218,14 @@ HRESULT STDMETHODCALLTYPE ControllerCompletedHandler::Invoke(HRESULT errorCode, 
     g_controller = createdController;
     g_controller->AddRef();
     g_controller->get_CoreWebView2(&g_webview);
+
+    // Feature detect ICoreWebView2Controller2 to set dark background color immediately
+    ICoreWebView2Controller2* ctl2 = nullptr;
+    if (SUCCEEDED(g_controller->QueryInterface(IID_ICoreWebView2Controller2, (void**)&ctl2)) && ctl2) {
+        COREWEBVIEW2_COLOR bg{ 255, 31, 31, 31 }; // #1F1F1F dark taskbar color
+        ctl2->put_DefaultBackgroundColor(bg);
+        ctl2->Release();
+    }
 
     RECT rc;
     GetClientRect(hwnd_, &rc);
@@ -240,12 +297,25 @@ static void InitWebView2(HWND hwnd) {
     wprintf(L"[Spike C] Initializing WebView2 environment at: %ls\n", user_data);
     fflush(stdout);
 
+    static const wchar_t* BROWSER_ARGS =
+        L"--disable-features=Translate,OptimizationHints,MediaRouter,DialLocalDiscovery,AutofillServerCommunication "
+        L"--disable-background-networking "
+        L"--disable-component-update "
+        L"--disable-sync "
+        L"--disable-domain-reliability "
+        L"--renderer-process-limit=1 "
+        L"--no-first-run "
+        L"--no-default-browser-check "
+        L"--disk-cache-size=10485760";
+
+    auto options = new CustomEnvironmentOptions(BROWSER_ARGS);
     auto env_cb = new EnvironmentCompletedHandler(hwnd);
-    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, user_data, nullptr, env_cb);
+    HRESULT hr = CreateCoreWebView2EnvironmentWithOptions(nullptr, user_data, options, env_cb);
     if (FAILED(hr)) {
         wprintf(L"[Spike C] CreateCoreWebView2EnvironmentWithOptions returned: 0x%08lX\n", hr);
         fflush(stdout);
     }
+    options->Release();
     env_cb->Release();
 }
 

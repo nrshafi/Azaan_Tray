@@ -10,13 +10,41 @@
 static HWND g_hwnd = nullptr;
 static NOTIFYICONDATAW g_nid = {};
 static HFONT g_font = nullptr;
+static HDC g_memDC = nullptr;
+static HBITMAP g_memBmp = nullptr;
+static HGDIOBJ g_oldBmp = nullptr;
+static HBRUSH g_bgBrush = nullptr;
+static int g_bufWidth = 0;
+static int g_bufHeight = 0;
 static wchar_t g_line1[64] = L"Asr in 24m";
 static wchar_t g_line2[64] = L"16:42 \x2022 Dhaka";
 
-static void UpdateTimeText() {
+static bool UpdateTimeText() {
+    wchar_t prev[64];
+    wcscpy_s(prev, g_line2);
     SYSTEMTIME st;
     GetLocalTime(&st);
     swprintf_s(g_line2, 64, L"%02d:%02d:%02d \x2022 Dhaka", st.wHour, st.wMinute, st.wSecond);
+    return (wcscmp(prev, g_line2) != 0);
+}
+
+static void CleanupGdiCache() {
+    if (g_memDC) {
+        if (g_oldBmp) SelectObject(g_memDC, g_oldBmp);
+        g_oldBmp = nullptr;
+        DeleteDC(g_memDC);
+        g_memDC = nullptr;
+    }
+    if (g_memBmp) {
+        DeleteObject(g_memBmp);
+        g_memBmp = nullptr;
+    }
+    if (g_bgBrush) {
+        DeleteObject(g_bgBrush);
+        g_bgBrush = nullptr;
+    }
+    g_bufWidth = 0;
+    g_bufHeight = 0;
 }
 
 static void OnPaint(HWND hwnd) {
@@ -28,36 +56,47 @@ static void OnPaint(HWND hwnd) {
     int width = rc.right - rc.left;
     int height = rc.bottom - rc.top;
 
-    // Double-buffered GDI
-    HDC memDC = CreateCompatibleDC(hdc);
-    HBITMAP memBmp = CreateCompatibleBitmap(hdc, width, height);
-    HGDIOBJ oldBmp = SelectObject(memDC, memBmp);
+    if (width <= 0 || height <= 0) {
+        EndPaint(hwnd, &ps);
+        return;
+    }
+
+    // Reallocate backbuffer only if dimensions change or not yet initialized
+    if (!g_memDC || width != g_bufWidth || height != g_bufHeight) {
+        if (g_memDC) {
+            SelectObject(g_memDC, g_oldBmp);
+            DeleteObject(g_memBmp);
+            DeleteDC(g_memDC);
+        }
+        g_memDC = CreateCompatibleDC(hdc);
+        g_memBmp = CreateCompatibleBitmap(hdc, width, height);
+        g_oldBmp = SelectObject(g_memDC, g_memBmp);
+        g_bufWidth = width;
+        g_bufHeight = height;
+        if (!g_bgBrush) {
+            g_bgBrush = CreateSolidBrush(RGB(31, 31, 31));
+        }
+    }
 
     // Dark background matching taskbar #1F1F1F
-    HBRUSH bgBrush = CreateSolidBrush(RGB(31, 31, 31));
-    FillRect(memDC, &rc, bgBrush);
-    DeleteObject(bgBrush);
+    FillRect(g_memDC, &rc, g_bgBrush);
 
-    SetBkMode(memDC, TRANSPARENT);
-    HGDIOBJ oldFont = SelectObject(memDC, g_font);
+    SetBkMode(g_memDC, TRANSPARENT);
+    HGDIOBJ oldFont = SelectObject(g_memDC, g_font);
 
     // Primary line (White)
-    SetTextColor(memDC, RGB(255, 255, 255));
+    SetTextColor(g_memDC, RGB(255, 255, 255));
     RECT r1 = { 4, 2, width - 4, height / 2 };
-    DrawTextW(memDC, g_line1, -1, &r1, DT_LEFT | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
+    DrawTextW(g_memDC, g_line1, -1, &r1, DT_LEFT | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
 
     // Secondary line (Subtle light gray #D1D5DB)
-    SetTextColor(memDC, RGB(209, 213, 219));
+    SetTextColor(g_memDC, RGB(209, 213, 219));
     RECT r2 = { 4, height / 2, width - 4, height - 2 };
-    DrawTextW(memDC, g_line2, -1, &r2, DT_LEFT | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
+    DrawTextW(g_memDC, g_line2, -1, &r2, DT_LEFT | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
 
-    BitBlt(hdc, 0, 0, width, height, memDC, 0, 0, SRCCOPY);
+    BitBlt(hdc, 0, 0, width, height, g_memDC, 0, 0, SRCCOPY);
 
-    SelectObject(memDC, oldFont);
-    SelectObject(memDC, oldBmp);
-    DeleteObject(memBmp);
-    DeleteDC(memDC);
-
+    SelectObject(g_memDC, oldFont);
     EndPaint(hwnd, &ps);
 }
 
@@ -74,13 +113,24 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         wcscpy_s(g_nid.szTip, L"Azaan Tray (Spike A - GDI)");
         Shell_NotifyIconW(NIM_ADD, &g_nid);
 
-        SetTimer(hwnd, ID_TIMER_TICK, 1000, nullptr);
+        SYSTEMTIME st;
+        GetLocalTime(&st);
+        UINT next_delay = 1000 - st.wMilliseconds;
+        if (next_delay < 50) next_delay += 1000;
+        SetTimer(hwnd, ID_TIMER_TICK, next_delay, nullptr);
         return 0;
     }
     case WM_TIMER:
         if (wParam == ID_TIMER_TICK) {
-            UpdateTimeText();
-            InvalidateRect(hwnd, nullptr, FALSE);
+            bool changed = UpdateTimeText();
+            if (changed) {
+                InvalidateRect(hwnd, nullptr, FALSE);
+            }
+            SYSTEMTIME st;
+            GetLocalTime(&st);
+            UINT next_delay = 1000 - st.wMilliseconds;
+            if (next_delay < 50) next_delay += 1000;
+            SetTimer(hwnd, ID_TIMER_TICK, next_delay, nullptr);
         }
         return 0;
     case WM_PAINT:
@@ -103,6 +153,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }
         return 0;
     case WM_DESTROY:
+        CleanupGdiCache();
         Shell_NotifyIconW(NIM_DELETE, &g_nid);
         KillTimer(hwnd, ID_TIMER_TICK);
         PostQuitMessage(0);

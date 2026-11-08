@@ -29,17 +29,17 @@ static int g_tests_passed = 0;
 } while(0)
 
 static void test_julian_day() {
-    /* J2000.0 epoch: 2000 Jan 1 12:00 UTC = 2451545.0 */
+    /* 2000 Jan 1 00:00:00 UTC = 2451544.5 (J2000.0 is 12:00 UTC = 2451545.0) */
     double jd = engine_julian_day(2000, 1, 1);
-    ASSERT_NEAR(jd, 2451545.0, 0.001);
+    ASSERT_NEAR(jd, 2451544.5, 0.001);
 
-    /* 1999 Dec 31 12:00 UTC = 2451544.0 */
+    /* 1999 Dec 31 00:00:00 UTC = 2451543.5 */
     jd = engine_julian_day(1999, 12, 31);
-    ASSERT_NEAR(jd, 2451544.0, 0.001);
+    ASSERT_NEAR(jd, 2451543.5, 0.001);
 
-    /* Leap year 2024-02-29 12:00 UTC = 2460370.0 */
+    /* Leap year 2024-02-29 00:00:00 UTC = 2460369.5 */
     jd = engine_julian_day(2024, 2, 29);
-    ASSERT_NEAR(jd, 2460370.0, 0.001);
+    ASSERT_NEAR(jd, 2460369.5, 0.001);
 }
 
 static void test_solar_coordinates() {
@@ -112,14 +112,14 @@ static void test_dhaka_prayer_times() {
 
     /* Verify forbidden windows */
     ASSERT_NEAR(times.sunrise_forbidden_end_utc_min - times.sunrise_utc_min, 15.0, 0.01);
-    ASSERT_NEAR(times.dhuhr_utc_min - times.zenith_forbidden_start_utc_min, 10.0, 0.01);
+    ASSERT_NEAR(times.dhuhr_utc_min - times.zawal_forbidden_start_utc_min, 10.0, 0.01);
     ASSERT_NEAR(times.sunset_utc_min - times.sunset_forbidden_start_utc_min, 15.0, 0.01);
 }
 
 static void test_high_latitude_oslo() {
     engine_settings_t settings;
     engine_get_default_settings(CALC_METHOD_MWL, &settings);
-    settings.high_lat_rule = HIGH_LAT_SEVENTH;
+    settings.high_lat_rule = HIGH_LAT_SEVENTH_OF_NIGHT;
 
     prayer_times_t times;
     /* Oslo (59.91 N) on Summer Solstice */
