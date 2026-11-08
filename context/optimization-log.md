@@ -48,6 +48,18 @@
 - Commit: `2f671b5`
 - Notes / next idea it suggests: Enormous reduction in binary footprint (-65 KB on CLI exe, -27.6 KB on test binary). Zero math regression or output difference.
 
+#### #3 Precompute interpolation deltas and trig products in solar_time_t: KEPT
+- Hypothesis: Precomputing day-invariant interpolation differences (`ra_sum`, `ra_diff`, `dec_sum`, `dec_diff`) and latitude/declination trigonometric products (`sin_lat_sin_dec`, `cos_lat_cos_dec`) in `solar_time_t` eliminates ~32 calls to `unwind_angle`/`floor` and redundant multiplies per day, reducing `calculate_times` and `calculate_month` by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`, `native/tests/test_engine.c`. Stored precomputed deltas in `solar_time_t`; passed `const solar_time_t*` by pointer to `corrected_hour_angle` and `corrected_hour_angle_from_m`; evaluated polynomial differences directly with zero `unwind_angle` overhead during transit/hour-angle evaluations. Added 9 pinning test assertions in `test_engine.c`.
+- Result:
+  - `calculate_times`: 3924.76 -> 3812.50 ns/call (-2.86% iteration gain; -2.72% vs baseline)
+  - `calculate_month`: 58000.10 -> 55884.40 ns/call (-3.65% iteration gain; -5.37% vs baseline)
+  - `azaan.exe` size: 32256 -> 32256 bytes (0.00%)
+  - `test_engine.exe` size: 39424 -> 39424 bytes (0.00%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `00dc5d0`
+- Notes / next idea it suggests: Substantial -3.65% cut in monthly timetable calculation latency and -2.86% in single-day calculations. Code is significantly cleaner with `const solar_time_t*` pointer passing.
+
 ---
 
 ## Prior Run: perf/auto-loop-20261109-0025, started 2026-11-09 00:25
