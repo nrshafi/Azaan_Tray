@@ -9,9 +9,16 @@ MKDIR_P = mkdir -p $(BINDIR)
 RM_RF = rm -rf $(BINDIR) *.o
 EXE = .exe
 
-.PHONY: all test cli clean
+.PHONY: all test cli bench clean
 
 all: test cli
+
+bench: $(BINDIR)/bench_engine$(EXE)
+	./$(BINDIR)/bench_engine$(EXE)
+
+$(BINDIR)/bench_engine$(EXE): tests/bench_engine.c engine/engine.c engine/engine.h
+	@$(MKDIR_P)
+	$(CC) $(CFLAGS) -Iengine tests/bench_engine.c engine/engine.c -o $@ $(LDFLAGS)
 
 test: $(BINDIR)/test_engine$(EXE)
 	./$(BINDIR)/test_engine$(EXE)

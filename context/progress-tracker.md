@@ -57,6 +57,11 @@ Update this file after every meaningful implementation change with current date 
   - **GDI Host & Power**: Implemented adaptive timer cadence (seconds vs minutes mode reducing wakeups 60x), `RegisterPowerSettingNotification` for `GUID_MONITOR_POWER_ON`, and `WTSRegisterSessionNotification` for workstation lock/unlock in `spike_a_gdi.cpp`. Timers are completely suspended during monitor sleep and session lock, achieving true 0.0% CPU and zero wakes.
   - **WebView2 Lifecycle**: Integrated `ICoreWebView2_3::TrySuspend` when entering linger and `Resume` on reopen; added speculative hover pre-warming (`WM_MOUSEHOVER`) reducing perceived cold-open latency; stripped Chromium background feature flags; added working set trimming on teardown in `spike_c_webview2.cpp`.
   - **Documentation**: Authored `docs/adr/0007-cross-cutting-optimizations-and-power-efficiency.md` recording motivations, measurements, decisions, and why alternative approaches were rejected.
+- 2026-11-09 00:32: **Autonomous optimization loop**: #1 Cached sin/cos(lat) and folded declination trig (-5.5% month, -4.0% times, golden MATCH).
+- 2026-11-09 00:36: **Autonomous optimization loop**: #2 Skipped unrequested prayer paths & deferred tomorrow solar coords (-25.1% times, -1.3% month, golden MATCH).
+- 2026-11-09 00:40: **Autonomous optimization loop**: #4 Precomputed sin/cos(dec) in solar_time_t (-5.5% month, -4.1% times, golden MATCH).
+- 2026-11-09 00:51: **Autonomous optimization loop**: #6 Linear Julian Day stepping, add_one_day helper, and shared h0_angle (-7.5% times, -6.7% month, golden MATCH). Cumulative latency reduction: -36.2% on calculate_times, -17.8% on calculate_month. Golden snapshot: MATCH.
+
 
 ## In Progress
 

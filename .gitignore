@@ -12,6 +12,7 @@
 !native/third_party/**/WebView2Loader.dll
 *.pdb
 *.ilk
+native/tests/golden/snapshot.json
 
 # Bun & Node
 node_modules/

@@ -84,6 +84,29 @@ static int get_days_in_month(int year, int month) {
     return months[month - 1];
 }
 
+static inline void add_one_day(int year, int month, int day, int* out_y, int* out_m, int* out_d) {
+    if (day < 28) {
+        *out_y = year;
+        *out_m = month;
+        *out_d = day + 1;
+        return;
+    }
+    int dim = get_days_in_month(year, month);
+    if (day < dim) {
+        *out_y = year;
+        *out_m = month;
+        *out_d = day + 1;
+    } else if (month < 12) {
+        *out_y = year;
+        *out_m = month + 1;
+        *out_d = 1;
+    } else {
+        *out_y = year + 1;
+        *out_m = 1;
+        *out_d = 1;
+    }
+}
+
 static void add_days_to_date(int year, int month, int day, int delta_days, int* out_y, int* out_m, int* out_d) {
     /* Convert via Julian Day at 00:00 UTC (Meeus Ch. 7 inverse) */
     double jd = engine_julian_day(year, month, day) + (double)delta_days + 0.5;
@@ -226,16 +249,19 @@ static double interpolate_angles(double y2, double y1, double y3, double n) {
 }
 
 /* Meeus p. 93: Altitude of celestial body */
-static double altitude_of_celestial_body(double lat_deg, double dec_deg, double lha_deg) {
-    double phi = deg2rad(lat_deg);
+static inline double altitude_of_celestial_body(double sin_phi, double cos_phi, double dec_deg, double lha_deg) {
     double delta = deg2rad(dec_deg);
     double h = deg2rad(lha_deg);
-    return rad2deg(asin(sin(phi) * sin(delta) + cos(phi) * cos(delta) * cos(h)));
+    return rad2deg(asin(sin_phi * sin(delta) + cos_phi * cos(delta) * cos(h)));
 }
 
 typedef struct {
     double lat_deg;
     double lng_deg;
+    double sin_lat;
+    double cos_lat;
+    double sin_dec;
+    double cos_dec;
     solar_coords_t solar;
     solar_coords_t prev_solar;
     solar_coords_t next_solar;
@@ -255,16 +281,33 @@ static double corrected_transit(double m0, double lng_deg, double theta0, double
     return (m0 + dm) * 24.0;
 }
 
-/* Meeus p. 102: Corrected hour angle in universal time (hours) */
-static double corrected_hour_angle(
-    double m0, double h0_deg, double lat_deg, double lng_deg, bool after_transit,
+/* Meeus p. 102: Corrected hour angle evaluation given transit offset m */
+static inline double corrected_hour_angle_from_m(
+    double m, double h0_deg, double sin_phi, double cos_phi,
+    double lng_deg,
     double theta0, double a2, double a1, double a3, double d2, double d1, double d3
 ) {
     double lw = -lng_deg;
-    double phi = deg2rad(lat_deg);
-    double d2_rad = deg2rad(d2);
-    double term1 = sin(deg2rad(h0_deg)) - sin(phi) * sin(d2_rad);
-    double term2 = cos(phi) * cos(d2_rad);
+    double theta = unwind_angle(theta0 + 360.985647 * m);
+    double a = unwind_angle(interpolate_angles(a2, a1, a3, m));
+    double delta = interpolate_value(d2, d1, d3, m);
+    double h = theta - lw - a;
+    double alt = altitude_of_celestial_body(sin_phi, cos_phi, delta, h);
+    double term3 = alt - h0_deg;
+    double term4 = 360.0 * cos(deg2rad(delta)) * cos_phi * sin(deg2rad(h));
+    if (fabs(term4) < 1e-12) return NAN;
+    double dm = term3 / term4;
+    return (m + dm) * 24.0;
+}
+
+/* Meeus p. 102: Corrected hour angle in universal time (hours) */
+static double corrected_hour_angle(
+    double m0, double h0_deg, double sin_phi, double cos_phi, double sin_d2, double cos_d2,
+    double lng_deg, bool after_transit,
+    double theta0, double a2, double a1, double a3, double d2, double d1, double d3
+) {
+    double term1 = sin(deg2rad(h0_deg)) - sin_phi * sin_d2;
+    double term2 = cos_phi * cos_d2;
     double ratio = term1 / term2;
     if (ratio < -1.0 || ratio > 1.0) {
         return NAN;
@@ -272,16 +315,10 @@ static double corrected_hour_angle(
 
     double h0_angle = rad2deg(acos(ratio));
     double m = after_transit ? (m0 + h0_angle / 360.0) : (m0 - h0_angle / 360.0);
-    double theta = unwind_angle(theta0 + 360.985647 * m);
-    double a = unwind_angle(interpolate_angles(a2, a1, a3, m));
-    double delta = interpolate_value(d2, d1, d3, m);
-    double h = theta - lw - a;
-    double alt = altitude_of_celestial_body(lat_deg, delta, h);
-    double term3 = alt - h0_deg;
-    double term4 = 360.0 * cos(deg2rad(delta)) * cos(phi) * sin(deg2rad(h));
-    if (fabs(term4) < 1e-12) return NAN;
-    double dm = term3 / term4;
-    return (m + dm) * 24.0;
+    return corrected_hour_angle_from_m(
+        m, h0_deg, sin_phi, cos_phi, lng_deg,
+        theta0, a2, a1, a3, d2, d1, d3
+    );
 }
 
 static solar_time_t create_solar_time_with_coords(
@@ -291,6 +328,10 @@ static solar_time_t create_solar_time_with_coords(
     solar_time_t st;
     st.lat_deg = lat_deg;
     st.lng_deg = lng_deg;
+    double phi = deg2rad(lat_deg);
+    FAST_SINCOS(phi, &st.sin_lat, &st.cos_lat);
+    double d2_rad = deg2rad(curr.declination_deg);
+    FAST_SINCOS(d2_rad, &st.sin_dec, &st.cos_dec);
     st.solar = curr;
     st.prev_solar = prev;
     st.next_solar = next;
@@ -301,23 +342,33 @@ static solar_time_t create_solar_time_with_coords(
         st.approx_transit, lng_deg, st.solar.apparent_sidereal_time_deg,
         st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg
     );
-    st.sunrise_hours = corrected_hour_angle(
-        st.approx_transit, SOLAR_ALTITUDE_DEG, lat_deg, lng_deg, false,
-        st.solar.apparent_sidereal_time_deg,
-        st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
-        st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
-    );
-    st.sunset_hours = corrected_hour_angle(
-        st.approx_transit, SOLAR_ALTITUDE_DEG, lat_deg, lng_deg, true,
-        st.solar.apparent_sidereal_time_deg,
-        st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
-        st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
-    );
+
+    double term1 = sin(deg2rad(SOLAR_ALTITUDE_DEG)) - st.sin_lat * st.sin_dec;
+    double term2 = st.cos_lat * st.cos_dec;
+    double ratio = term1 / term2;
+    if (ratio < -1.0 || ratio > 1.0) {
+        st.sunrise_hours = NAN;
+        st.sunset_hours = NAN;
+    } else {
+        double h0_angle = rad2deg(acos(ratio));
+        double delta_m = h0_angle / 360.0;
+        st.sunrise_hours = corrected_hour_angle_from_m(
+            st.approx_transit - delta_m, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg,
+            st.solar.apparent_sidereal_time_deg,
+            st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
+            st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
+        );
+        st.sunset_hours = corrected_hour_angle_from_m(
+            st.approx_transit + delta_m, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg,
+            st.solar.apparent_sidereal_time_deg,
+            st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
+            st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
+        );
+    }
     return st;
 }
 
-static solar_time_t create_solar_time(int year, int month, int day, double lat_deg, double lng_deg) {
-    double jd = engine_julian_day(year, month, day);
+static solar_time_t create_solar_time(double jd, double lat_deg, double lng_deg) {
     solar_coords_t prev = compute_solar_coordinates(jd - 1.0);
     solar_coords_t curr = compute_solar_coordinates(jd);
     solar_coords_t next = compute_solar_coordinates(jd + 1.0);
@@ -326,7 +377,7 @@ static solar_time_t create_solar_time(int year, int month, int day, double lat_d
 
 static double solar_time_hour_angle(const solar_time_t* st, double angle_deg, bool after_transit) {
     return corrected_hour_angle(
-        st->approx_transit, angle_deg, st->lat_deg, st->lng_deg, after_transit,
+        st->approx_transit, angle_deg, st->sin_lat, st->cos_lat, st->sin_dec, st->cos_dec, st->lng_deg, after_transit,
         st->solar.apparent_sidereal_time_deg,
         st->solar.right_ascension_deg, st->prev_solar.right_ascension_deg, st->next_solar.right_ascension_deg,
         st->solar.declination_deg, st->prev_solar.declination_deg, st->next_solar.declination_deg
@@ -463,10 +514,10 @@ static bool resolve_polar_circle(
                 int ty, tm, td;
                 add_days_to_date(year, month, day, direction * days_added, &ty, &tm, &td);
                 int tmy, tmm, tmd;
-                add_days_to_date(ty, tm, td, 1, &tmy, &tmm, &tmd);
+                add_one_day(ty, tm, td, &tmy, &tmm, &tmd);
 
-                solar_time_t st1 = create_solar_time(ty, tm, td, lat_deg, lng_deg);
-                solar_time_t st2 = create_solar_time(tmy, tmm, tmd, lat_deg, lng_deg);
+                solar_time_t st1 = create_solar_time(engine_julian_day(ty, tm, td), lat_deg, lng_deg);
+                solar_time_t st2 = create_solar_time(engine_julian_day(tmy, tmm, tmd), lat_deg, lng_deg);
                 if (is_valid_solar_time(&st1) && is_valid_solar_time(&st2)) {
                     *io_solar_time = st1;
                     *io_tomorrow_solar_time = st2;
@@ -477,12 +528,11 @@ static bool resolve_polar_circle(
     } else if (resolver == POLAR_AQRAB_BALAD) {
         double sign = (lat_deg >= 0.0) ? 1.0 : -1.0;
         double test_lat = lat_deg - sign * 0.5;
-        int tmy, tmm, tmd;
-        add_days_to_date(year, month, day, 1, &tmy, &tmm, &tmd);
+        double jd_day = engine_julian_day(year, month, day);
 
         while (fabs(test_lat) >= 65.0) {
-            solar_time_t st1 = create_solar_time(year, month, day, test_lat, lng_deg);
-            solar_time_t st2 = create_solar_time(tmy, tmm, tmd, test_lat, lng_deg);
+            solar_time_t st1 = create_solar_time(jd_day, test_lat, lng_deg);
+            solar_time_t st2 = create_solar_time(jd_day + 1.0, test_lat, lng_deg);
             if (is_valid_solar_time(&st1) && is_valid_solar_time(&st2)) {
                 *io_solar_time = st1;
                 *io_tomorrow_solar_time = st2;
@@ -588,7 +638,7 @@ void engine_get_default_settings(calc_method_t method, engine_settings_t* out_se
 
 /* Internal core calculation for a single day (returns times in minutes from 00:00:00 UTC of that day) */
 static bool compute_day_prayers(
-    int year, int month, int day,
+    int year, int month, int day, double jd,
     double lat_deg, double lng_deg,
     const engine_settings_t* settings,
     const solar_time_t* opt_solar_today,
@@ -606,119 +656,177 @@ static bool compute_day_prayers(
     if (opt_solar_today) {
         solar_time = *opt_solar_today;
     } else {
-        solar_time = create_solar_time(year, month, day, lat_deg, lng_deg);
+        solar_time = create_solar_time(jd, lat_deg, lng_deg);
     }
 
-    double jd = engine_julian_day(year, month, day);
-    solar_coords_t next_tomorrow = compute_solar_coordinates(jd + 2.0);
-    solar_time_t tomorrow_solar_time = create_solar_time_with_coords(
-        lat_deg, lng_deg,
-        solar_time.solar,
-        solar_time.next_solar,
-        next_tomorrow
-    );
+    double fajr_sec = NAN;
+    if (out_fajr_min) {
+        fajr_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->fajr_angle_deg, false));
+    }
 
-    if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours) || isnan(tomorrow_solar_time.sunrise_hours)) &&
-        settings->polar_resolution != POLAR_UNRESOLVED) {
-        resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &tomorrow_solar_time);
+    bool need_tomorrow = (out_solar_tomorrow != NULL) ||
+                         (out_isha_min != NULL && settings->isha_interval_min == 0) ||
+                         (out_fajr_min != NULL && (
+                             isnan(fajr_sec) ||
+                             (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0) ||
+                             (settings->method != CALC_METHOD_MOONSIGHTING && settings->high_lat_rule != HIGH_LAT_MIDDLE_OF_NIGHT)
+                         ));
+
+    solar_time_t tomorrow_solar_time;
+    if (need_tomorrow) {
+        solar_coords_t next_tomorrow = compute_solar_coordinates(jd + 2.0);
+        tomorrow_solar_time = create_solar_time_with_coords(
+            lat_deg, lng_deg,
+            solar_time.solar,
+            solar_time.next_solar,
+            next_tomorrow
+        );
+
+        if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours) || isnan(tomorrow_solar_time.sunrise_hours)) &&
+            settings->polar_resolution != POLAR_UNRESOLVED) {
+            resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &tomorrow_solar_time);
+        }
+
+        if (out_solar_tomorrow) *out_solar_tomorrow = tomorrow_solar_time;
+    } else {
+        if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours)) &&
+            settings->polar_resolution != POLAR_UNRESOLVED) {
+            solar_time_t dummy_tomorrow;
+            resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &dummy_tomorrow);
+        }
     }
 
     if (out_solar_today) *out_solar_today = solar_time;
-    if (out_solar_tomorrow) *out_solar_tomorrow = tomorrow_solar_time;
 
-    double dhuhr_sec = hours_to_truncated_seconds(solar_time.transit_hours);
-    double sunrise_sec = hours_to_truncated_seconds(solar_time.sunrise_hours);
-    double sunset_sec = hours_to_truncated_seconds(solar_time.sunset_hours);
-
-    double shadow_factor = (settings->madhab == MADHAB_HANAFI) ? 2.0 : 1.0;
-    double asr_sec = hours_to_truncated_seconds(solar_time_afternoon(&solar_time, shadow_factor));
-
-    /* Tomorrow's sunrise is on day + 1, so add 86400 seconds relative to today's 00:00:00 UTC */
-    double tomorrow_sunrise_sec = hours_to_truncated_seconds(tomorrow_solar_time.sunrise_hours) + 86400.0;
-    double night_sec = tomorrow_sunrise_sec - sunset_sec;
-
-    double fajr_portion = 0.5;
-    double isha_portion = 0.5;
-    if (settings->high_lat_rule == HIGH_LAT_SEVENTH_OF_NIGHT) {
-        fajr_portion = 1.0 / 7.0;
-        isha_portion = 1.0 / 7.0;
-    } else if (settings->high_lat_rule == HIGH_LAT_TWILIGHT_ANGLE) {
-        fajr_portion = settings->fajr_angle_deg / 60.0;
-        isha_portion = settings->isha_angle_deg / 60.0;
+    double dhuhr_sec = NAN;
+    if (out_dhuhr_min) {
+        dhuhr_sec = hours_to_truncated_seconds(solar_time.transit_hours);
     }
 
-    int doy = day_of_year(year, month, day);
-
-    /* Fajr */
-    double fajr_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->fajr_angle_deg, false));
-    if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunrise_sec) && !isnan(night_sec)) {
-        fajr_sec = sunrise_sec - (night_sec / 7.0);
+    double sunrise_sec = NAN;
+    if (out_sunrise_min || out_fajr_min) {
+        sunrise_sec = hours_to_truncated_seconds(solar_time.sunrise_hours);
     }
 
-    double safe_fajr_sec = NAN;
-    if (!isnan(sunrise_sec)) {
-        if (settings->method == CALC_METHOD_MOONSIGHTING) {
-            safe_fajr_sec = season_adjusted_morning_twilight_sec(lat_deg, doy, year, sunrise_sec);
-        } else if (!isnan(night_sec)) {
-            safe_fajr_sec = sunrise_sec - (fajr_portion * night_sec);
-        }
-    }
-    if (isnan(fajr_sec) || (!isnan(safe_fajr_sec) && safe_fajr_sec > fajr_sec)) {
-        fajr_sec = safe_fajr_sec;
+    double sunset_sec = NAN;
+    if (out_sunset_min || out_maghrib_min || out_isha_min || need_tomorrow) {
+        sunset_sec = hours_to_truncated_seconds(solar_time.sunset_hours);
     }
 
-    /* Isha */
-    double isha_sec = NAN;
-    if (settings->isha_interval_min > 0) {
-        if (!isnan(sunset_sec)) {
-            isha_sec = sunset_sec + (double)settings->isha_interval_min * 60.0;
-        }
-    } else {
-        isha_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->isha_angle_deg, true));
-        if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunset_sec) && !isnan(night_sec)) {
-            isha_sec = sunset_sec + (night_sec / 7.0);
+    double asr_sec = NAN;
+    if (out_asr_min) {
+        double shadow_factor = (settings->madhab == MADHAB_HANAFI) ? 2.0 : 1.0;
+        asr_sec = hours_to_truncated_seconds(solar_time_afternoon(&solar_time, shadow_factor));
+    }
+
+    double night_sec = NAN;
+    if (need_tomorrow) {
+        double tomorrow_sunrise_sec = hours_to_truncated_seconds(tomorrow_solar_time.sunrise_hours) + 86400.0;
+        night_sec = tomorrow_sunrise_sec - sunset_sec;
+    }
+
+    int doy = (out_fajr_min || out_isha_min) ? day_of_year(year, month, day) : 0;
+
+    /* Finalize Fajr */
+    if (out_fajr_min) {
+        if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunrise_sec) && !isnan(night_sec)) {
+            fajr_sec = sunrise_sec - (night_sec / 7.0);
         }
 
-        double safe_isha_sec = NAN;
-        if (!isnan(sunset_sec)) {
+        double safe_fajr_sec = NAN;
+        if (!isnan(sunrise_sec)) {
             if (settings->method == CALC_METHOD_MOONSIGHTING) {
-                safe_isha_sec = season_adjusted_evening_twilight_sec(lat_deg, doy, year, sunset_sec, settings->shafaq);
+                safe_fajr_sec = season_adjusted_morning_twilight_sec(lat_deg, doy, year, sunrise_sec);
             } else if (!isnan(night_sec)) {
-                safe_isha_sec = sunset_sec + (isha_portion * night_sec);
+                double fajr_portion = 0.5;
+                if (settings->high_lat_rule == HIGH_LAT_SEVENTH_OF_NIGHT) {
+                    fajr_portion = 1.0 / 7.0;
+                } else if (settings->high_lat_rule == HIGH_LAT_TWILIGHT_ANGLE) {
+                    fajr_portion = settings->fajr_angle_deg / 60.0;
+                }
+                safe_fajr_sec = sunrise_sec - (fajr_portion * night_sec);
             }
         }
-        if (isnan(isha_sec) || (!isnan(safe_isha_sec) && safe_isha_sec < isha_sec)) {
-            isha_sec = safe_isha_sec;
+        if (isnan(fajr_sec) || (!isnan(safe_fajr_sec) && safe_fajr_sec > fajr_sec)) {
+            fajr_sec = safe_fajr_sec;
         }
     }
 
-    /* Maghrib */
-    double maghrib_sec = sunset_sec;
-    if (settings->maghrib_angle_deg > 0.0) {
-        double angle_maghrib_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->maghrib_angle_deg, true));
-        if (!isnan(angle_maghrib_sec) && !isnan(sunset_sec) && !isnan(isha_sec)) {
-            if (sunset_sec < angle_maghrib_sec && isha_sec > angle_maghrib_sec) {
-                maghrib_sec = angle_maghrib_sec;
+    /* Finalize Isha */
+    double isha_sec = NAN;
+    if (out_isha_min) {
+        if (settings->isha_interval_min > 0) {
+            if (!isnan(sunset_sec)) {
+                isha_sec = sunset_sec + (double)settings->isha_interval_min * 60.0;
+            }
+        } else {
+            isha_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->isha_angle_deg, true));
+            if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunset_sec) && !isnan(night_sec)) {
+                isha_sec = sunset_sec + (night_sec / 7.0);
+            }
+
+            double safe_isha_sec = NAN;
+            if (!isnan(sunset_sec)) {
+                if (settings->method == CALC_METHOD_MOONSIGHTING) {
+                    safe_isha_sec = season_adjusted_evening_twilight_sec(lat_deg, doy, year, sunset_sec, settings->shafaq);
+                } else if (!isnan(night_sec)) {
+                    double isha_portion = 0.5;
+                    if (settings->high_lat_rule == HIGH_LAT_SEVENTH_OF_NIGHT) {
+                        isha_portion = 1.0 / 7.0;
+                    } else if (settings->high_lat_rule == HIGH_LAT_TWILIGHT_ANGLE) {
+                        isha_portion = settings->isha_angle_deg / 60.0;
+                    }
+                    safe_isha_sec = sunset_sec + (isha_portion * night_sec);
+                }
+            }
+            if (isnan(isha_sec) || (!isnan(safe_isha_sec) && safe_isha_sec < isha_sec)) {
+                isha_sec = safe_isha_sec;
             }
         }
     }
 
-    /* Combined adjustments (method + user) in seconds */
-    double fajr_adj_sec = (double)(settings->method_adjustments.fajr + settings->user_adjustments.fajr) * 60.0;
-    double sunrise_adj_sec = (double)(settings->method_adjustments.sunrise + settings->user_adjustments.sunrise) * 60.0;
-    double dhuhr_adj_sec = (double)(settings->method_adjustments.dhuhr + settings->user_adjustments.dhuhr) * 60.0;
-    double asr_adj_sec = (double)(settings->method_adjustments.asr + settings->user_adjustments.asr) * 60.0;
-    double sunset_adj_sec = (double)(settings->method_adjustments.sunset + settings->user_adjustments.sunset) * 60.0;
-    double maghrib_adj_sec = (double)(settings->method_adjustments.maghrib + settings->user_adjustments.maghrib) * 60.0;
-    double isha_adj_sec = (double)(settings->method_adjustments.isha + settings->user_adjustments.isha) * 60.0;
+    /* Finalize Maghrib */
+    double maghrib_sec = NAN;
+    if (out_maghrib_min) {
+        maghrib_sec = sunset_sec;
+        if (settings->maghrib_angle_deg > 0.0) {
+            double angle_maghrib_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->maghrib_angle_deg, true));
+            if (!isnan(angle_maghrib_sec) && !isnan(sunset_sec) && !isnan(isha_sec)) {
+                if (sunset_sec < angle_maghrib_sec && isha_sec > angle_maghrib_sec) {
+                    maghrib_sec = angle_maghrib_sec;
+                }
+            }
+        }
+    }
 
-    if (out_fajr_min) *out_fajr_min = round_seconds_to_minutes(fajr_sec + fajr_adj_sec, settings->rounding);
-    if (out_sunrise_min) *out_sunrise_min = round_seconds_to_minutes(sunrise_sec + sunrise_adj_sec, settings->rounding);
-    if (out_dhuhr_min) *out_dhuhr_min = round_seconds_to_minutes(dhuhr_sec + dhuhr_adj_sec, settings->rounding);
-    if (out_asr_min) *out_asr_min = round_seconds_to_minutes(asr_sec + asr_adj_sec, settings->rounding);
-    if (out_sunset_min) *out_sunset_min = round_seconds_to_minutes(sunset_sec + sunset_adj_sec, settings->rounding);
-    if (out_maghrib_min) *out_maghrib_min = round_seconds_to_minutes(maghrib_sec + maghrib_adj_sec, settings->rounding);
-    if (out_isha_min) *out_isha_min = round_seconds_to_minutes(isha_sec + isha_adj_sec, settings->rounding);
+    if (out_fajr_min) {
+        double fajr_adj_sec = (double)(settings->method_adjustments.fajr + settings->user_adjustments.fajr) * 60.0;
+        *out_fajr_min = round_seconds_to_minutes(fajr_sec + fajr_adj_sec, settings->rounding);
+    }
+    if (out_sunrise_min) {
+        double sunrise_adj_sec = (double)(settings->method_adjustments.sunrise + settings->user_adjustments.sunrise) * 60.0;
+        *out_sunrise_min = round_seconds_to_minutes(sunrise_sec + sunrise_adj_sec, settings->rounding);
+    }
+    if (out_dhuhr_min) {
+        double dhuhr_adj_sec = (double)(settings->method_adjustments.dhuhr + settings->user_adjustments.dhuhr) * 60.0;
+        *out_dhuhr_min = round_seconds_to_minutes(dhuhr_sec + dhuhr_adj_sec, settings->rounding);
+    }
+    if (out_asr_min) {
+        double asr_adj_sec = (double)(settings->method_adjustments.asr + settings->user_adjustments.asr) * 60.0;
+        *out_asr_min = round_seconds_to_minutes(asr_sec + asr_adj_sec, settings->rounding);
+    }
+    if (out_sunset_min) {
+        double sunset_adj_sec = (double)(settings->method_adjustments.sunset + settings->user_adjustments.sunset) * 60.0;
+        *out_sunset_min = round_seconds_to_minutes(sunset_sec + sunset_adj_sec, settings->rounding);
+    }
+    if (out_maghrib_min) {
+        double maghrib_adj_sec = (double)(settings->method_adjustments.maghrib + settings->user_adjustments.maghrib) * 60.0;
+        *out_maghrib_min = round_seconds_to_minutes(maghrib_sec + maghrib_adj_sec, settings->rounding);
+    }
+    if (out_isha_min) {
+        double isha_adj_sec = (double)(settings->method_adjustments.isha + settings->user_adjustments.isha) * 60.0;
+        *out_isha_min = round_seconds_to_minutes(isha_sec + isha_adj_sec, settings->rounding);
+    }
 
     return true;
 }
@@ -782,9 +890,10 @@ bool engine_calculate_times(
     if (!settings || !out_times) return false;
     if (lat_deg < -90.0 || lat_deg > 90.0 || lng_deg < -180.0 || lng_deg > 180.0) return false;
 
+    double jd = engine_julian_day(year, month, day);
     solar_time_t today_solar, tomorrow_solar;
     compute_day_prayers(
-        year, month, day, lat_deg, lng_deg, settings,
+        year, month, day, jd, lat_deg, lng_deg, settings,
         NULL,
         &today_solar,
         &tomorrow_solar,
@@ -802,10 +911,10 @@ bool engine_calculate_times(
      * Night is defined from today's Maghrib to tomorrow's Fajr.
      */
     int tmy, tmm, tmd;
-    add_days_to_date(year, month, day, 1, &tmy, &tmm, &tmd);
+    add_one_day(year, month, day, &tmy, &tmm, &tmd);
     double tomorrow_fajr_min = NAN;
     compute_day_prayers(
-        tmy, tmm, tmd, lat_deg, lng_deg, settings,
+        tmy, tmm, tmd, jd + 1.0, lat_deg, lng_deg, settings,
         &tomorrow_solar,
         NULL,
         NULL,
@@ -835,13 +944,15 @@ bool engine_calculate_month(
 
     solar_time_t today_solar;
     solar_time_t tomorrow_solar;
+    double jd_start = engine_julian_day(year, month, 1);
 
     for (int day = 1; day <= num_days; day++) {
         prayer_times_t* curr = &out_times[day - 1];
         const solar_time_t* opt_solar = (day == 1) ? NULL : &tomorrow_solar;
+        double jd = jd_start + (double)(day - 1);
 
         compute_day_prayers(
-            year, month, day, lat_deg, lng_deg, settings,
+            year, month, day, jd, lat_deg, lng_deg, settings,
             opt_solar,
             &today_solar,
             &tomorrow_solar,
@@ -861,10 +972,10 @@ bool engine_calculate_month(
 
     /* Last day of month: tomorrow is day 1 of next month */
     int tmy, tmm, tmd;
-    add_days_to_date(year, month, num_days, 1, &tmy, &tmm, &tmd);
+    add_one_day(year, month, num_days, &tmy, &tmm, &tmd);
     double next_month_fajr = NAN;
     compute_day_prayers(
-        tmy, tmm, tmd, lat_deg, lng_deg, settings,
+        tmy, tmm, tmd, jd_start + (double)num_days, lat_deg, lng_deg, settings,
         &tomorrow_solar,
         NULL,
         NULL,
