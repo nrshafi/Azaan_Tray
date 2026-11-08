@@ -15,7 +15,7 @@
 ### Backlog
 - [x] Idea 1: Cache `sin(lat)` and `cos(lat)` and pass into `corrected_hour_angle` / `altitude_of_celestial_body` instead of computing 5 times per hour-angle call. Expected gain: 8-15% time, Risk: Low, Files: `native/engine/engine.c`
 - [ ] Idea 2: Add `-fno-math-errno` to `OPTFLAGS` in `native/Makefile` to permit inlining math builtins without `errno` checking. Expected gain: 3-8% time, Risk: Low, Files: `native/Makefile`
-- [ ] Idea 3: Avoid redundant day+2 solar coordinates calculation when computing only tomorrow's Fajr in `engine_calculate_times`. Expected gain: 10-20% on `calculate_times`, Risk: Medium, Files: `native/engine/engine.c`
+- [x] Idea 3: Avoid redundant day+2 solar coordinates calculation when computing only tomorrow's Fajr in `engine_calculate_times`. Expected gain: 10-20% on `calculate_times`, Risk: Medium, Files: `native/engine/engine.c`
 - [ ] Idea 4: Pass `solar_time_t` (144 bytes) and `solar_coords_t` by const pointer instead of pass-by-value across internal functions. Expected gain: 3-6% time, Risk: Low, Files: `native/engine/engine.c`
 - [ ] Idea 5: Precompute `sin(dec)` and `cos(dec)` in `solar_coords_t` / `solar_time_t` to avoid repeating `deg2rad(d2)` and trig in `corrected_hour_angle`. Expected gain: 4-8% time, Risk: Low, Files: `native/engine/engine.c`
 - [ ] Idea 6: Optimize `deg2rad` / `rad2deg` conversions and redundant angle normalizations across Meeus solar routines. Expected gain: 3-5% time, Risk: Medium, Files: `native/engine/engine.c`
@@ -33,3 +33,15 @@
 - Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
 - Commit: `ba88e01`
 - Notes / next idea it suggests: Now that hour angle evaluation avoids repeated trig, inspect the day+2 solar coordinates evaluation in `compute_day_prayers` and compiler flag `-fno-math-errno`.
+
+#### #2 Skip unrequested prayers and defer tomorrow solar coords: KEPT
+- Hypothesis: Skipping unrequested prayer calculations (dhuhr, asr, sunset, maghrib, isha) and lazily evaluating tomorrow's solar time in compute_day_prayers reduces engine_calculate_times by >= 10% with byte-identical output.
+- Change: `native/engine/engine.c`. Conditioned dhuhr, asr, sunset, maghrib, and isha calculations in `compute_day_prayers` on non-NULL output pointers. Deferred computation of `tomorrow_solar_time` and `next_tomorrow` (Day D+2/D+3) only when `need_tomorrow` is required for night duration or caller requested `out_solar_tomorrow`.
+- Result:
+  - `calculate_times`: 5836.74 -> 4371.62 ns/call (-25.10% iteration gain; -28.07% cumulative)
+  - `calculate_month`: 65599.52 -> 64760.48 ns/call (-1.28% iteration gain; -6.75% cumulative)
+  - `azaan.exe` size: 96256 -> 97280 bytes (+1.06%)
+  - `test_engine.exe` size: 66048 -> 66560 bytes (+0.78%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `7ec958d`
+- Notes / next idea it suggests: Day+2 solar elimination delivered a 25.1% latency cut. Test compiler math optimizations (-fno-math-errno) and struct pointer passing next.
