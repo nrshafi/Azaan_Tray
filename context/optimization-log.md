@@ -23,7 +23,7 @@
 - [ ] Idea 8: Factor Horner's polynomial evaluations for `theta0`, `l0`, `lp`, and `omega` in `compute_solar_coordinates`. Expected gain: 1-3% time, Risk: Medium, Files: `native/engine/engine.c`
 - [x] Idea 9: Dead code stripping and crt runtime minimization in `azaan.exe` (remove unnecessary stdio formats via -D__USE_MINGW_ANSI_STDIO=0). Expected gain: 5-10% binary size (Achieved: -66.8% on azaan.exe, -41.2% on test_engine.exe), Risk: Low, Files: `native/Makefile`
 - [ ] Idea 10: Struct alignment and cache-line packing for `solar_time_t` (currently 152 bytes). Expected gain: 1-2% time, Risk: Low, Files: `native/engine/engine.c`
-- [ ] Idea 11: Pass `solar_coords_t` by const pointer instead of pass-by-value across internal functions. Expected gain: 1-2% time, Risk: Low, Files: `native/engine/engine.c`
+- [x] Idea 11: Pass `solar_coords_t` by const pointer instead of pass-by-value across internal functions, eliminate dead struct storage (`prev_solar`), and elide unused copies. Expected gain: 1-2% time, 3-5% binary size (Achieved: -4.76% azaan.exe size, -2.07% calculate_times, -1.79% calculate_month), Risk: Low, Files: `native/engine/engine.c`
 - Deferred (future phase): GDI text caching and window invalidation optimizations in `native/host/` once Phase 2/3 host is built.
 
 ### Iterations
@@ -59,6 +59,18 @@
 - Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
 - Commit: `00dc5d0`
 - Notes / next idea it suggests: Substantial -3.65% cut in monthly timetable calculation latency and -2.86% in single-day calculations. Code is significantly cleaner with `const solar_time_t*` pointer passing.
+
+#### #4 Eliminate dead struct storage, pass coordinate pointers, and elide unused copies: KEPT
+- Hypothesis: Removing unread `prev_solar` from `solar_time_t` (shrinking struct by 24 bytes), passing `solar_coords_t` by const pointer, initializing `solar_time_t` in place via `init_solar_time_with_coords`, and passing `NULL` for unused `out_solar_today` eliminates struct copy overhead and reduces binary size by >= 3% and latency with byte-identical output.
+- Change: `native/engine/engine.c`, `native/tests/test_engine.c`. Removed `prev_solar` field from `solar_time_t`; refactored `create_solar_time_with_coords` and `create_solar_time` into in-place initializers accepting `const solar_coords_t*` pointers; replaced redundant `(int)trunc(...)` on positive terms in `engine_julian_day`; passed `NULL` for unused `out_solar_today` in `engine_calculate_times` and `engine_calculate_month`. Added Julian day test assertions in `test_engine.c`.
+- Result:
+  - `calculate_times`: 3812.50 -> 3733.74 ns/call (-2.07% iteration gain; -4.73% cumulative vs baseline)
+  - `calculate_month`: 55884.40 -> 54886.76 ns/call (-1.79% iteration gain; -7.06% cumulative vs baseline)
+  - `azaan.exe` size: 32256 -> 30720 bytes (-4.76% iteration gain; -68.42% cumulative vs baseline)
+  - `test_engine.exe` size: 39424 -> 39424 bytes (0.00%; added 2 test assertions)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `1f47368`
+- Notes / next idea it suggests: Sizable binary reduction (-1,536 bytes) from eliminating GCC ABI struct-return memcpy overheads, accompanied by steady latency drops across both single-day and monthly calculations.
 
 ---
 
