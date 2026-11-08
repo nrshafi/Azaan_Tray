@@ -70,7 +70,53 @@
   - `test_engine.exe` size: 39424 -> 39424 bytes (0.00%; added 2 test assertions)
 - Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
 - Commit: `1f47368`
-- Notes / next idea it suggests: Sizable binary reduction (-1,536 bytes) from eliminating GCC ABI struct-return memcpy overheads, accompanied by steady latency drops across both single-day and monthly calculations.
+#### #5 Precompute century polynomial powers t2 and t3 in compute_solar_coordinates: REJECTED
+- Hypothesis: Precomputing century powers t2 = t * t and t3 = t2 * t in compute_solar_coordinates eliminates ~10 redundant multiplications per solar coordinate evaluation, reducing latency by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`. Factored powers `t2` and `t3` into local variables and substituted into polynomial terms across `l0`, `omega`, `m_deg`, `c`, `theta0`, and `eps0`.
+- Result:
+  - `calculate_times`: 3733.74 -> 3735.83 ns/call (+0.05% noise)
+  - `calculate_month`: 54886.76 -> 54805.74 - 54974.16 ns/call (-0.15% to +0.16% noise)
+  - `azaan.exe` size: 30720 -> 30720 bytes (0.00%)
+  - `test_engine.exe` size: 39424 -> 39424 bytes (0.00%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: reverted
+- Notes / next idea it suggests: Latency differences were within +/-0.2% measurement noise (< 3% threshold). Modern x86_64 pipelined multipliers execute FMUL in parallel with negligible cycle stalls. Reverted cleanly to green.
+
+### Final Summary (End of Run)
+
+#### Overview
+- **Branch**: `perf/auto-loop-20261109-0110`
+- **Total Iterations**: 5
+- **Kept**: 3 (Iterations #2, #3, #4)
+- **Rejected**: 2 (Iterations #1, #5 - both cleanly reverted)
+- **Status of Gates**:
+  - Build gate: 0 warnings, 0 errors under `-Wall -Wextra -Wpedantic -Werror`.
+  - Test gate: 2,624 assertions pass (100% pass rate, +11 pinning tests added).
+  - Golden gate: MATCH (`95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`).
+  - Gain gate: Passed on all kept iterations (each achieved >= 3% metric gain with zero regressions).
+
+#### Cumulative Metric Progression
+| Metric | Baseline | Iteration #2 | Iteration #3 | Iteration #4 (Final) | Cumulative Gain vs Baseline |
+|---|---|---|---|---|---|
+| Tests passed | 2,613 | 2,613 | 2,622 | 2,624 | +11 tests |
+| `calculate_times` median | 3,919.25 ns | 3,924.76 ns | 3,812.50 ns | 3,733.74 ns | **-4.73%** |
+| `calculate_month` median | 59,057.60 ns | 58,000.10 ns | 55,884.40 ns | 54,886.76 ns | **-7.06%** |
+| `azaan.exe` binary size | 97,280 B | 32,256 B | 32,256 B | 30,720 B | **-68.42%** (-66,560 B) |
+| `test_engine.exe` binary size | 67,072 B | 39,424 B | 39,424 B | 39,424 B | **-41.22%** (-27,648 B) |
+| Golden SHA-256 | `95aed7f803...` | MATCH | MATCH | MATCH | MATCH (identical) |
+
+#### Commits on Branch
+- `2f671b5`: `perf(build): minimize stdio runtime via -D__USE_MINGW_ANSI_STDIO=0 (-66.8% azaan size, -41.2% test size)`
+- `00dc5d0`: `perf(engine): precompute interpolation deltas and trig products in solar_time_t (-3.6% month, -2.9% times)`
+- `1f47368`: `perf(engine): eliminate dead struct fields, pass coordinate pointers, and elide unused copies (-4.8% azaan size, -2.1% times, -1.8% month)`
+
+#### Remaining Backlog Ideas
+1. **Idea 7: Vectorize / unroll monthly coordinate stepping** (`native/engine/engine.c`): Expected gain 2-4% month latency.
+2. **Idea 10: Struct alignment and packing** (`native/engine/engine.c`): Check alignment on 32-byte cache lines.
+3. **Host GDI text caching and invalidation** (`native/host/`): Deferred to Phase 2/3.
+
+#### Doubts / Assumptions for Review
+- None. All calculations are byte-identical across all 2,016 fixtures and golden snapshot.
 
 ---
 
