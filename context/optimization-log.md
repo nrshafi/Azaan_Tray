@@ -1,6 +1,44 @@
 # Optimization Loop Log
 
-## Run perf/auto-loop-20261109-0025, started 2026-11-09 00:25
+## Run perf/auto-loop-20261109-0110, started 2026-11-09 01:10
+
+### Baseline
+| Metric | Value |
+|---|---|
+| Tests | 2613 pass |
+| calculate_times median | 3919.25 ns/call |
+| calculate_month median | 59057.60 ns/call |
+| azaan.exe size | 97280 bytes |
+| test_engine.exe size | 67072 bytes |
+| spikes/spike_a.exe size | 66653 bytes |
+| spikes/spike_a_dc.exe size | 66133 bytes |
+| spikes/spike_a_gdi.exe size | 23552 bytes |
+| spikes/spike_b.exe size | 69974 bytes |
+| spikes/spike_c.exe size | 86528 bytes |
+| Golden SHA-256 | 95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a |
+
+### Backlog
+- [ ] Idea 1: Elide unused `transit_hours` and `sunset_hours` in `create_solar_time_with_coords` for tomorrow's solar time when not carried forward as full day, and propagate `sin_lat`/`cos_lat`. Expected gain: 5-8% on calculate_times, 2-4% on calculate_month, Risk: Low, Files: `native/engine/engine.c`
+- [ ] Idea 7: Vectorize / unroll monthly sliding window coordinate stepping in `engine_calculate_month`. Expected gain: 2-4% month time, Risk: Low, Files: `native/engine/engine.c`
+- [ ] Idea 8: Factor Horner's polynomial evaluations for `theta0`, `l0`, `lp`, and `omega` in `compute_solar_coordinates`. Expected gain: 1-3% time, Risk: Medium, Files: `native/engine/engine.c`
+- [ ] Idea 9: Dead code stripping and crt runtime minimization in `azaan.exe` (remove unnecessary stdio formats). Expected gain: 5-10% binary size, Risk: Medium, Files: `native/cli/main.c`, `native/Makefile`
+- [ ] Idea 10: Struct alignment and cache-line packing for `solar_time_t` (currently 152 bytes). Expected gain: 1-2% time, Risk: Low, Files: `native/engine/engine.c`
+- [ ] Idea 11: Pass `solar_coords_t` by const pointer instead of pass-by-value across internal functions. Expected gain: 1-2% time, Risk: Low, Files: `native/engine/engine.c`
+- Deferred (future phase): GDI text caching and window invalidation optimizations in `native/host/` once Phase 2/3 host is built.
+
+### Iterations
+
+#### #1 Elide unused transit and sunset calculations for tomorrow: REJECTED
+- Hypothesis: In compute_day_prayers, eliding unused transit_hours and sunset_hours for tomorrow_solar_time when tomorrow is not carried forward as a full day reduces engine_calculate_times by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`. Passed `full_tomorrow` flag to skip `corrected_transit` and `sunset_hours` in `create_solar_time_with_coords`.
+- Result: Test gate failed. In high-latitude locations (such as Oslo with 1/7th rule), tomorrow's safe Fajr calculation requires tomorrow's `night_sec`, which depends on tomorrow's `sunset_sec = hours_to_truncated_seconds(solar_time.sunset_hours)`. Setting tomorrow's `sunset_hours` to NAN caused `night_sec` to be NAN, altering midnight / Sunnah times by 13-16 minutes in high-latitude months.
+- Golden: N/A (failed test gate before golden check)
+- Commit: reverted
+- Notes / next idea it suggests: Ground rule 1 applied: correctness beats speed. Tomorrow's sunset is an essential dependency for high-latitude night duration when computing Sunnah times. Reverted cleanly to green.
+
+---
+
+## Prior Run: perf/auto-loop-20261109-0025, started 2026-11-09 00:25
 
 ### Baseline
 | Metric | Value |
