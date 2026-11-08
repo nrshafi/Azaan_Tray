@@ -1,5 +1,5 @@
 CC ?= gcc
-OPTFLAGS ?= -Os -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables
+OPTFLAGS ?= -Os -ffunction-sections -fdata-sections -fno-asynchronous-unwind-tables -D__USE_MINGW_ANSI_STDIO=0
 CFLAGS ?= -std=c11 -Wall -Wextra -Wpedantic -Werror $(OPTFLAGS)
 LDFLAGS ?= -Wl,--gc-sections -s -lm
 

@@ -37,9 +37,17 @@ static void test_julian_day() {
     jd = engine_julian_day(1999, 12, 31);
     ASSERT_NEAR(jd, 2451543.5, 0.001);
 
+    /* Unix epoch 1970-01-01 00:00:00 UTC = 2440587.5 */
+    jd = engine_julian_day(1970, 1, 1);
+    ASSERT_NEAR(jd, 2440587.5, 0.001);
+
     /* Leap year 2024-02-29 00:00:00 UTC = 2460369.5 */
     jd = engine_julian_day(2024, 2, 29);
     ASSERT_NEAR(jd, 2460369.5, 0.001);
+
+    /* Reference date 2026-11-09 00:00:00 UTC = 2461353.5 */
+    jd = engine_julian_day(2026, 11, 9);
+    ASSERT_NEAR(jd, 2461353.5, 0.001);
 }
 
 static void test_solar_coordinates() {
@@ -274,6 +282,19 @@ static void test_hour_angle_and_solar_times_pinning() {
     ASSERT_TRUE(!isnan(t2.sunrise_utc_min));
     ASSERT_TRUE(!isnan(t2.sunset_utc_min));
     ASSERT_TRUE(!isnan(t2.asr_utc_min));
+
+    /* Dhaka 2024-03-20 */
+    prayer_times_t t3;
+    bool ok3 = engine_calculate_times(2024, 3, 20, 23.8103, 90.4125, &settings, &t3);
+    ASSERT_TRUE(ok3);
+    ASSERT_TRUE(!isnan(t3.fajr_utc_min));
+    ASSERT_TRUE(!isnan(t3.sunrise_utc_min));
+    ASSERT_TRUE(!isnan(t3.dhuhr_utc_min));
+    ASSERT_TRUE(!isnan(t3.asr_utc_min));
+    ASSERT_TRUE(!isnan(t3.sunset_utc_min));
+    ASSERT_TRUE(!isnan(t3.isha_utc_min));
+    ASSERT_TRUE(t3.sunrise_utc_min > t3.fajr_utc_min);
+    ASSERT_TRUE(t3.sunset_utc_min > t3.asr_utc_min);
 
     /* Assert astronomical progression */
     ASSERT_TRUE(t1.sunrise_utc_min > t1.fajr_utc_min);

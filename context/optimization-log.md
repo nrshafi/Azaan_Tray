@@ -1,6 +1,126 @@
 # Optimization Loop Log
 
-## Run perf/auto-loop-20261109-0025, started 2026-11-09 00:25
+## Run perf/auto-loop-20261109-0110, started 2026-11-09 01:10
+
+### Baseline
+| Metric | Value |
+|---|---|
+| Tests | 2613 pass |
+| calculate_times median | 3919.25 ns/call |
+| calculate_month median | 59057.60 ns/call |
+| azaan.exe size | 97280 bytes |
+| test_engine.exe size | 67072 bytes |
+| spikes/spike_a.exe size | 66653 bytes |
+| spikes/spike_a_dc.exe size | 66133 bytes |
+| spikes/spike_a_gdi.exe size | 23552 bytes |
+| spikes/spike_b.exe size | 69974 bytes |
+| spikes/spike_c.exe size | 86528 bytes |
+| Golden SHA-256 | 95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a |
+
+### Backlog
+- [ ] Idea 1: Elide unused `transit_hours` and `sunset_hours` in `create_solar_time_with_coords` for tomorrow's solar time when not carried forward as full day, and propagate `sin_lat`/`cos_lat`. Expected gain: 5-8% on calculate_times, 2-4% on calculate_month, Risk: Low, Files: `native/engine/engine.c`
+- [ ] Idea 7: Vectorize / unroll monthly sliding window coordinate stepping in `engine_calculate_month`. Expected gain: 2-4% month time, Risk: Low, Files: `native/engine/engine.c`
+- [ ] Idea 8: Factor Horner's polynomial evaluations for `theta0`, `l0`, `lp`, and `omega` in `compute_solar_coordinates`. Expected gain: 1-3% time, Risk: Medium, Files: `native/engine/engine.c`
+- [x] Idea 9: Dead code stripping and crt runtime minimization in `azaan.exe` (remove unnecessary stdio formats via -D__USE_MINGW_ANSI_STDIO=0). Expected gain: 5-10% binary size (Achieved: -66.8% on azaan.exe, -41.2% on test_engine.exe), Risk: Low, Files: `native/Makefile`
+- [ ] Idea 10: Struct alignment and cache-line packing for `solar_time_t` (currently 152 bytes). Expected gain: 1-2% time, Risk: Low, Files: `native/engine/engine.c`
+- [x] Idea 11: Pass `solar_coords_t` by const pointer instead of pass-by-value across internal functions, eliminate dead struct storage (`prev_solar`), and elide unused copies. Expected gain: 1-2% time, 3-5% binary size (Achieved: -4.76% azaan.exe size, -2.07% calculate_times, -1.79% calculate_month), Risk: Low, Files: `native/engine/engine.c`
+- Deferred (future phase): GDI text caching and window invalidation optimizations in `native/host/` once Phase 2/3 host is built.
+
+### Iterations
+
+#### #1 Elide unused transit and sunset calculations for tomorrow: REJECTED
+- Hypothesis: In compute_day_prayers, eliding unused transit_hours and sunset_hours for tomorrow_solar_time when tomorrow is not carried forward as a full day reduces engine_calculate_times by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`. Passed `full_tomorrow` flag to skip `corrected_transit` and `sunset_hours` in `create_solar_time_with_coords`.
+- Result: Test gate failed. In high-latitude locations (such as Oslo with 1/7th rule), tomorrow's safe Fajr calculation requires tomorrow's `night_sec`, which depends on tomorrow's `sunset_sec = hours_to_truncated_seconds(solar_time.sunset_hours)`. Setting tomorrow's `sunset_hours` to NAN caused `night_sec` to be NAN, altering midnight / Sunnah times by 13-16 minutes in high-latitude months.
+- Golden: N/A (failed test gate before golden check)
+- Commit: reverted
+- Notes / next idea it suggests: Ground rule 1 applied: correctness beats speed. Tomorrow's sunset is an essential dependency for high-latitude night duration when computing Sunnah times. Reverted cleanly to green.
+
+#### #2 Minimize CRT stdio runtime via -D__USE_MINGW_ANSI_STDIO=0: KEPT
+- Hypothesis: Setting -D__USE_MINGW_ANSI_STDIO=0 in Makefile OPTFLAGS delegates stdio formatting directly to msvcrt.dll rather than linking libmingwex ANSI formatting routines (__mingw_pformat, __mingw_sformat, gdtoa), reducing binary size of azaan.exe and test_engine.exe by >= 30% with byte-identical output.
+- Change: `native/Makefile`. Added `-D__USE_MINGW_ANSI_STDIO=0` to `OPTFLAGS`.
+- Result:
+  - `calculate_times`: 3919.25 -> 3924.76 ns/call (+0.14% noise)
+  - `calculate_month`: 59057.60 -> 58000.10 ns/call (-1.79%)
+  - `azaan.exe` size: 97280 -> 32256 bytes (-66.84%)
+  - `test_engine.exe` size: 67072 -> 39424 bytes (-41.22%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `2f671b5`
+- Notes / next idea it suggests: Enormous reduction in binary footprint (-65 KB on CLI exe, -27.6 KB on test binary). Zero math regression or output difference.
+
+#### #3 Precompute interpolation deltas and trig products in solar_time_t: KEPT
+- Hypothesis: Precomputing day-invariant interpolation differences (`ra_sum`, `ra_diff`, `dec_sum`, `dec_diff`) and latitude/declination trigonometric products (`sin_lat_sin_dec`, `cos_lat_cos_dec`) in `solar_time_t` eliminates ~32 calls to `unwind_angle`/`floor` and redundant multiplies per day, reducing `calculate_times` and `calculate_month` by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`, `native/tests/test_engine.c`. Stored precomputed deltas in `solar_time_t`; passed `const solar_time_t*` by pointer to `corrected_hour_angle` and `corrected_hour_angle_from_m`; evaluated polynomial differences directly with zero `unwind_angle` overhead during transit/hour-angle evaluations. Added 9 pinning test assertions in `test_engine.c`.
+- Result:
+  - `calculate_times`: 3924.76 -> 3812.50 ns/call (-2.86% iteration gain; -2.72% vs baseline)
+  - `calculate_month`: 58000.10 -> 55884.40 ns/call (-3.65% iteration gain; -5.37% vs baseline)
+  - `azaan.exe` size: 32256 -> 32256 bytes (0.00%)
+  - `test_engine.exe` size: 39424 -> 39424 bytes (0.00%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `00dc5d0`
+- Notes / next idea it suggests: Substantial -3.65% cut in monthly timetable calculation latency and -2.86% in single-day calculations. Code is significantly cleaner with `const solar_time_t*` pointer passing.
+
+#### #4 Eliminate dead struct storage, pass coordinate pointers, and elide unused copies: KEPT
+- Hypothesis: Removing unread `prev_solar` from `solar_time_t` (shrinking struct by 24 bytes), passing `solar_coords_t` by const pointer, initializing `solar_time_t` in place via `init_solar_time_with_coords`, and passing `NULL` for unused `out_solar_today` eliminates struct copy overhead and reduces binary size by >= 3% and latency with byte-identical output.
+- Change: `native/engine/engine.c`, `native/tests/test_engine.c`. Removed `prev_solar` field from `solar_time_t`; refactored `create_solar_time_with_coords` and `create_solar_time` into in-place initializers accepting `const solar_coords_t*` pointers; replaced redundant `(int)trunc(...)` on positive terms in `engine_julian_day`; passed `NULL` for unused `out_solar_today` in `engine_calculate_times` and `engine_calculate_month`. Added Julian day test assertions in `test_engine.c`.
+- Result:
+  - `calculate_times`: 3812.50 -> 3733.74 ns/call (-2.07% iteration gain; -4.73% cumulative vs baseline)
+  - `calculate_month`: 55884.40 -> 54886.76 ns/call (-1.79% iteration gain; -7.06% cumulative vs baseline)
+  - `azaan.exe` size: 32256 -> 30720 bytes (-4.76% iteration gain; -68.42% cumulative vs baseline)
+  - `test_engine.exe` size: 39424 -> 39424 bytes (0.00%; added 2 test assertions)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `1f47368`
+#### #5 Precompute century polynomial powers t2 and t3 in compute_solar_coordinates: REJECTED
+- Hypothesis: Precomputing century powers t2 = t * t and t3 = t2 * t in compute_solar_coordinates eliminates ~10 redundant multiplications per solar coordinate evaluation, reducing latency by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`. Factored powers `t2` and `t3` into local variables and substituted into polynomial terms across `l0`, `omega`, `m_deg`, `c`, `theta0`, and `eps0`.
+- Result:
+  - `calculate_times`: 3733.74 -> 3735.83 ns/call (+0.05% noise)
+  - `calculate_month`: 54886.76 -> 54805.74 - 54974.16 ns/call (-0.15% to +0.16% noise)
+  - `azaan.exe` size: 30720 -> 30720 bytes (0.00%)
+  - `test_engine.exe` size: 39424 -> 39424 bytes (0.00%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: reverted
+- Notes / next idea it suggests: Latency differences were within +/-0.2% measurement noise (< 3% threshold). Modern x86_64 pipelined multipliers execute FMUL in parallel with negligible cycle stalls. Reverted cleanly to green.
+
+### Final Summary (End of Run)
+
+#### Overview
+- **Branch**: `perf/auto-loop-20261109-0110`
+- **Total Iterations**: 5
+- **Kept**: 3 (Iterations #2, #3, #4)
+- **Rejected**: 2 (Iterations #1, #5 - both cleanly reverted)
+- **Status of Gates**:
+  - Build gate: 0 warnings, 0 errors under `-Wall -Wextra -Wpedantic -Werror`.
+  - Test gate: 2,624 assertions pass (100% pass rate, +11 pinning tests added).
+  - Golden gate: MATCH (`95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`).
+  - Gain gate: Passed on all kept iterations (each achieved >= 3% metric gain with zero regressions).
+
+#### Cumulative Metric Progression
+| Metric | Baseline | Iteration #2 | Iteration #3 | Iteration #4 (Final) | Cumulative Gain vs Baseline |
+|---|---|---|---|---|---|
+| Tests passed | 2,613 | 2,613 | 2,622 | 2,624 | +11 tests |
+| `calculate_times` median | 3,919.25 ns | 3,924.76 ns | 3,812.50 ns | 3,733.74 ns | **-4.73%** |
+| `calculate_month` median | 59,057.60 ns | 58,000.10 ns | 55,884.40 ns | 54,886.76 ns | **-7.06%** |
+| `azaan.exe` binary size | 97,280 B | 32,256 B | 32,256 B | 30,720 B | **-68.42%** (-66,560 B) |
+| `test_engine.exe` binary size | 67,072 B | 39,424 B | 39,424 B | 39,424 B | **-41.22%** (-27,648 B) |
+| Golden SHA-256 | `95aed7f803...` | MATCH | MATCH | MATCH | MATCH (identical) |
+
+#### Commits on Branch
+- `2f671b5`: `perf(build): minimize stdio runtime via -D__USE_MINGW_ANSI_STDIO=0 (-66.8% azaan size, -41.2% test size)`
+- `00dc5d0`: `perf(engine): precompute interpolation deltas and trig products in solar_time_t (-3.6% month, -2.9% times)`
+- `1f47368`: `perf(engine): eliminate dead struct fields, pass coordinate pointers, and elide unused copies (-4.8% azaan size, -2.1% times, -1.8% month)`
+
+#### Remaining Backlog Ideas
+1. **Idea 7: Vectorize / unroll monthly coordinate stepping** (`native/engine/engine.c`): Expected gain 2-4% month latency.
+2. **Idea 10: Struct alignment and packing** (`native/engine/engine.c`): Check alignment on 32-byte cache lines.
+3. **Host GDI text caching and invalidation** (`native/host/`): Deferred to Phase 2/3.
+
+#### Doubts / Assumptions for Review
+- None. All calculations are byte-identical across all 2,016 fixtures and golden snapshot.
+
+---
+
+## Prior Run: perf/auto-loop-20261109-0025, started 2026-11-09 00:25
 
 ### Baseline
 | Metric | Value |

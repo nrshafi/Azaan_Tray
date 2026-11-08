@@ -61,6 +61,9 @@ Update this file after every meaningful implementation change with current date 
 - 2026-11-09 00:36: **Autonomous optimization loop**: #2 Skipped unrequested prayer paths & deferred tomorrow solar coords (-25.1% times, -1.3% month, golden MATCH).
 - 2026-11-09 00:40: **Autonomous optimization loop**: #4 Precomputed sin/cos(dec) in solar_time_t (-5.5% month, -4.1% times, golden MATCH).
 - 2026-11-09 00:51: **Autonomous optimization loop**: #6 Linear Julian Day stepping, add_one_day helper, and shared h0_angle (-7.5% times, -6.7% month, golden MATCH). Cumulative latency reduction: -36.2% on calculate_times, -17.8% on calculate_month. Golden snapshot: MATCH.
+- 2026-11-09 01:23: **Autonomous optimization loop**: #2 Minimized CRT stdio runtime via -D__USE_MINGW_ANSI_STDIO=0 (-66.8% azaan.exe size from 97,280 to 32,256 B, -41.2% test_engine.exe size, golden MATCH).
+- 2026-11-09 01:27: **Autonomous optimization loop**: #3 Precomputed interpolation deltas and trig products in solar_time_t (-3.65% month, -2.86% times, golden MATCH). Cumulative: -66.8% azaan.exe, -5.4% month latency.
+- 2026-11-09 01:38: **Autonomous optimization loop**: #4 Eliminated dead struct storage (`prev_solar`), passed coordinate pointers, and elided unused struct copies (-4.76% azaan.exe size from 32,256 to 30,720 B, -2.07% calculate_times, -1.79% calculate_month, golden MATCH). Cumulative: -68.4% azaan.exe size, -7.1% month latency, -4.7% times latency.
 
 
 ## In Progress
@@ -138,6 +141,7 @@ library configuration.
 | 2026-11-07 | WebView2 distribution | https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution | Evergreen runtime ships with Win11; "vast majority" of Win10 devices have it, but apps must detect it (registry `pv` or `GetAvailableCoreWebView2BrowserVersionString`). Ship `WebView2Loader.dll` or link the static lib. Feature-detect newer interfaces. |
 | 2026-11-07 | WebView2 + MinGW | https://github.com/jchv/webview2-in-mingw, webview/webview PR #783 | Works via CINTERFACE / C++; static `WebView2Loader.lib` does not link with MinGW, so use the DLL. |
 | 2026-11-07 | Store registration | https://blogs.windows.com/windowsdeveloper/2025/09/10/free-developer-registration-for-individual-developers-on-microsoft-store/ | Free for individual developers (ID verification). Store signs and hosts MSIX. |
+| 2026-11-09 | `__USE_MINGW_ANSI_STDIO` | `tools/w64devkit/include/_mingw.h` lines 446-466 | When defined as 0, disables libmingwex POSIX stdio wrappers and delegates directly to msvcrt.dll, stripping ~65 KB of dead CRT formatting code. |
 
 ## Session Notes
 
