@@ -21,7 +21,7 @@
 - [ ] Idea 1: Elide unused `transit_hours` and `sunset_hours` in `create_solar_time_with_coords` for tomorrow's solar time when not carried forward as full day, and propagate `sin_lat`/`cos_lat`. Expected gain: 5-8% on calculate_times, 2-4% on calculate_month, Risk: Low, Files: `native/engine/engine.c`
 - [ ] Idea 7: Vectorize / unroll monthly sliding window coordinate stepping in `engine_calculate_month`. Expected gain: 2-4% month time, Risk: Low, Files: `native/engine/engine.c`
 - [ ] Idea 8: Factor Horner's polynomial evaluations for `theta0`, `l0`, `lp`, and `omega` in `compute_solar_coordinates`. Expected gain: 1-3% time, Risk: Medium, Files: `native/engine/engine.c`
-- [ ] Idea 9: Dead code stripping and crt runtime minimization in `azaan.exe` (remove unnecessary stdio formats). Expected gain: 5-10% binary size, Risk: Medium, Files: `native/cli/main.c`, `native/Makefile`
+- [x] Idea 9: Dead code stripping and crt runtime minimization in `azaan.exe` (remove unnecessary stdio formats via -D__USE_MINGW_ANSI_STDIO=0). Expected gain: 5-10% binary size (Achieved: -66.8% on azaan.exe, -41.2% on test_engine.exe), Risk: Low, Files: `native/Makefile`
 - [ ] Idea 10: Struct alignment and cache-line packing for `solar_time_t` (currently 152 bytes). Expected gain: 1-2% time, Risk: Low, Files: `native/engine/engine.c`
 - [ ] Idea 11: Pass `solar_coords_t` by const pointer instead of pass-by-value across internal functions. Expected gain: 1-2% time, Risk: Low, Files: `native/engine/engine.c`
 - Deferred (future phase): GDI text caching and window invalidation optimizations in `native/host/` once Phase 2/3 host is built.
@@ -35,6 +35,18 @@
 - Golden: N/A (failed test gate before golden check)
 - Commit: reverted
 - Notes / next idea it suggests: Ground rule 1 applied: correctness beats speed. Tomorrow's sunset is an essential dependency for high-latitude night duration when computing Sunnah times. Reverted cleanly to green.
+
+#### #2 Minimize CRT stdio runtime via -D__USE_MINGW_ANSI_STDIO=0: KEPT
+- Hypothesis: Setting -D__USE_MINGW_ANSI_STDIO=0 in Makefile OPTFLAGS delegates stdio formatting directly to msvcrt.dll rather than linking libmingwex ANSI formatting routines (__mingw_pformat, __mingw_sformat, gdtoa), reducing binary size of azaan.exe and test_engine.exe by >= 30% with byte-identical output.
+- Change: `native/Makefile`. Added `-D__USE_MINGW_ANSI_STDIO=0` to `OPTFLAGS`.
+- Result:
+  - `calculate_times`: 3919.25 -> 3924.76 ns/call (+0.14% noise)
+  - `calculate_month`: 59057.60 -> 58000.10 ns/call (-1.79%)
+  - `azaan.exe` size: 97280 -> 32256 bytes (-66.84%)
+  - `test_engine.exe` size: 67072 -> 39424 bytes (-41.22%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `2f671b5`
+- Notes / next idea it suggests: Enormous reduction in binary footprint (-65 KB on CLI exe, -27.6 KB on test binary). Zero math regression or output difference.
 
 ---
 
