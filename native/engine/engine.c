@@ -226,16 +226,17 @@ static double interpolate_angles(double y2, double y1, double y3, double n) {
 }
 
 /* Meeus p. 93: Altitude of celestial body */
-static double altitude_of_celestial_body(double lat_deg, double dec_deg, double lha_deg) {
-    double phi = deg2rad(lat_deg);
+static inline double altitude_of_celestial_body(double sin_phi, double cos_phi, double dec_deg, double lha_deg) {
     double delta = deg2rad(dec_deg);
     double h = deg2rad(lha_deg);
-    return rad2deg(asin(sin(phi) * sin(delta) + cos(phi) * cos(delta) * cos(h)));
+    return rad2deg(asin(sin_phi * sin(delta) + cos_phi * cos(delta) * cos(h)));
 }
 
 typedef struct {
     double lat_deg;
     double lng_deg;
+    double sin_lat;
+    double cos_lat;
     solar_coords_t solar;
     solar_coords_t prev_solar;
     solar_coords_t next_solar;
@@ -257,14 +258,15 @@ static double corrected_transit(double m0, double lng_deg, double theta0, double
 
 /* Meeus p. 102: Corrected hour angle in universal time (hours) */
 static double corrected_hour_angle(
-    double m0, double h0_deg, double lat_deg, double lng_deg, bool after_transit,
+    double m0, double h0_deg, double sin_phi, double cos_phi, double lng_deg, bool after_transit,
     double theta0, double a2, double a1, double a3, double d2, double d1, double d3
 ) {
     double lw = -lng_deg;
-    double phi = deg2rad(lat_deg);
     double d2_rad = deg2rad(d2);
-    double term1 = sin(deg2rad(h0_deg)) - sin(phi) * sin(d2_rad);
-    double term2 = cos(phi) * cos(d2_rad);
+    double sin_d2, cos_d2;
+    FAST_SINCOS(d2_rad, &sin_d2, &cos_d2);
+    double term1 = sin(deg2rad(h0_deg)) - sin_phi * sin_d2;
+    double term2 = cos_phi * cos_d2;
     double ratio = term1 / term2;
     if (ratio < -1.0 || ratio > 1.0) {
         return NAN;
@@ -276,9 +278,9 @@ static double corrected_hour_angle(
     double a = unwind_angle(interpolate_angles(a2, a1, a3, m));
     double delta = interpolate_value(d2, d1, d3, m);
     double h = theta - lw - a;
-    double alt = altitude_of_celestial_body(lat_deg, delta, h);
+    double alt = altitude_of_celestial_body(sin_phi, cos_phi, delta, h);
     double term3 = alt - h0_deg;
-    double term4 = 360.0 * cos(deg2rad(delta)) * cos(phi) * sin(deg2rad(h));
+    double term4 = 360.0 * cos(deg2rad(delta)) * cos_phi * sin(deg2rad(h));
     if (fabs(term4) < 1e-12) return NAN;
     double dm = term3 / term4;
     return (m + dm) * 24.0;
@@ -291,6 +293,8 @@ static solar_time_t create_solar_time_with_coords(
     solar_time_t st;
     st.lat_deg = lat_deg;
     st.lng_deg = lng_deg;
+    double phi = deg2rad(lat_deg);
+    FAST_SINCOS(phi, &st.sin_lat, &st.cos_lat);
     st.solar = curr;
     st.prev_solar = prev;
     st.next_solar = next;
@@ -302,13 +306,13 @@ static solar_time_t create_solar_time_with_coords(
         st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg
     );
     st.sunrise_hours = corrected_hour_angle(
-        st.approx_transit, SOLAR_ALTITUDE_DEG, lat_deg, lng_deg, false,
+        st.approx_transit, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg, false,
         st.solar.apparent_sidereal_time_deg,
         st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
         st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
     );
     st.sunset_hours = corrected_hour_angle(
-        st.approx_transit, SOLAR_ALTITUDE_DEG, lat_deg, lng_deg, true,
+        st.approx_transit, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg, true,
         st.solar.apparent_sidereal_time_deg,
         st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
         st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
@@ -326,7 +330,7 @@ static solar_time_t create_solar_time(int year, int month, int day, double lat_d
 
 static double solar_time_hour_angle(const solar_time_t* st, double angle_deg, bool after_transit) {
     return corrected_hour_angle(
-        st->approx_transit, angle_deg, st->lat_deg, st->lng_deg, after_transit,
+        st->approx_transit, angle_deg, st->sin_lat, st->cos_lat, st->lng_deg, after_transit,
         st->solar.apparent_sidereal_time_deg,
         st->solar.right_ascension_deg, st->prev_solar.right_ascension_deg, st->next_solar.right_ascension_deg,
         st->solar.declination_deg, st->prev_solar.declination_deg, st->next_solar.declination_deg

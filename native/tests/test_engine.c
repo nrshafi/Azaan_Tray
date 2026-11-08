@@ -253,6 +253,42 @@ static void test_calculate_month_polar_high_lat() {
     }
 }
 
+static void test_hour_angle_and_solar_times_pinning() {
+    engine_settings_t settings;
+    engine_get_default_settings(CALC_METHOD_MWL, &settings);
+    settings.rounding = ROUNDING_NONE;
+
+    prayer_times_t t1, t2;
+    /* Mecca 2024-06-20 */
+    bool ok1 = engine_calculate_times(2024, 6, 20, 21.4225, 39.8262, &settings, &t1);
+    ASSERT_TRUE(ok1);
+    ASSERT_TRUE(!isnan(t1.fajr_utc_min));
+    ASSERT_TRUE(!isnan(t1.sunrise_utc_min));
+    ASSERT_TRUE(!isnan(t1.sunset_utc_min));
+    ASSERT_TRUE(!isnan(t1.asr_utc_min));
+
+    /* London 2024-12-21 */
+    bool ok2 = engine_calculate_times(2024, 12, 21, 51.5074, -0.1278, &settings, &t2);
+    ASSERT_TRUE(ok2);
+    ASSERT_TRUE(!isnan(t2.fajr_utc_min));
+    ASSERT_TRUE(!isnan(t2.sunrise_utc_min));
+    ASSERT_TRUE(!isnan(t2.sunset_utc_min));
+    ASSERT_TRUE(!isnan(t2.asr_utc_min));
+
+    /* Assert astronomical progression */
+    ASSERT_TRUE(t1.sunrise_utc_min > t1.fajr_utc_min);
+    ASSERT_TRUE(t1.dhuhr_utc_min > t1.sunrise_utc_min);
+    ASSERT_TRUE(t1.asr_utc_min > t1.dhuhr_utc_min);
+    ASSERT_TRUE(t1.sunset_utc_min > t1.asr_utc_min);
+    ASSERT_TRUE(t1.isha_utc_min > t1.sunset_utc_min);
+
+    ASSERT_TRUE(t2.sunrise_utc_min > t2.fajr_utc_min);
+    ASSERT_TRUE(t2.dhuhr_utc_min > t2.sunrise_utc_min);
+    ASSERT_TRUE(t2.asr_utc_min > t2.dhuhr_utc_min);
+    ASSERT_TRUE(t2.sunset_utc_min > t2.asr_utc_min);
+    ASSERT_TRUE(t2.isha_utc_min > t2.sunset_utc_min);
+}
+
 int main() {
     printf("--- Running Azaan Tray Engine Tests ---\n");
 
@@ -265,6 +301,7 @@ int main() {
     test_calculate_month_30_days();
     test_calculate_month_31_days();
     test_calculate_month_polar_high_lat();
+    test_hour_angle_and_solar_times_pinning();
 
     printf("\nTests run: %d, Passed: %d, Failed: %d\n",
            g_tests_run, g_tests_passed, g_tests_run - g_tests_passed);
