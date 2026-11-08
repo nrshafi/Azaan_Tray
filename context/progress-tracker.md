@@ -59,6 +59,7 @@ Update this file after every meaningful implementation change with current date 
   - **Documentation**: Authored `docs/adr/0007-cross-cutting-optimizations-and-power-efficiency.md` recording motivations, measurements, decisions, and why alternative approaches were rejected.
 - 2026-11-09 00:32: **Autonomous optimization loop**: #1 Cached sin/cos(lat) and folded declination trig (-5.5% month, -4.0% times, golden MATCH).
 - 2026-11-09 00:36: **Autonomous optimization loop**: #2 Skipped unrequested prayer paths & deferred tomorrow solar coords (-25.1% times, -1.3% month, golden MATCH).
+- 2026-11-09 00:40: **Autonomous optimization loop**: #4 Precomputed sin/cos(dec) in solar_time_t (-5.5% month, -4.1% times, golden MATCH).
 
 ## In Progress
 

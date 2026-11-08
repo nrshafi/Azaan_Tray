@@ -17,7 +17,7 @@
 - [ ] Idea 2: Add `-fno-math-errno` to `OPTFLAGS` in `native/Makefile` to permit inlining math builtins without `errno` checking. Expected gain: 3-8% time, Risk: Low, Files: `native/Makefile`
 - [x] Idea 3: Avoid redundant day+2 solar coordinates calculation when computing only tomorrow's Fajr in `engine_calculate_times`. Expected gain: 10-20% on `calculate_times`, Risk: Medium, Files: `native/engine/engine.c`
 - [ ] Idea 4: Pass `solar_time_t` (144 bytes) and `solar_coords_t` by const pointer instead of pass-by-value across internal functions. Expected gain: 3-6% time, Risk: Low, Files: `native/engine/engine.c`
-- [ ] Idea 5: Precompute `sin(dec)` and `cos(dec)` in `solar_coords_t` / `solar_time_t` to avoid repeating `deg2rad(d2)` and trig in `corrected_hour_angle`. Expected gain: 4-8% time, Risk: Low, Files: `native/engine/engine.c`
+- [x] Idea 5: Precompute `sin(dec)` and `cos(dec)` in `solar_coords_t` / `solar_time_t` to avoid repeating `deg2rad(d2)` and trig in `corrected_hour_angle`. Expected gain: 4-8% time, Risk: Low, Files: `native/engine/engine.c`
 - [ ] Idea 6: Optimize `deg2rad` / `rad2deg` conversions and redundant angle normalizations across Meeus solar routines. Expected gain: 3-5% time, Risk: Medium, Files: `native/engine/engine.c`
 - Deferred (future phase): GDI text caching and window invalidation optimizations in `native/host/` once Phase 2/3 host is built.
 
@@ -57,3 +57,15 @@
 - Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
 - Commit: reverted
 - Notes / next idea it suggests: Gain of ~0.6% was below the >= 3% threshold after 6 confirmation runs. On x86_64 mingw with -Os, standard math functions already use fast builtins or inline calls; errno checks do not dominate. Reverted cleanly.
+
+#### #4 Precompute sin/cos(declination) in solar_time_t: KEPT
+- Hypothesis: Caching sin/cos(declination) in solar_time_t eliminates repeated declination trigonometry in corrected_hour_angle, reducing calculate_times and calculate_month by >= 3% with byte-identical output.
+- Change: `native/engine/engine.c`. Stored `sin_dec` and `cos_dec` in `solar_time_t` evaluated once per day via `FAST_SINCOS(d2_rad)` in `create_solar_time_with_coords`; passed directly into `corrected_hour_angle`, avoiding `deg2rad` and trigonometric calls on every hour angle evaluation.
+- Result:
+  - `calculate_times`: 4371.62 -> 4192.21 ns/call (-4.10% iteration gain; -31.02% cumulative)
+  - `calculate_month`: 64760.48 -> 61185.30 ns/call (-5.52% iteration gain; -11.89% cumulative)
+  - `azaan.exe` size: 97280 -> 97280 bytes (0.00%)
+  - `test_engine.exe` size: 66560 -> 66560 bytes (0.00%)
+- Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
+- Commit: `307050c`
+- Notes / next idea it suggests: Monthly calculation improved by 5.5% and single-day times by 4.1%. Test passing solar_time_t via pointers next.
