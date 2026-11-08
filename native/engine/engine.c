@@ -237,6 +237,8 @@ typedef struct {
     double lng_deg;
     double sin_lat;
     double cos_lat;
+    double sin_dec;
+    double cos_dec;
     solar_coords_t solar;
     solar_coords_t prev_solar;
     solar_coords_t next_solar;
@@ -258,13 +260,11 @@ static double corrected_transit(double m0, double lng_deg, double theta0, double
 
 /* Meeus p. 102: Corrected hour angle in universal time (hours) */
 static double corrected_hour_angle(
-    double m0, double h0_deg, double sin_phi, double cos_phi, double lng_deg, bool after_transit,
+    double m0, double h0_deg, double sin_phi, double cos_phi, double sin_d2, double cos_d2,
+    double lng_deg, bool after_transit,
     double theta0, double a2, double a1, double a3, double d2, double d1, double d3
 ) {
     double lw = -lng_deg;
-    double d2_rad = deg2rad(d2);
-    double sin_d2, cos_d2;
-    FAST_SINCOS(d2_rad, &sin_d2, &cos_d2);
     double term1 = sin(deg2rad(h0_deg)) - sin_phi * sin_d2;
     double term2 = cos_phi * cos_d2;
     double ratio = term1 / term2;
@@ -295,6 +295,8 @@ static solar_time_t create_solar_time_with_coords(
     st.lng_deg = lng_deg;
     double phi = deg2rad(lat_deg);
     FAST_SINCOS(phi, &st.sin_lat, &st.cos_lat);
+    double d2_rad = deg2rad(curr.declination_deg);
+    FAST_SINCOS(d2_rad, &st.sin_dec, &st.cos_dec);
     st.solar = curr;
     st.prev_solar = prev;
     st.next_solar = next;
@@ -306,13 +308,13 @@ static solar_time_t create_solar_time_with_coords(
         st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg
     );
     st.sunrise_hours = corrected_hour_angle(
-        st.approx_transit, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg, false,
+        st.approx_transit, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, st.sin_dec, st.cos_dec, lng_deg, false,
         st.solar.apparent_sidereal_time_deg,
         st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
         st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
     );
     st.sunset_hours = corrected_hour_angle(
-        st.approx_transit, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, lng_deg, true,
+        st.approx_transit, SOLAR_ALTITUDE_DEG, st.sin_lat, st.cos_lat, st.sin_dec, st.cos_dec, lng_deg, true,
         st.solar.apparent_sidereal_time_deg,
         st.solar.right_ascension_deg, st.prev_solar.right_ascension_deg, st.next_solar.right_ascension_deg,
         st.solar.declination_deg, st.prev_solar.declination_deg, st.next_solar.declination_deg
@@ -330,7 +332,7 @@ static solar_time_t create_solar_time(int year, int month, int day, double lat_d
 
 static double solar_time_hour_angle(const solar_time_t* st, double angle_deg, bool after_transit) {
     return corrected_hour_angle(
-        st->approx_transit, angle_deg, st->sin_lat, st->cos_lat, st->lng_deg, after_transit,
+        st->approx_transit, angle_deg, st->sin_lat, st->cos_lat, st->sin_dec, st->cos_dec, st->lng_deg, after_transit,
         st->solar.apparent_sidereal_time_deg,
         st->solar.right_ascension_deg, st->prev_solar.right_ascension_deg, st->next_solar.right_ascension_deg,
         st->solar.declination_deg, st->prev_solar.declination_deg, st->next_solar.declination_deg
