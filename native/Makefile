@@ -20,12 +20,15 @@ $(BINDIR)/bench_engine$(EXE): tests/bench_engine.c engine/engine.c engine/engine
 	@$(MKDIR_P)
 	$(CC) $(CFLAGS) -Iengine tests/bench_engine.c engine/engine.c -o $@ $(LDFLAGS)
 
-test: $(BINDIR)/test_engine$(EXE)
-	./$(BINDIR)/test_engine$(EXE)
+CJSON_DIR = third_party/cjson
 
-$(BINDIR)/test_engine$(EXE): tests/test_engine.c engine/engine.c engine/engine.h
+test: $(BINDIR)/test_engine$(EXE)
+	./$(BINDIR)/test_engine$(EXE) tests/fixtures
+
+# cJSON is test-only here (golden fixture loader); the engine itself stays dependency-free.
+$(BINDIR)/test_engine$(EXE): tests/test_engine.c engine/engine.c engine/engine.h $(CJSON_DIR)/cJSON.c $(CJSON_DIR)/cJSON.h
 	@$(MKDIR_P)
-	$(CC) $(CFLAGS) -Iengine tests/test_engine.c engine/engine.c -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) -Iengine -I$(CJSON_DIR) tests/test_engine.c engine/engine.c $(CJSON_DIR)/cJSON.c -o $@ $(LDFLAGS)
 
 cli: $(BINDIR)/azaan$(EXE)
 

@@ -6,7 +6,7 @@
 ┌──────────────────────── AzaanTray.exe (always running, ≤5 MB) ────────────────────────┐
 │ engine/ (C11, pure)   host/ (C++ subset, Win32)                                        │
 │  prayer math  ◄────── scheduler ── alerts ── audio (miniaudio, opened only to play)   │
-│  hijri, makruh        tray icon ── taskbar widget (Direct2D/DirectWrite)              │
+│  hijri, makruh        tray icon ── taskbar widget (GDI ClearType, ADR 0003)           │
 │                       config store (JSON)    platform events (TZ, DPI, power, Explorer)│
 │                       flyout manager ──► creates WebView2 only on demand ─────────┐    │
 └───────────────────────────────────────────────────────────────────────────────────┼────┘
@@ -22,7 +22,7 @@
 | --- | --- | --- |
 | Prayer engine | C11, no OS headers, `libm` only | All astronomical and prayer-time math, Hijri, forbidden windows. One implementation, used by host and CLI. |
 | Native host | C++ subset (see code-standards) compiled with **w64devkit (GCC, mingw-w64)**; MSVC build kept working for contributors | Win32 message loop, tray, taskbar widget, scheduler, alerts, config, WebView2 hosting. |
-| Rendering (widget) | Direct2D + DirectWrite (`ID2D1DCRenderTarget` or HWND target), GDI fallback | Crisp two-line text on light/dark taskbars. |
+| Rendering (widget) | Double-buffered GDI with ClearType (`DrawTextW` + `BitBlt`); no Direct2D/D3D in the resident process (ADR 0003: D2D HWND target 49 MB WS, DC target 20 MB, GDI 1.1 MB) | Crisp two-line text on light/dark taskbars within the ≤ 5 MB budget. |
 | Window chrome (flyout) | DWM attributes: corner preference, immersive dark mode, system backdrop | Win11 look. Corner/dark mode need build 22000+, backdrop needs 22621+. Win10 gets square, solid fallback. |
 | Audio | miniaudio (single-header C, vendored) | MP3/WAV decode and playback. Device opened only while playing. |
 | JSON | Small vendored C JSON library (cJSON or equivalent, chosen in Phase 0) | Config file and bridge messages. |

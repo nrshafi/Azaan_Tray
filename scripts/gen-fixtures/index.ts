@@ -57,6 +57,9 @@ const METHODS = [
   'Turkey',
 ] as const;
 
+const HIGH_LAT_RULES = ['MiddleOfTheNight', 'SeventhOfTheNight', 'TwilightAngle'] as const;
+const POLAR_RESOLUTIONS = ['Unresolved', 'AqrabYaum', 'AqrabBalad'] as const;
+
 interface FixtureEntry {
   city: string;
   lat: number;
@@ -65,66 +68,100 @@ interface FixtureEntry {
   method: string;
   madhab: string;
   high_lat_rule: string;
-  fajr_ms: number;
-  sunrise_ms: number;
-  dhuhr_ms: number;
-  asr_ms: number;
-  sunset_ms: number;
-  maghrib_ms: number;
-  isha_ms: number;
-  midnight_ms: number;
-  last_third_ms: number;
+  polar_resolution: string;
+  // null when adhan-js returns an invalid Date (event does not occur)
+  fajr_ms: number | null;
+  sunrise_ms: number | null;
+  dhuhr_ms: number | null;
+  asr_ms: number | null;
+  sunset_ms: number | null;
+  maghrib_ms: number | null;
+  isha_ms: number | null;
+  midnight_ms: number | null;
+  last_third_ms: number | null;
+}
+
+const ms = (d: Date): number | null => {
+  const t = d.getTime();
+  return Number.isFinite(t) ? t : null;
+};
+
+function computeEntry(
+  name: string,
+  lat: number,
+  lng: number,
+  dateStr: string,
+  methodName: (typeof METHODS)[number],
+  madhab: 'Shafi' | 'Hanafi',
+  hlName: (typeof HIGH_LAT_RULES)[number],
+  polarName: (typeof POLAR_RESOLUTIONS)[number],
+): FixtureEntry {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  // Construct local Date so getFullYear/getMonth/getDate inside adhan-js return exact Y, M, D
+  const date = new Date(y!, m! - 1, d!, 12, 0, 0);
+  const params = CalculationMethod[methodName]();
+  params.madhab = madhab === 'Hanafi' ? Madhab.Hanafi : Madhab.Shafi;
+  params.highLatitudeRule = HighLatitudeRule[hlName];
+  params.polarCircleResolution = PolarCircleResolution[polarName];
+
+  const pt = new PrayerTimes(new Coordinates(lat, lng), date, params);
+  const sunnah = new SunnahTimes(pt);
+
+  return {
+    city: name,
+    lat,
+    lng,
+    date: dateStr,
+    method: methodName,
+    madhab,
+    high_lat_rule: hlName,
+    polar_resolution: polarName,
+    fajr_ms: ms(pt.fajr),
+    sunrise_ms: ms(pt.sunrise),
+    dhuhr_ms: ms(pt.dhuhr),
+    asr_ms: ms(pt.asr),
+    sunset_ms: ms(pt.sunset),
+    maghrib_ms: ms(pt.maghrib),
+    isha_ms: ms(pt.isha),
+    midnight_ms: ms(sunnah.middleOfTheNight),
+    last_third_ms: ms(sunnah.lastThirdOfTheNight),
+  };
 }
 
 const fixtures: FixtureEntry[] = [];
 
+// 1. City matrix (build plan unit 1.1)
 for (const city of CITIES) {
-  const coords = new Coordinates(city.lat, city.lng);
-
   for (const dateStr of DATES) {
-    const [y, m, d] = dateStr.split('-').map(Number);
-    // Construct local Date so getFullYear/getMonth/getDate inside adhan-js return exact Y, M, D
-    const date = new Date(y!, m! - 1, d!, 12, 0, 0);
-
     for (const methodName of METHODS) {
       for (const madhab of ['Shafi', 'Hanafi'] as const) {
-        const methodFn = CalculationMethod[methodName];
-        const params = methodFn();
-        params.madhab = madhab === 'Hanafi' ? Madhab.Hanafi : Madhab.Shafi;
-
-        let hlName = 'MiddleOfTheNight';
-        if (Math.abs(city.lat) > 55) {
-          params.highLatitudeRule = HighLatitudeRule.SeventhOfTheNight;
-          hlName = 'SeventhOfTheNight';
-        }
-        if (Math.abs(city.lat) >= 64) {
-          params.polarCircleResolution = PolarCircleResolution.AqrabYaum;
-        }
-
-        const pt = new PrayerTimes(coords, date, params);
-        const sunnah = new SunnahTimes(pt);
-
-        fixtures.push({
-          city: city.name,
-          lat: city.lat,
-          lng: city.lng,
-          date: dateStr,
-          method: methodName,
-          madhab,
-          high_lat_rule: hlName,
-          fajr_ms: pt.fajr.getTime(),
-          sunrise_ms: pt.sunrise.getTime(),
-          dhuhr_ms: pt.dhuhr.getTime(),
-          asr_ms: pt.asr.getTime(),
-          sunset_ms: pt.sunset.getTime(),
-          maghrib_ms: pt.maghrib.getTime(),
-          isha_ms: pt.isha.getTime(),
-          midnight_ms: sunnah.middleOfTheNight.getTime(),
-          last_third_ms: sunnah.lastThirdOfTheNight.getTime(),
-        });
+        const hlName = Math.abs(city.lat) > 55 ? 'SeventhOfTheNight' : 'MiddleOfTheNight';
+        const polarName = Math.abs(city.lat) >= 64 ? 'AqrabYaum' : 'Unresolved';
+        fixtures.push(computeEntry(city.name, city.lat, city.lng, dateStr, methodName, madhab, hlName, polarName));
       }
     }
   }
+}
+
+// 2. Seeded random sweep: every high-latitude rule and polar resolver, polar and date-line
+//    longitudes, any day 2020-2030. Covers the night-fraction, rounding and polar-resolution
+//    paths the city matrix barely touches. Deterministic (fixed LCG seed).
+let seed = 20261111;
+const rnd = (): number => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+const pick = <T>(xs: readonly T[]): T => xs[Math.floor(rnd() * xs.length)]!;
+const pad = (n: number) => String(n).padStart(2, '0');
+const randomFixtures: FixtureEntry[] = [];
+const RANDOM_COUNT = 1500;
+for (let i = 0; i < RANDOM_COUNT; i++) {
+  const band = rnd();
+  const sign = rnd() < 0.5 ? -1 : 1;
+  const lat = band < 0.4 ? rnd() * 120 - 60 : band < 0.75 ? sign * (48 + rnd() * 20) : sign * (65 + rnd() * 24);
+  const lng = rnd() * 360 - 180;
+  const dateStr = `${2020 + Math.floor(rnd() * 11)}-${pad(1 + Math.floor(rnd() * 12))}-${pad(1 + Math.floor(rnd() * 28))}`;
+  randomFixtures.push(
+    computeEntry(`random-${i}`, Number(lat.toFixed(4)), Number(lng.toFixed(4)), dateStr, pick(METHODS),
+      rnd() < 0.5 ? 'Shafi' : 'Hanafi', pick(HIGH_LAT_RULES), pick(POLAR_RESOLUTIONS)),
+  );
 }
 
 const outDir = path.resolve(__dirname, '../../native/tests/fixtures');
@@ -134,5 +171,8 @@ if (!fs.existsSync(outDir)) {
 
 const outFile = path.join(outDir, 'prayer_fixtures.json');
 fs.writeFileSync(outFile, JSON.stringify(fixtures, null, 2), 'utf-8');
-
 console.log(`Generated ${fixtures.length} prayer time test fixtures -> ${outFile}`);
+
+const randomFile = path.join(outDir, 'prayer_fixtures_random.json');
+fs.writeFileSync(randomFile, JSON.stringify(randomFixtures) + '\n', 'utf-8');
+console.log(`Generated ${randomFixtures.length} random prayer time test fixtures -> ${randomFile}`);

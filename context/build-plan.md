@@ -163,7 +163,8 @@ StartupTask (`GetCurrentPackageFullName`). ✅ Toggle works in both modes.
 
 ## Phase 3: Taskbar Widget
 
-**3.1 Renderer**: Direct2D/DirectWrite text layout, cached text formats,
+**3.1 Renderer**: double-buffered GDI ClearType (`DrawTextW` + `BitBlt`, ADR 0003;
+Direct2D loads D3D11/DXGI and breaks the idle budget), cached fonts/DC/bitmap,
 redraw only when the string changes; minutes mode wakes once per minute.
 
 **3.2 Embedding + positioning** (from Spike B): DPI, auto-hide, taskbar

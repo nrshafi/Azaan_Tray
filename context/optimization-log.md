@@ -171,6 +171,14 @@
 - Golden: identical (SHA-256: `95aed7f803b3806d23a62fa88ff74455dda70a6b794e0a1d18900feb7501255a`)
 - Commit: `7ec958d`
 - Notes / next idea it suggests: Day+2 solar elimination delivered a 25.1% latency cut. Test compiler math optimizations (-fno-math-errno) and struct pointer passing next.
+- **2026-11-12 correction: partially REVERTED.** The deferred-tomorrow part was not output-preserving. It skipped the
+  night length when computing the next day's Fajr for Sunnah times, but adhan-js applies the safe-Fajr bound
+  there too, so midnight / last third were wrong whenever Fajr falls near solar midnight (e.g. lat -52 lng 50.8
+  2027-01-20: midnight off by 14 min; lat 0 lng -180: off by 219 min) and with polar resolvers. The golden
+  snapshot (12 cities x 12 dates) did not cover those inputs, so "identical" was true only for the matrix.
+  Tomorrow's solar time is now always computed when Fajr or angle-based Isha is requested. The
+  unrequested-prayer skips are kept. Cost: `calculate_times` 3.75 -> 4.47 us/call; `calculate_month` unchanged.
+  Lesson: a perf gate needs the full adhan-js fixture comparison (`make -C native test`), not only the CLI snapshot.
 
 #### #3 Add -fno-math-errno to Makefile OPTFLAGS: REJECTED
 - Hypothesis: Adding -fno-math-errno to OPTFLAGS in native/Makefile allows GCC to inline math builtins without errno setting overhead, reducing calculation latency by >= 3% while remaining byte-identical.

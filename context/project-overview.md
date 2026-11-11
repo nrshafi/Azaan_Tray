@@ -68,7 +68,7 @@ and the SRS disagree, **the context files win**. The deltas are listed in
 
 ### Taskbar Widget and Tray
 
-- Embedded taskbar widget (two lines, Direct2D/DirectWrite), with fallback
+- Embedded taskbar widget (two lines, GDI ClearType per ADR 0003), with fallback
   display modes: floating mini-window, or tray icon only.
 - Countdown modes: time to next Adhan, time to Jamaat, time left in the
   current prayer window.

@@ -1,6 +1,9 @@
 # scripts/golden-snapshot.ps1
-# Runs native/bin/azaan.exe --json across a fixed matrix of 12 cities x 12 dates
+# Runs native/bin/azaan.exe --json --utc across a fixed matrix of 12 cities x 12 dates
 # Generates or verifies the golden snapshot and outputs its SHA-256.
+# --utc keeps the snapshot independent of the machine's time zone.
+# This is a CLI smoke gate only; engine correctness is gated by `make -C native test`
+# (every adhan-js fixture, compared to the second).
 
 param (
     [string]$OutputFile = "",
@@ -15,12 +18,10 @@ $goldenDir = Join-Path $repoRoot "native\tests\golden"
 $baselineFile = Join-Path $goldenDir "baseline.json"
 $snapshotFile = Join-Path $goldenDir "snapshot.json"
 
-if (-not (Test-Path $exePath)) {
-    Write-Host "[golden-snapshot] azaan.exe not found, building..."
-    & make -C (Join-Path $repoRoot "native") cli
-    if ($LASTEXITCODE -ne 0) {
-        throw "Failed to build native/bin/azaan.exe"
-    }
+# Always run make (incremental) so a stale azaan.exe is never snapshotted
+& make -C (Join-Path $repoRoot "native") cli
+if ($LASTEXITCODE -ne 0) {
+    throw "Failed to build native/bin/azaan.exe"
 }
 
 if (-not (Test-Path $goldenDir)) {
@@ -74,7 +75,7 @@ foreach ($c in $cities) {
     foreach ($d in $dates) {
         $pinfo = [System.Diagnostics.ProcessStartInfo]::new()
         $pinfo.FileName = $exePath
-        $pinfo.Arguments = "--json --date $d --lat $latStr --lng $lngStr"
+        $pinfo.Arguments = "--json --utc --date $d --lat $latStr --lng $lngStr"
         $pinfo.RedirectStandardOutput = $true
         $pinfo.RedirectStandardError = $true
         $pinfo.UseShellExecute = $false

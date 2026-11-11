@@ -377,24 +377,21 @@ static double hours_to_truncated_seconds(double hours) {
 }
 
 /*
- * Round seconds from 00:00:00 UTC according to Rounding rule, matching adhan-js DateUtils.roundedMinute
+ * Round seconds from 00:00:00 UTC according to Rounding rule, matching adhan-js DateUtils.roundedMinute.
+ * adhan-js decides the direction from Date.getUTCSeconds(), i.e. the whole-second component with any
+ * sub-second fraction truncated. Night-fraction paths (high-latitude rules, Sunnah times) produce
+ * fractional seconds, so the fraction is dropped first and the result lands exactly on a minute
+ * boundary (adhan-js keeps the stray milliseconds; the minute it picks is identical).
+ * ROUNDING_UP mirrors adhan-js exactly, including adding a full minute when seconds are already 0.
  */
 static double round_seconds_to_minutes(double total_seconds, rounding_rule_t rounding) {
     if (isnan(total_seconds)) return NAN;
-    /* Extract positive modulo 60 seconds */
-    double sec = fmod(total_seconds, 60.0);
-    if (sec < 0.0) sec += 60.0;
-    /* Round sec to nearest integer to avoid floating point representation drift */
-    int sec_int = (int)llround(sec);
-    if (sec_int == 60) sec_int = 0;
+    if (rounding == ROUNDING_NONE) return total_seconds / 60.0;
 
-    double offset = (sec_int >= 30) ? (double)(60 - sec_int) : (double)(-sec_int);
-    if (rounding == ROUNDING_UP) {
-        offset = (double)(60 - sec_int);
-    } else if (rounding == ROUNDING_NONE) {
-        offset = 0.0;
-    }
-    return (total_seconds + offset) / 60.0;
+    double whole = floor(total_seconds);
+    double sec = whole - 60.0 * floor(whole / 60.0); /* integer in [0, 59], also for negative times */
+    double offset = (rounding == ROUNDING_UP || sec >= 30.0) ? (60.0 - sec) : -sec;
+    return (whole + offset) / 60.0;
 }
 
 /* Moonsighting Committee seasonal twilight helpers (Astronomical.js lines 265-354) */
@@ -497,11 +494,13 @@ static bool resolve_polar_circle(
             }
         }
     } else if (resolver == POLAR_AQRAB_BALAD) {
+        /* adhan-js aqrabBaladResolver: always test the first stepped latitude, and only stop
+         * stepping after a failed test at a latitude below 65 deg (so the last test may be < 65). */
         double sign = (lat_deg >= 0.0) ? 1.0 : -1.0;
         double test_lat = lat_deg - sign * 0.5;
         double jd_day = engine_julian_day(year, month, day);
 
-        while (fabs(test_lat) >= 65.0) {
+        for (;;) {
             solar_time_t st1, st2;
             init_solar_time(&st1, jd_day, test_lat, lng_deg);
             init_solar_time(&st2, jd_day + 1.0, test_lat, lng_deg);
@@ -510,6 +509,7 @@ static bool resolve_polar_circle(
                 *io_tomorrow_solar_time = st2;
                 return true;
             }
+            if (fabs(test_lat) < 65.0) break;
             test_lat -= sign * 0.5;
         }
     }
@@ -631,18 +631,23 @@ static bool compute_day_prayers(
         init_solar_time(&solar_time, jd, lat_deg, lng_deg);
     }
 
+    const bool polar_enabled = (settings->polar_resolution != POLAR_UNRESOLVED);
+
     double fajr_sec = NAN;
     if (out_fajr_min) {
         fajr_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->fajr_angle_deg, false));
     }
 
-    bool need_tomorrow = (out_solar_tomorrow != NULL) ||
-                         (out_isha_min != NULL && settings->isha_interval_min == 0) ||
-                         (out_fajr_min != NULL && (
-                             isnan(fajr_sec) ||
-                             (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0) ||
-                             (settings->method != CALC_METHOD_MOONSIGHTING && settings->high_lat_rule != HIGH_LAT_MIDDLE_OF_NIGHT)
-                         ));
+    /*
+     * adhan-js always derives the night length from tomorrow's sunrise: the safe-Fajr bound
+     * (sunrise - portion * night) can override the angle-based Fajr even with the middle-of-the-night
+     * rule when Fajr falls near solar midnight, and tomorrow's sunrise also decides whether polar
+     * resolution runs. Only an interval-Isha-only request can skip it.
+     */
+    bool need_tomorrow = polar_enabled ||
+                         (out_solar_tomorrow != NULL) ||
+                         (out_fajr_min != NULL) ||
+                         (out_isha_min != NULL && settings->isha_interval_min == 0);
 
     solar_time_t tomorrow_solar_time;
     if (need_tomorrow) {
@@ -655,17 +660,19 @@ static bool compute_day_prayers(
             &next_tomorrow
         );
 
-        if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours) || isnan(tomorrow_solar_time.sunrise_hours)) &&
-            settings->polar_resolution != POLAR_UNRESOLVED) {
-            resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &tomorrow_solar_time);
-        }
-
+        /*
+         * Hand back the real (unresolved) tomorrow: the next day runs its own polar resolution,
+         * exactly like adhan-js builds a fresh PrayerTimes for SunnahTimes and for each day.
+         */
         if (out_solar_tomorrow) *out_solar_tomorrow = tomorrow_solar_time;
-    } else {
-        if ((isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours)) &&
-            settings->polar_resolution != POLAR_UNRESOLVED) {
-            solar_time_t dummy_tomorrow;
-            resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &dummy_tomorrow);
+
+        if (polar_enabled &&
+            (isnan(solar_time.sunrise_hours) || isnan(solar_time.sunset_hours) || isnan(tomorrow_solar_time.sunrise_hours))) {
+            if (resolve_polar_circle(settings->polar_resolution, year, month, day, lat_deg, lng_deg, &solar_time, &tomorrow_solar_time) &&
+                out_fajr_min) {
+                /* adhan-js computes Fajr from the resolved solar time */
+                fajr_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->fajr_angle_deg, false));
+            }
         }
     }
 
@@ -702,7 +709,8 @@ static bool compute_day_prayers(
 
     /* Finalize Fajr */
     if (out_fajr_min) {
-        if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunrise_sec) && !isnan(night_sec)) {
+        /* adhan-js applies this unconditionally: with no sunrise (polar night) Fajr becomes NaN */
+        if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0) {
             fajr_sec = sunrise_sec - (night_sec / 7.0);
         }
 
@@ -734,7 +742,8 @@ static bool compute_day_prayers(
             }
         } else {
             isha_sec = hours_to_truncated_seconds(solar_time_hour_angle(&solar_time, -settings->isha_angle_deg, true));
-            if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0 && !isnan(sunset_sec) && !isnan(night_sec)) {
+            /* adhan-js applies this unconditionally: with no sunset Isha becomes NaN */
+            if (settings->method == CALC_METHOD_MOONSIGHTING && lat_deg >= 55.0) {
                 isha_sec = sunset_sec + (night_sec / 7.0);
             }
 
@@ -861,7 +870,9 @@ bool engine_calculate_times(
     prayer_times_t* out_times
 ) {
     if (!settings || !out_times) return false;
-    if (lat_deg < -90.0 || lat_deg > 90.0 || lng_deg < -180.0 || lng_deg > 180.0) return false;
+    if (!(lat_deg >= -90.0 && lat_deg <= 90.0 && lng_deg >= -180.0 && lng_deg <= 180.0)) return false; /* also rejects NaN */
+    if (month < 1 || month > 12 || day < 1 || day > get_days_in_month(year, month)) return false;
+    if ((unsigned)settings->method >= (unsigned)CALC_METHOD_COUNT) return false;
 
     double jd = engine_julian_day(year, month, day);
     solar_time_t tomorrow_solar;
@@ -908,7 +919,8 @@ bool engine_calculate_month(
 ) {
     if (!settings || !out_times) return false;
     if (month < 1 || month > 12) return false;
-    if (lat_deg < -90.0 || lat_deg > 90.0 || lng_deg < -180.0 || lng_deg > 180.0) return false;
+    if (!(lat_deg >= -90.0 && lat_deg <= 90.0 && lng_deg >= -180.0 && lng_deg <= 180.0)) return false; /* also rejects NaN */
+    if ((unsigned)settings->method >= (unsigned)CALC_METHOD_COUNT) return false;
 
     int num_days = get_days_in_month(year, month);
     if (out_day_count) {

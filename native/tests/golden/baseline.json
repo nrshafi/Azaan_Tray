@@ -3,15 +3,15 @@
   "hijri": "13 Dhu al-Hijjah 1445",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "03:44",
-    "sunrise": "05:12",
-    "dhuhr": "12:01",
-    "asr": "16:41",
-    "sunset": "18:48",
-    "maghrib": "18:48",
-    "isha": "20:16",
-    "midnight": "23:16",
-    "last_third": "00:45"
+    "fajr": "21:44",
+    "sunrise": "23:12",
+    "dhuhr": "06:01",
+    "asr": "10:41",
+    "sunset": "12:48",
+    "maghrib": "12:48",
+    "isha": "14:16",
+    "midnight": "17:16",
+    "last_third": "18:45"
   }
 }
 ---
@@ -20,15 +20,15 @@
   "hijri": "19 Jumada al-Akhirah 1446",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "05:16",
-    "sunrise": "06:37",
-    "dhuhr": "11:58",
-    "asr": "15:41",
-    "sunset": "17:17",
-    "maghrib": "17:17",
-    "isha": "18:37",
-    "midnight": "23:17",
-    "last_third": "01:16"
+    "fajr": "23:16",
+    "sunrise": "00:37",
+    "dhuhr": "05:58",
+    "asr": "09:41",
+    "sunset": "11:17",
+    "maghrib": "11:17",
+    "isha": "12:37",
+    "midnight": "17:17",
+    "last_third": "19:16"
   }
 }
 ---
@@ -37,15 +37,15 @@
   "hijri": "10 Ramadan 1445",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "04:47",
-    "sunrise": "06:02",
-    "dhuhr": "12:07",
-    "asr": "16:28",
-    "sunset": "18:10",
-    "maghrib": "18:10",
-    "isha": "19:25",
-    "midnight": "23:28",
-    "last_third": "01:14"
+    "fajr": "22:47",
+    "sunrise": "00:02",
+    "dhuhr": "06:07",
+    "asr": "10:28",
+    "sunset": "12:10",
+    "maghrib": "12:10",
+    "isha": "13:25",
+    "midnight": "17:28",
+    "last_third": "19:14"
   }
 }
 ---
@@ -54,15 +54,15 @@
   "hijri": "18 Rabi' al-Awwal 1446",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "04:32",
-    "sunrise": "05:47",
-    "dhuhr": "11:52",
-    "asr": "16:13",
-    "sunset": "17:55",
-    "maghrib": "17:55",
-    "isha": "19:10",
-    "midnight": "23:14",
-    "last_third": "01:00"
+    "fajr": "22:32",
+    "sunrise": "23:47",
+    "dhuhr": "05:52",
+    "asr": "10:13",
+    "sunset": "11:55",
+    "maghrib": "11:55",
+    "isha": "13:10",
+    "midnight": "17:14",
+    "last_third": "19:00"
   }
 }
 ---
@@ -71,15 +71,15 @@
   "hijri": "19 Sha'ban 1445",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "05:06",
-    "sunrise": "06:21",
-    "dhuhr": "12:12",
-    "asr": "16:23",
-    "sunset": "18:01",
-    "maghrib": "18:01",
-    "isha": "19:16",
-    "midnight": "23:33",
-    "last_third": "01:24"
+    "fajr": "23:06",
+    "sunrise": "00:21",
+    "dhuhr": "06:12",
+    "asr": "10:23",
+    "sunset": "12:01",
+    "maghrib": "12:01",
+    "isha": "13:16",
+    "midnight": "17:33",
+    "last_third": "19:24"
   }
 }
 ---
@@ -88,15 +88,15 @@
   "hijri": "18 Jumada al-Akhirah 1445",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "05:20",
-    "sunrise": "06:40",
-    "dhuhr": "12:02",
-    "asr": "15:46",
-    "sunset": "17:22",
-    "maghrib": "17:22",
-    "isha": "18:42",
-    "midnight": "23:21",
-    "last_third": "01:21"
+    "fajr": "23:20",
+    "sunrise": "00:40",
+    "dhuhr": "06:02",
+    "asr": "09:46",
+    "sunset": "11:22",
+    "maghrib": "11:22",
+    "isha": "12:42",
+    "midnight": "17:21",
+    "last_third": "19:21"
   }
 }
 ---
@@ -105,15 +105,15 @@
   "hijri": "19 Jumada al-Akhirah 1445",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "05:20",
-    "sunrise": "06:41",
-    "dhuhr": "12:03",
-    "asr": "15:47",
-    "sunset": "17:22",
-    "maghrib": "17:22",
-    "isha": "18:43",
-    "midnight": "23:21",
-    "last_third": "01:21"
+    "fajr": "23:20",
+    "sunrise": "00:41",
+    "dhuhr": "06:03",
+    "asr": "09:47",
+    "sunset": "11:22",
+    "maghrib": "11:22",
+    "isha": "12:43",
+    "midnight": "17:21",
+    "last_third": "19:21"
   }
 }
 ---
@@ -122,15 +122,15 @@
   "hijri": "2 Ramadan 1445",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "04:55",
-    "sunrise": "06:10",
-    "dhuhr": "12:09",
-    "asr": "16:26",
-    "sunset": "18:06",
-    "maghrib": "18:06",
-    "isha": "19:21",
-    "midnight": "23:30",
-    "last_third": "01:18"
+    "fajr": "22:55",
+    "sunrise": "00:10",
+    "dhuhr": "06:09",
+    "asr": "10:26",
+    "sunset": "12:06",
+    "maghrib": "12:06",
+    "isha": "13:21",
+    "midnight": "17:30",
+    "last_third": "19:18"
   }
 }
 ---
@@ -139,15 +139,15 @@
   "hijri": "8 Muharram 1446",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "03:55",
-    "sunrise": "05:20",
-    "dhuhr": "12:05",
-    "asr": "16:44",
-    "sunset": "18:48",
-    "maghrib": "18:48",
-    "isha": "20:14",
-    "midnight": "23:22",
-    "last_third": "00:53"
+    "fajr": "21:55",
+    "sunrise": "23:20",
+    "dhuhr": "06:05",
+    "asr": "10:44",
+    "sunset": "12:48",
+    "maghrib": "12:48",
+    "isha": "14:14",
+    "midnight": "17:22",
+    "last_third": "18:53"
   }
 }
 ---
@@ -156,14 +156,422 @@
   "hijri": "4 Rajab 1445",
   "location": { "lat": 23.8103, "lng": 90.4125 },
   "times": {
-    "fajr": "05:23",
-    "sunrise": "06:43",
+    "fajr": "23:23",
+    "sunrise": "00:43",
+    "dhuhr": "06:08",
+    "asr": "09:56",
+    "sunset": "11:32",
+    "maghrib": "11:32",
+    "isha": "12:52",
+    "midnight": "17:28",
+    "last_third": "19:26"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": 23.8103, "lng": 90.4125 },
+  "times": {
+    "fajr": "21:44",
+    "sunrise": "23:12",
+    "dhuhr": "06:01",
+    "asr": "10:41",
+    "sunset": "12:48",
+    "maghrib": "12:48",
+    "isha": "14:16",
+    "midnight": "17:16",
+    "last_third": "18:45"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 23.8103, "lng": 90.4125 },
+  "times": {
+    "fajr": "22:47",
+    "sunrise": "00:02",
+    "dhuhr": "06:07",
+    "asr": "10:28",
+    "sunset": "12:10",
+    "maghrib": "12:10",
+    "isha": "13:25",
+    "midnight": "17:28",
+    "last_third": "19:14"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "01:14",
+    "sunrise": "02:39",
+    "dhuhr": "09:23",
+    "asr": "14:01",
+    "sunset": "16:06",
+    "maghrib": "16:06",
+    "isha": "17:31",
+    "midnight": "20:40",
+    "last_third": "22:11"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:35",
+    "sunrise": "03:54",
+    "dhuhr": "09:20",
+    "asr": "13:08",
+    "sunset": "14:44",
+    "maghrib": "14:44",
+    "isha": "16:03",
+    "midnight": "20:40",
+    "last_third": "22:38"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:11",
+    "sunrise": "03:25",
+    "dhuhr": "09:29",
+    "asr": "13:50",
+    "sunset": "15:32",
+    "maghrib": "15:32",
+    "isha": "16:46",
+    "midnight": "20:51",
+    "last_third": "22:37"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "01:56",
+    "sunrise": "03:10",
+    "dhuhr": "09:14",
+    "asr": "13:35",
+    "sunset": "15:17",
+    "maghrib": "15:17",
+    "isha": "16:31",
+    "midnight": "20:37",
+    "last_third": "22:23"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:28",
+    "sunrise": "03:42",
+    "dhuhr": "09:34",
+    "asr": "13:47",
+    "sunset": "15:25",
+    "maghrib": "15:25",
+    "isha": "16:39",
+    "midnight": "20:56",
+    "last_third": "22:46"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:39",
+    "sunrise": "03:58",
+    "dhuhr": "09:24",
+    "asr": "13:13",
+    "sunset": "14:49",
+    "maghrib": "14:49",
+    "isha": "16:08",
+    "midnight": "20:44",
+    "last_third": "22:42"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:39",
+    "sunrise": "03:58",
+    "dhuhr": "09:25",
+    "asr": "13:14",
+    "sunset": "14:50",
+    "maghrib": "14:50",
+    "isha": "16:09",
+    "midnight": "20:45",
+    "last_third": "22:43"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:18",
+    "sunrise": "03:32",
+    "dhuhr": "09:31",
+    "asr": "13:50",
+    "sunset": "15:29",
+    "maghrib": "15:29",
+    "isha": "16:43",
+    "midnight": "20:53",
+    "last_third": "22:41"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "01:24",
+    "sunrise": "02:47",
+    "dhuhr": "09:28",
+    "asr": "14:02",
+    "sunset": "16:06",
+    "maghrib": "16:06",
+    "isha": "17:29",
+    "midnight": "20:45",
+    "last_third": "22:18"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:43",
+    "sunrise": "04:01",
+    "dhuhr": "09:31",
+    "asr": "13:23",
+    "sunset": "14:59",
+    "maghrib": "14:59",
+    "isha": "16:17",
+    "midnight": "20:51",
+    "last_third": "22:48"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "01:14",
+    "sunrise": "02:39",
+    "dhuhr": "09:23",
+    "asr": "14:01",
+    "sunset": "16:06",
+    "maghrib": "16:06",
+    "isha": "17:31",
+    "midnight": "20:40",
+    "last_third": "22:11"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 21.4225, "lng": 39.8262 },
+  "times": {
+    "fajr": "02:10",
+    "sunrise": "03:24",
+    "dhuhr": "09:29",
+    "asr": "13:50",
+    "sunset": "15:32",
+    "maghrib": "15:32",
+    "isha": "16:46",
+    "midnight": "20:51",
+    "last_third": "22:37"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "00:02",
+    "sunrise": "03:43",
+    "dhuhr": "12:03",
+    "asr": "17:40",
+    "sunset": "20:21",
+    "maghrib": "20:21",
+    "isha": "00:02",
+    "midnight": "22:12",
+    "last_third": "22:48"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "06:00",
+    "sunrise": "08:04",
+    "dhuhr": "12:00",
+    "asr": "14:07",
+    "sunset": "15:54",
+    "maghrib": "15:54",
+    "isha": "17:58",
+    "midnight": "22:57",
+    "last_third": "01:18"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "04:09",
+    "sunrise": "06:02",
+    "dhuhr": "12:09",
+    "asr": "16:17",
+    "sunset": "18:14",
+    "maghrib": "18:14",
+    "isha": "20:09",
+    "midnight": "23:10",
+    "last_third": "00:49"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "03:53",
+    "sunrise": "05:47",
+    "dhuhr": "11:54",
+    "asr": "16:00",
+    "sunset": "17:58",
+    "maghrib": "17:58",
+    "isha": "19:51",
+    "midnight": "22:57",
+    "last_third": "00:36"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "04:56",
+    "sunrise": "06:47",
+    "dhuhr": "12:14",
+    "asr": "15:48",
+    "sunset": "17:40",
+    "maghrib": "17:40",
+    "isha": "19:31",
+    "midnight": "23:17",
+    "last_third": "01:09"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "06:03",
+    "sunrise": "08:06",
+    "dhuhr": "12:04",
+    "asr": "14:14",
+    "sunset": "16:01",
+    "maghrib": "16:01",
+    "isha": "18:04",
+    "midnight": "23:02",
+    "last_third": "01:22"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "06:03",
+    "sunrise": "08:06",
+    "dhuhr": "12:05",
+    "asr": "14:15",
+    "sunset": "16:02",
+    "maghrib": "16:02",
+    "isha": "18:05",
+    "midnight": "23:03",
+    "last_third": "01:23"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "04:29",
+    "sunrise": "06:20",
+    "dhuhr": "12:11",
+    "asr": "16:06",
+    "sunset": "18:01",
+    "maghrib": "18:01",
+    "isha": "19:53",
+    "midnight": "23:14",
+    "last_third": "00:58"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "00:06",
+    "sunrise": "04:01",
     "dhuhr": "12:08",
-    "asr": "15:56",
-    "sunset": "17:32",
-    "maghrib": "17:32",
-    "isha": "18:52",
-    "midnight": "23:28",
+    "asr": "17:36",
+    "sunset": "20:11",
+    "maghrib": "20:11",
+    "isha": "00:07",
+    "midnight": "22:09",
+    "last_third": "22:48"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "05:59",
+    "sunrise": "08:00",
+    "dhuhr": "12:11",
+    "asr": "14:33",
+    "sunset": "16:20",
+    "maghrib": "16:20",
+    "isha": "18:21",
+    "midnight": "23:10",
     "last_third": "01:26"
   }
 }
@@ -171,1972 +579,1564 @@
 {
   "date": "2023-06-21",
   "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 23.8103, "lng": 90.4125 },
-  "times": {
-    "fajr": "03:44",
-    "sunrise": "05:12",
-    "dhuhr": "12:01",
-    "asr": "16:41",
-    "sunset": "18:48",
-    "maghrib": "18:48",
-    "isha": "20:16",
-    "midnight": "23:16",
-    "last_third": "00:45"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": 23.8103, "lng": 90.4125 },
-  "times": {
-    "fajr": "04:47",
-    "sunrise": "06:02",
-    "dhuhr": "12:07",
-    "asr": "16:28",
-    "sunset": "18:10",
-    "maghrib": "18:10",
-    "isha": "19:25",
-    "midnight": "23:28",
-    "last_third": "01:14"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "07:14",
-    "sunrise": "08:39",
-    "dhuhr": "15:23",
-    "asr": "20:01",
-    "sunset": "22:06",
-    "maghrib": "22:06",
-    "isha": "23:31",
-    "midnight": "02:40",
-    "last_third": "04:11"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:35",
-    "sunrise": "09:54",
-    "dhuhr": "15:20",
-    "asr": "19:08",
-    "sunset": "20:44",
-    "maghrib": "20:44",
-    "isha": "22:03",
-    "midnight": "02:40",
-    "last_third": "04:38"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:11",
-    "sunrise": "09:25",
-    "dhuhr": "15:29",
-    "asr": "19:50",
-    "sunset": "21:32",
-    "maghrib": "21:32",
-    "isha": "22:46",
-    "midnight": "02:51",
-    "last_third": "04:37"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "07:56",
-    "sunrise": "09:10",
-    "dhuhr": "15:14",
-    "asr": "19:35",
-    "sunset": "21:17",
-    "maghrib": "21:17",
-    "isha": "22:31",
-    "midnight": "02:37",
-    "last_third": "04:23"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:28",
-    "sunrise": "09:42",
-    "dhuhr": "15:34",
-    "asr": "19:47",
-    "sunset": "21:25",
-    "maghrib": "21:25",
-    "isha": "22:39",
-    "midnight": "02:56",
-    "last_third": "04:46"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:39",
-    "sunrise": "09:58",
-    "dhuhr": "15:24",
-    "asr": "19:13",
-    "sunset": "20:49",
-    "maghrib": "20:49",
-    "isha": "22:08",
-    "midnight": "02:44",
-    "last_third": "04:42"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:39",
-    "sunrise": "09:58",
-    "dhuhr": "15:25",
-    "asr": "19:14",
-    "sunset": "20:50",
-    "maghrib": "20:50",
-    "isha": "22:09",
-    "midnight": "02:45",
-    "last_third": "04:43"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:18",
-    "sunrise": "09:32",
-    "dhuhr": "15:31",
-    "asr": "19:50",
-    "sunset": "21:29",
-    "maghrib": "21:29",
-    "isha": "22:43",
-    "midnight": "02:53",
-    "last_third": "04:41"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "07:24",
-    "sunrise": "08:47",
-    "dhuhr": "15:28",
-    "asr": "20:02",
-    "sunset": "22:06",
-    "maghrib": "22:06",
-    "isha": "23:29",
-    "midnight": "02:45",
-    "last_third": "04:18"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:43",
-    "sunrise": "10:01",
-    "dhuhr": "15:31",
-    "asr": "19:23",
-    "sunset": "20:59",
-    "maghrib": "20:59",
-    "isha": "22:17",
-    "midnight": "02:51",
-    "last_third": "04:48"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "07:14",
-    "sunrise": "08:39",
-    "dhuhr": "15:23",
-    "asr": "20:01",
-    "sunset": "22:06",
-    "maghrib": "22:06",
-    "isha": "23:31",
-    "midnight": "02:40",
-    "last_third": "04:11"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": 21.4225, "lng": 39.8262 },
-  "times": {
-    "fajr": "08:10",
-    "sunrise": "09:24",
-    "dhuhr": "15:29",
-    "asr": "19:50",
-    "sunset": "21:32",
-    "maghrib": "21:32",
-    "isha": "22:46",
-    "midnight": "02:51",
-    "last_third": "04:37"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
   "location": { "lat": 51.5074, "lng": -0.1278 },
   "times": {
-    "fajr": "06:01",
-    "sunrise": "09:43",
-    "dhuhr": "18:03",
-    "asr": "23:40",
-    "sunset": "02:21",
-    "maghrib": "02:21",
-    "isha": "06:01",
-    "midnight": "04:12",
-    "last_third": "04:48"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "12:00",
-    "sunrise": "14:04",
-    "dhuhr": "18:00",
-    "asr": "20:07",
-    "sunset": "21:54",
-    "maghrib": "21:54",
-    "isha": "23:58",
-    "midnight": "04:57",
-    "last_third": "07:18"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "10:09",
-    "sunrise": "12:02",
-    "dhuhr": "18:09",
-    "asr": "22:17",
-    "sunset": "00:14",
-    "maghrib": "00:14",
-    "isha": "02:09",
-    "midnight": "05:10",
-    "last_third": "06:49"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "09:53",
-    "sunrise": "11:47",
-    "dhuhr": "17:54",
-    "asr": "22:00",
-    "sunset": "23:58",
-    "maghrib": "23:58",
-    "isha": "01:51",
-    "midnight": "04:57",
-    "last_third": "06:36"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "10:56",
-    "sunrise": "12:47",
-    "dhuhr": "18:14",
-    "asr": "21:48",
-    "sunset": "23:40",
-    "maghrib": "23:40",
-    "isha": "01:31",
-    "midnight": "05:17",
-    "last_third": "07:09"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "12:03",
-    "sunrise": "14:06",
-    "dhuhr": "18:04",
-    "asr": "20:14",
-    "sunset": "22:01",
-    "maghrib": "22:01",
-    "isha": "00:04",
-    "midnight": "05:02",
-    "last_third": "07:22"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "12:03",
-    "sunrise": "14:06",
-    "dhuhr": "18:05",
-    "asr": "20:15",
-    "sunset": "22:02",
-    "maghrib": "22:02",
-    "isha": "00:05",
-    "midnight": "05:03",
-    "last_third": "07:23"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "10:29",
-    "sunrise": "12:20",
-    "dhuhr": "18:11",
-    "asr": "22:06",
-    "sunset": "00:01",
-    "maghrib": "00:01",
-    "isha": "01:53",
-    "midnight": "05:14",
-    "last_third": "06:58"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "06:05",
-    "sunrise": "10:01",
-    "dhuhr": "18:08",
-    "asr": "23:36",
-    "sunset": "02:11",
-    "maghrib": "02:11",
-    "isha": "06:06",
-    "midnight": "04:08",
-    "last_third": "04:47"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "11:59",
-    "sunrise": "14:00",
-    "dhuhr": "18:11",
-    "asr": "20:33",
-    "sunset": "22:20",
-    "maghrib": "22:20",
-    "isha": "00:21",
-    "midnight": "05:10",
-    "last_third": "07:26"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "06:01",
-    "sunrise": "09:43",
-    "dhuhr": "18:03",
-    "asr": "23:40",
-    "sunset": "02:22",
-    "maghrib": "02:22",
-    "isha": "06:01",
-    "midnight": "04:12",
-    "last_third": "04:49"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": 51.5074, "lng": -0.1278 },
-  "times": {
-    "fajr": "10:08",
-    "sunrise": "12:02",
-    "dhuhr": "18:09",
-    "asr": "22:17",
-    "sunset": "00:15",
-    "maghrib": "00:15",
-    "isha": "02:09",
-    "midnight": "05:11",
-    "last_third": "06:49"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "05:18",
-    "sunrise": "07:54",
-    "dhuhr": "17:20",
-    "asr": "23:19",
-    "sunset": "02:44",
-    "maghrib": "02:44",
-    "isha": "05:18",
-    "midnight": "04:01",
-    "last_third": "04:26"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "11:33",
-    "sunrise": "14:18",
-    "dhuhr": "17:16",
-    "asr": "18:26",
-    "sunset": "20:12",
-    "maghrib": "20:12",
-    "isha": "22:58",
-    "midnight": "03:53",
-    "last_third": "06:26"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "08:52",
-    "sunrise": "11:17",
-    "dhuhr": "17:25",
-    "asr": "21:22",
-    "sunset": "23:33",
-    "maghrib": "23:33",
-    "isha": "01:59",
-    "midnight": "04:11",
-    "last_third": "05:43"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "08:36",
-    "sunrise": "11:02",
-    "dhuhr": "17:11",
-    "asr": "21:04",
-    "sunset": "23:16",
-    "maghrib": "23:16",
-    "isha": "01:40",
-    "midnight": "03:58",
-    "last_third": "05:31"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "09:59",
-    "sunrise": "12:17",
-    "dhuhr": "17:30",
-    "asr": "20:40",
-    "sunset": "22:43",
-    "maghrib": "22:43",
-    "isha": "01:02",
-    "midnight": "04:20",
-    "last_third": "06:12"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "11:35",
-    "sunrise": "14:19",
-    "dhuhr": "17:21",
-    "asr": "18:34",
-    "sunset": "20:21",
-    "maghrib": "20:21",
-    "isha": "23:05",
-    "midnight": "03:58",
-    "last_third": "06:30"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "11:35",
-    "sunrise": "14:19",
-    "dhuhr": "17:21",
-    "asr": "18:36",
+    "fajr": "00:02",
+    "sunrise": "03:43",
+    "dhuhr": "12:03",
+    "asr": "17:40",
     "sunset": "20:22",
     "maghrib": "20:22",
-    "isha": "23:06",
-    "midnight": "03:59",
-    "last_third": "06:31"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "09:21",
-    "sunrise": "11:42",
-    "dhuhr": "17:28",
-    "asr": "21:06",
-    "sunset": "23:13",
-    "maghrib": "23:13",
-    "isha": "01:35",
-    "midnight": "04:15",
-    "last_third": "05:56"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "05:21",
-    "sunrise": "08:22",
-    "dhuhr": "17:24",
-    "asr": "23:12",
-    "sunset": "02:23",
-    "maghrib": "02:23",
-    "isha": "05:23",
-    "midnight": "03:51",
-    "last_third": "04:21"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "11:28",
-    "sunrise": "14:05",
-    "dhuhr": "17:27",
-    "asr": "18:59",
-    "sunset": "20:48",
-    "maghrib": "20:48",
-    "isha": "23:25",
-    "midnight": "04:08",
-    "last_third": "06:34"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "05:19",
-    "sunrise": "07:54",
-    "dhuhr": "17:20",
-    "asr": "23:19",
-    "sunset": "02:44",
-    "maghrib": "02:44",
-    "isha": "05:19",
-    "midnight": "04:01",
-    "last_third": "04:26"
+    "isha": "00:02",
+    "midnight": "22:12",
+    "last_third": "22:49"
   }
 }
 ---
 {
   "date": "2023-03-21",
   "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 51.5074, "lng": -0.1278 },
+  "times": {
+    "fajr": "04:08",
+    "sunrise": "06:02",
+    "dhuhr": "12:09",
+    "asr": "16:17",
+    "sunset": "18:15",
+    "maghrib": "18:15",
+    "isha": "20:09",
+    "midnight": "23:11",
+    "last_third": "00:49"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
   "location": { "lat": 59.9139, "lng": 10.7522 },
-  "times": {
-    "fajr": "08:51",
-    "sunrise": "11:17",
-    "dhuhr": "17:25",
-    "asr": "21:22",
-    "sunset": "23:33",
-    "maghrib": "23:33",
-    "isha": "02:00",
-    "midnight": "04:11",
-    "last_third": "05:43"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "--:--",
-    "sunrise": "--:--",
-    "dhuhr": "16:47",
-    "asr": "23:30",
-    "sunset": "--:--",
-    "maghrib": "--:--",
-    "isha": "--:--",
-    "midnight": "--:--",
-    "last_third": "--:--"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "11:29",
-    "sunrise": "--:--",
-    "dhuhr": "16:43",
-    "asr": "17:29",
-    "sunset": "--:--",
-    "maghrib": "--:--",
-    "isha": "21:56",
-    "midnight": "--:--",
-    "last_third": "--:--"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "06:42",
-    "sunrise": "10:42",
-    "dhuhr": "16:53",
-    "asr": "20:27",
-    "sunset": "23:03",
-    "maghrib": "23:03",
-    "isha": "03:09",
-    "midnight": "02:48",
-    "last_third": "04:02"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "06:21",
-    "sunrise": "10:26",
-    "dhuhr": "16:38",
-    "asr": "20:08",
-    "sunset": "22:46",
-    "maghrib": "22:46",
-    "isha": "02:44",
-    "midnight": "02:38",
-    "last_third": "03:55"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "08:49",
-    "sunrise": "12:13",
-    "dhuhr": "16:58",
-    "asr": "19:23",
-    "sunset": "21:42",
-    "maghrib": "21:42",
-    "isha": "01:07",
-    "midnight": "03:14",
-    "last_third": "05:04"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "11:29",
-    "sunrise": "--:--",
-    "dhuhr": "16:48",
-    "asr": "17:31",
-    "sunset": "--:--",
-    "maghrib": "--:--",
-    "isha": "22:05",
-    "midnight": "--:--",
-    "last_third": "--:--"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "11:29",
-    "sunrise": "--:--",
-    "dhuhr": "16:48",
-    "asr": "17:30",
-    "sunset": "--:--",
-    "maghrib": "--:--",
-    "isha": "22:06",
-    "midnight": "--:--",
-    "last_third": "--:--"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "07:43",
-    "sunrise": "11:18",
-    "dhuhr": "16:55",
-    "asr": "20:02",
-    "sunset": "22:32",
-    "maghrib": "22:32",
-    "isha": "02:10",
-    "midnight": "03:04",
-    "last_third": "04:35"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "--:--",
-    "sunrise": "--:--",
-    "dhuhr": "16:51",
-    "asr": "23:16",
-    "sunset": "--:--",
-    "maghrib": "--:--",
-    "isha": "--:--",
-    "midnight": "--:--",
-    "last_third": "--:--"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "11:15",
-    "sunrise": "--:--",
-    "dhuhr": "16:54",
-    "asr": "17:25",
-    "sunset": "--:--",
-    "maghrib": "--:--",
-    "isha": "22:33",
-    "midnight": "--:--",
-    "last_third": "--:--"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "--:--",
-    "sunrise": "--:--",
-    "dhuhr": "16:47",
-    "asr": "23:30",
-    "sunset": "--:--",
-    "maghrib": "--:--",
-    "isha": "--:--",
-    "midnight": "--:--",
-    "last_third": "--:--"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": 69.6492, "lng": 18.9553 },
-  "times": {
-    "fajr": "06:39",
-    "sunrise": "10:41",
-    "dhuhr": "16:52",
-    "asr": "20:28",
-    "sunset": "23:04",
-    "maghrib": "23:04",
-    "isha": "03:12",
-    "midnight": "02:47",
-    "last_third": "04:01"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "07:28",
-    "sunrise": "08:55",
-    "dhuhr": "19:30",
-    "asr": "01:46",
-    "sunset": "06:04",
-    "maghrib": "06:04",
-    "isha": "07:29",
-    "midnight": "06:46",
-    "last_third": "07:00"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "13:54",
-    "sunrise": "17:23",
-    "dhuhr": "19:27",
-    "asr": "19:55",
-    "sunset": "21:30",
-    "maghrib": "21:30",
-    "isha": "00:58",
-    "midnight": "05:43",
-    "last_third": "08:27"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "10:34",
-    "sunrise": "13:27",
-    "dhuhr": "19:36",
-    "asr": "23:25",
-    "sunset": "01:45",
-    "maghrib": "01:45",
-    "isha": "04:39",
-    "midnight": "06:07",
-    "last_third": "07:34"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "10:18",
-    "sunrise": "13:12",
-    "dhuhr": "19:21",
-    "asr": "23:06",
-    "sunset": "01:27",
-    "maghrib": "01:27",
-    "isha": "04:19",
-    "midnight": "05:55",
-    "last_third": "07:24"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "11:57",
-    "sunrise": "14:37",
-    "dhuhr": "19:41",
-    "asr": "22:35",
-    "sunset": "00:44",
-    "maghrib": "00:44",
-    "isha": "03:25",
-    "midnight": "06:19",
-    "last_third": "08:11"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "13:56",
-    "sunrise": "17:21",
-    "dhuhr": "19:32",
-    "asr": "20:06",
-    "sunset": "21:41",
-    "maghrib": "21:41",
-    "isha": "01:06",
-    "midnight": "05:49",
-    "last_third": "08:31"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "13:56",
-    "sunrise": "17:20",
-    "dhuhr": "19:32",
-    "asr": "20:08",
-    "sunset": "21:43",
-    "maghrib": "21:43",
-    "isha": "01:07",
-    "midnight": "05:49",
-    "last_third": "08:31"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "11:11",
-    "sunrise": "13:55",
-    "dhuhr": "19:38",
-    "asr": "23:06",
-    "sunset": "01:21",
-    "maghrib": "01:21",
-    "isha": "04:07",
-    "midnight": "06:14",
-    "last_third": "07:51"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "07:31",
-    "sunrise": "09:42",
-    "dhuhr": "19:35",
-    "asr": "01:36",
-    "sunset": "05:23",
-    "maghrib": "05:23",
-    "isha": "07:34",
-    "midnight": "06:27",
-    "last_third": "06:48"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "13:46",
-    "sunrise": "16:56",
-    "dhuhr": "19:38",
-    "asr": "20:35",
-    "sunset": "22:19",
-    "maghrib": "22:19",
-    "isha": "01:29",
-    "midnight": "06:02",
-    "last_third": "08:36"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "07:29",
-    "sunrise": "08:55",
-    "dhuhr": "19:31",
-    "asr": "01:46",
-    "sunset": "06:04",
-    "maghrib": "06:04",
-    "isha": "07:30",
-    "midnight": "06:46",
-    "last_third": "07:00"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": 64.1466, "lng": -21.9426 },
-  "times": {
-    "fajr": "10:33",
-    "sunrise": "13:26",
-    "dhuhr": "19:36",
-    "asr": "23:25",
-    "sunset": "01:46",
-    "maghrib": "01:46",
-    "isha": "04:40",
-    "midnight": "06:07",
-    "last_third": "07:34"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "01:30",
-    "sunrise": "03:00",
-    "dhuhr": "07:58",
-    "asr": "11:16",
-    "sunset": "12:54",
-    "maghrib": "12:54",
-    "isha": "14:23",
-    "midnight": "19:13",
-    "last_third": "21:19"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "22:56",
-    "sunrise": "00:41",
-    "dhuhr": "07:54",
-    "asr": "12:54",
-    "sunset": "15:06",
-    "maghrib": "15:06",
-    "isha": "16:50",
-    "midnight": "19:02",
-    "last_third": "20:20"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "00:35",
-    "sunrise": "01:58",
-    "dhuhr": "08:04",
-    "asr": "12:22",
-    "sunset": "14:06",
-    "maghrib": "14:06",
-    "isha": "15:30",
-    "midnight": "19:21",
-    "last_third": "21:06"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "00:21",
-    "sunrise": "01:45",
-    "dhuhr": "07:49",
-    "asr": "12:08",
-    "sunset": "13:52",
-    "maghrib": "13:52",
-    "isha": "15:15",
-    "midnight": "19:06",
-    "last_third": "20:51"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "00:16",
-    "sunrise": "01:42",
-    "dhuhr": "08:09",
-    "asr": "12:43",
-    "sunset": "14:33",
-    "maghrib": "14:33",
-    "isha": "15:59",
-    "midnight": "19:25",
-    "last_third": "21:02"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "23:03",
-    "sunrise": "00:46",
-    "dhuhr": "07:59",
-    "asr": "12:58",
-    "sunset": "15:09",
-    "maghrib": "15:09",
-    "isha": "16:53",
-    "midnight": "19:06",
-    "last_third": "20:25"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "23:03",
-    "sunrise": "00:47",
-    "dhuhr": "07:59",
-    "asr": "12:59",
-    "sunset": "15:09",
-    "maghrib": "15:09",
-    "isha": "16:53",
-    "midnight": "19:07",
-    "last_third": "20:26"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "00:28",
-    "sunrise": "01:52",
-    "dhuhr": "08:06",
-    "asr": "12:31",
-    "sunset": "14:17",
-    "maghrib": "14:17",
-    "isha": "15:41",
-    "midnight": "19:23",
-    "last_third": "21:05"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "01:30",
-    "sunrise": "02:58",
-    "dhuhr": "08:02",
-    "asr": "11:27",
-    "sunset": "13:05",
-    "maghrib": "13:05",
-    "isha": "14:33",
-    "midnight": "19:18",
-    "last_third": "21:22"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
   "times": {
     "fajr": "23:19",
-    "sunrise": "00:59",
-    "dhuhr": "08:05",
-    "asr": "13:02",
-    "sunset": "15:09",
-    "maghrib": "15:09",
-    "isha": "16:49",
-    "midnight": "19:15",
-    "last_third": "20:36"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "01:30",
-    "sunrise": "03:00",
-    "dhuhr": "07:58",
-    "asr": "11:16",
-    "sunset": "12:54",
-    "maghrib": "12:54",
-    "isha": "14:23",
-    "midnight": "19:13",
-    "last_third": "21:19"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": -33.8688, "lng": 151.2093 },
-  "times": {
-    "fajr": "00:35",
-    "sunrise": "01:59",
-    "dhuhr": "08:04",
-    "asr": "12:22",
-    "sunset": "14:06",
-    "maghrib": "14:06",
-    "isha": "15:29",
-    "midnight": "19:21",
-    "last_third": "21:06"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
-  "times": {
-    "fajr": "10:22",
-    "sunrise": "11:51",
-    "dhuhr": "16:49",
-    "asr": "20:07",
-    "sunset": "21:45",
-    "maghrib": "21:45",
-    "isha": "23:14",
-    "midnight": "04:04",
-    "last_third": "06:10"
+    "sunrise": "01:54",
+    "dhuhr": "11:20",
+    "asr": "17:19",
+    "sunset": "20:44",
+    "maghrib": "20:44",
+    "isha": "23:19",
+    "midnight": "22:02",
+    "last_third": "22:27"
   }
 }
 ---
 {
   "date": "2024-12-21",
   "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "location": { "lat": 59.9139, "lng": 10.7522 },
   "times": {
-    "fajr": "07:47",
-    "sunrise": "09:32",
-    "dhuhr": "16:46",
-    "asr": "21:46",
-    "sunset": "23:57",
-    "maghrib": "23:57",
-    "isha": "01:42",
-    "midnight": "03:53",
-    "last_third": "05:11"
+    "fajr": "05:33",
+    "sunrise": "08:18",
+    "dhuhr": "11:16",
+    "asr": "12:26",
+    "sunset": "14:12",
+    "maghrib": "14:12",
+    "isha": "16:58",
+    "midnight": "21:53",
+    "last_third": "00:26"
   }
 }
 ---
 {
   "date": "2024-03-20",
   "hijri": "10 Ramadan 1445",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "location": { "lat": 59.9139, "lng": 10.7522 },
   "times": {
-    "fajr": "09:26",
-    "sunrise": "10:50",
-    "dhuhr": "16:55",
-    "asr": "21:13",
-    "sunset": "22:57",
-    "maghrib": "22:57",
-    "isha": "00:20",
-    "midnight": "04:12",
-    "last_third": "05:57"
+    "fajr": "02:52",
+    "sunrise": "05:17",
+    "dhuhr": "11:25",
+    "asr": "15:22",
+    "sunset": "17:33",
+    "maghrib": "17:33",
+    "isha": "19:59",
+    "midnight": "22:11",
+    "last_third": "23:43"
   }
 }
 ---
 {
   "date": "2024-09-22",
   "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "location": { "lat": 59.9139, "lng": 10.7522 },
   "times": {
-    "fajr": "09:12",
-    "sunrise": "10:35",
-    "dhuhr": "16:40",
-    "asr": "20:59",
-    "sunset": "22:43",
-    "maghrib": "22:43",
-    "isha": "00:07",
-    "midnight": "03:57",
-    "last_third": "05:41"
+    "fajr": "02:36",
+    "sunrise": "05:02",
+    "dhuhr": "11:11",
+    "asr": "15:04",
+    "sunset": "17:16",
+    "maghrib": "17:16",
+    "isha": "19:40",
+    "midnight": "21:58",
+    "last_third": "23:31"
   }
 }
 ---
 {
   "date": "2024-02-29",
   "hijri": "19 Sha'ban 1445",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "location": { "lat": 59.9139, "lng": 10.7522 },
   "times": {
-    "fajr": "09:07",
-    "sunrise": "10:34",
-    "dhuhr": "17:00",
-    "asr": "21:33",
-    "sunset": "23:23",
-    "maghrib": "23:23",
-    "isha": "00:49",
-    "midnight": "04:16",
-    "last_third": "05:53"
+    "fajr": "03:59",
+    "sunrise": "06:17",
+    "dhuhr": "11:30",
+    "asr": "14:40",
+    "sunset": "16:43",
+    "maghrib": "16:43",
+    "isha": "19:02",
+    "midnight": "22:20",
+    "last_third": "00:12"
   }
 }
 ---
 {
   "date": "2023-12-31",
   "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "location": { "lat": 59.9139, "lng": 10.7522 },
   "times": {
-    "fajr": "07:54",
-    "sunrise": "09:38",
-    "dhuhr": "16:50",
-    "asr": "21:50",
-    "sunset": "00:00",
-    "maghrib": "00:00",
-    "isha": "01:44",
-    "midnight": "03:58",
-    "last_third": "05:17"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
-  "times": {
-    "fajr": "07:55",
-    "sunrise": "09:38",
-    "dhuhr": "16:51",
-    "asr": "21:50",
-    "sunset": "00:01",
-    "maghrib": "00:01",
-    "isha": "01:44",
-    "midnight": "03:59",
-    "last_third": "05:18"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
-  "times": {
-    "fajr": "09:19",
-    "sunrise": "10:44",
-    "dhuhr": "16:57",
-    "asr": "21:22",
-    "sunset": "23:08",
-    "maghrib": "23:08",
-    "isha": "00:32",
-    "midnight": "04:14",
-    "last_third": "05:56"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
-  "times": {
-    "fajr": "10:21",
-    "sunrise": "11:49",
-    "dhuhr": "16:53",
-    "asr": "20:18",
-    "sunset": "21:56",
-    "maghrib": "21:56",
-    "isha": "23:24",
-    "midnight": "04:09",
-    "last_third": "06:13"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
-  "times": {
-    "fajr": "08:10",
-    "sunrise": "09:50",
-    "dhuhr": "16:57",
-    "asr": "21:53",
-    "sunset": "00:00",
-    "maghrib": "00:00",
-    "isha": "01:40",
-    "midnight": "04:06",
-    "last_third": "05:27"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
-  "times": {
-    "fajr": "10:22",
-    "sunrise": "11:51",
-    "dhuhr": "16:49",
-    "asr": "20:07",
-    "sunset": "21:45",
-    "maghrib": "21:45",
-    "isha": "23:14",
-    "midnight": "04:04",
-    "last_third": "06:10"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": -33.9249, "lng": 18.4241 },
-  "times": {
-    "fajr": "09:26",
-    "sunrise": "10:50",
-    "dhuhr": "16:55",
-    "asr": "21:13",
-    "sunset": "22:57",
-    "maghrib": "22:57",
-    "isha": "00:20",
-    "midnight": "04:12",
-    "last_third": "05:57"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "13:18",
-    "sunrise": "15:25",
-    "dhuhr": "22:59",
-    "asr": "04:12",
-    "sunset": "06:31",
-    "maghrib": "06:31",
-    "isha": "08:37",
-    "midnight": "09:55",
-    "last_third": "11:03"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "16:38",
-    "sunrise": "18:17",
-    "dhuhr": "22:55",
-    "asr": "01:51",
-    "sunset": "03:32",
-    "maghrib": "03:32",
-    "isha": "05:11",
-    "midnight": "10:05",
-    "last_third": "12:16"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "15:27",
-    "sunrise": "16:59",
-    "dhuhr": "23:04",
-    "asr": "03:21",
-    "sunset": "05:09",
-    "maghrib": "05:09",
-    "isha": "06:41",
-    "midnight": "10:17",
-    "last_third": "12:00"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "15:12",
-    "sunrise": "16:44",
-    "dhuhr": "22:49",
-    "asr": "03:04",
-    "sunset": "04:52",
-    "maghrib": "04:52",
-    "isha": "06:24",
-    "midnight": "10:03",
-    "last_third": "11:46"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "16:00",
-    "sunrise": "17:31",
-    "dhuhr": "23:09",
-    "asr": "03:04",
-    "sunset": "04:47",
-    "maghrib": "04:47",
-    "isha": "06:18",
-    "midnight": "10:23",
-    "last_third": "12:14"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "16:41",
-    "sunrise": "18:20",
-    "dhuhr": "23:00",
-    "asr": "01:58",
-    "sunset": "03:38",
-    "maghrib": "03:38",
-    "isha": "05:17",
-    "midnight": "10:10",
-    "last_third": "12:21"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "16:42",
-    "sunrise": "18:20",
-    "dhuhr": "23:00",
-    "asr": "01:59",
-    "sunset": "03:39",
-    "maghrib": "03:39",
-    "isha": "05:17",
-    "midnight": "10:11",
-    "last_third": "12:21"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "15:41",
-    "sunrise": "17:12",
-    "dhuhr": "23:07",
-    "asr": "03:15",
-    "sunset": "05:00",
-    "maghrib": "05:00",
-    "isha": "06:31",
-    "midnight": "10:20",
-    "last_third": "12:06"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "13:39",
-    "sunrise": "15:38",
-    "dhuhr": "23:03",
-    "asr": "04:12",
-    "sunset": "06:26",
-    "maghrib": "06:26",
-    "isha": "08:25",
-    "midnight": "10:03",
-    "last_third": "11:15"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "16:41",
-    "sunrise": "18:18",
-    "dhuhr": "23:06",
-    "asr": "02:12",
-    "sunset": "03:53",
-    "maghrib": "03:53",
-    "isha": "05:30",
-    "midnight": "10:17",
-    "last_third": "12:25"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "13:18",
-    "sunrise": "15:25",
-    "dhuhr": "22:59",
-    "asr": "04:12",
-    "sunset": "06:31",
-    "maghrib": "06:31",
-    "isha": "08:37",
-    "midnight": "09:55",
-    "last_third": "11:03"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": 40.7128, "lng": -74.0060 },
-  "times": {
-    "fajr": "15:26",
-    "sunrise": "16:58",
-    "dhuhr": "23:04",
-    "asr": "03:21",
-    "sunset": "05:09",
-    "maghrib": "05:09",
-    "isha": "06:41",
-    "midnight": "10:17",
-    "last_third": "11:59"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "16:00",
-    "sunrise": "18:20",
-    "dhuhr": "04:02",
-    "asr": "10:06",
-    "sunset": "13:43",
-    "maghrib": "13:43",
-    "isha": "16:01",
-    "midnight": "14:51",
-    "last_third": "15:14"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "22:19",
-    "sunrise": "01:15",
-    "dhuhr": "03:59",
-    "asr": "04:57",
-    "sunset": "06:42",
-    "maghrib": "06:42",
-    "isha": "09:38",
-    "midnight": "14:31",
-    "last_third": "17:07"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "19:25",
-    "sunrise": "21:58",
-    "dhuhr": "04:08",
-    "asr": "08:03",
-    "sunset": "10:17",
-    "maghrib": "10:17",
-    "isha": "12:51",
-    "midnight": "14:49",
-    "last_third": "16:20"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "19:13",
-    "sunrise": "21:46",
-    "dhuhr": "03:53",
-    "asr": "07:43",
-    "sunset": "09:57",
-    "maghrib": "09:57",
-    "isha": "12:29",
-    "midnight": "14:37",
-    "last_third": "16:10"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "20:37",
-    "sunrise": "23:01",
-    "dhuhr": "04:13",
-    "asr": "07:20",
-    "sunset": "09:24",
-    "maghrib": "09:24",
-    "isha": "11:49",
-    "midnight": "14:59",
-    "last_third": "16:51"
-  }
-}
----
-{
-  "date": "2023-12-31",
-  "hijri": "18 Jumada al-Akhirah 1445",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "22:20",
-    "sunrise": "01:14",
-    "dhuhr": "04:04",
-    "asr": "05:07",
-    "sunset": "06:51",
-    "maghrib": "06:51",
-    "isha": "09:45",
-    "midnight": "14:36",
-    "last_third": "17:10"
-  }
-}
----
-{
-  "date": "2024-01-01",
-  "hijri": "19 Jumada al-Akhirah 1445",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "22:20",
-    "sunrise": "01:14",
-    "dhuhr": "04:04",
-    "asr": "05:09",
-    "sunset": "06:53",
-    "maghrib": "06:53",
-    "isha": "09:46",
-    "midnight": "14:37",
-    "last_third": "17:11"
-  }
-}
----
-{
-  "date": "2024-03-12",
-  "hijri": "2 Ramadan 1445",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "19:56",
-    "sunrise": "22:24",
-    "dhuhr": "04:10",
-    "asr": "07:47",
-    "sunset": "09:56",
-    "maghrib": "09:56",
-    "isha": "12:24",
-    "midnight": "14:55",
-    "last_third": "16:34"
-  }
-}
----
-{
-  "date": "2024-07-15",
-  "hijri": "8 Muharram 1446",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "16:03",
-    "sunrise": "18:53",
-    "dhuhr": "04:07",
-    "asr": "09:58",
-    "sunset": "13:17",
-    "maghrib": "13:17",
-    "isha": "16:05",
-    "midnight": "14:41",
-    "last_third": "15:08"
-  }
-}
----
-{
-  "date": "2024-01-15",
-  "hijri": "4 Rajab 1445",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "22:12",
-    "sunrise": "00:57",
-    "dhuhr": "04:10",
-    "asr": "05:34",
-    "sunset": "07:21",
-    "maghrib": "07:21",
-    "isha": "10:06",
-    "midnight": "14:46",
-    "last_third": "17:14"
-  }
-}
----
-{
-  "date": "2023-06-21",
-  "hijri": "2 Dhu al-Hijjah 1444",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "16:00",
-    "sunrise": "18:20",
-    "dhuhr": "04:02",
-    "asr": "10:07",
-    "sunset": "13:43",
-    "maghrib": "13:43",
-    "isha": "16:01",
-    "midnight": "14:52",
-    "last_third": "15:15"
-  }
-}
----
-{
-  "date": "2023-03-21",
-  "hijri": "28 Sha'ban 1444",
-  "location": { "lat": 61.2181, "lng": -149.9003 },
-  "times": {
-    "fajr": "19:24",
-    "sunrise": "21:58",
-    "dhuhr": "04:08",
-    "asr": "08:04",
-    "sunset": "10:17",
-    "maghrib": "10:17",
-    "isha": "12:52",
-    "midnight": "14:49",
-    "last_third": "16:19"
-  }
-}
----
-{
-  "date": "2024-06-20",
-  "hijri": "13 Dhu al-Hijjah 1445",
-  "location": { "lat": 1.3521, "lng": 103.8198 },
-  "times": {
-    "fajr": "03:45",
-    "sunrise": "05:00",
-    "dhuhr": "11:07",
-    "asr": "15:30",
-    "sunset": "17:12",
-    "maghrib": "17:12",
-    "isha": "18:28",
-    "midnight": "22:29",
-    "last_third": "00:14"
-  }
-}
----
-{
-  "date": "2024-12-21",
-  "hijri": "19 Jumada al-Akhirah 1446",
-  "location": { "lat": 1.3521, "lng": 103.8198 },
-  "times": {
-    "fajr": "03:46",
-    "sunrise": "05:01",
-    "dhuhr": "11:04",
-    "asr": "15:24",
-    "sunset": "17:04",
-    "maghrib": "17:04",
-    "isha": "18:19",
-    "midnight": "22:26",
-    "last_third": "00:13"
-  }
-}
----
-{
-  "date": "2024-03-20",
-  "hijri": "10 Ramadan 1445",
-  "location": { "lat": 1.3521, "lng": 103.8198 },
-  "times": {
-    "fajr": "04:00",
-    "sunrise": "05:09",
-    "dhuhr": "11:13",
-    "asr": "15:27",
-    "sunset": "17:15",
-    "maghrib": "17:15",
-    "isha": "18:24",
-    "midnight": "22:38",
-    "last_third": "00:25"
-  }
-}
----
-{
-  "date": "2024-09-22",
-  "hijri": "18 Rabi' al-Awwal 1446",
-  "location": { "lat": 1.3521, "lng": 103.8198 },
-  "times": {
-    "fajr": "03:45",
-    "sunrise": "04:54",
-    "dhuhr": "10:58",
-    "asr": "15:12",
-    "sunset": "17:01",
-    "maghrib": "17:01",
-    "isha": "18:09",
-    "midnight": "22:23",
-    "last_third": "00:10"
-  }
-}
----
-{
-  "date": "2024-02-29",
-  "hijri": "19 Sha'ban 1445",
-  "location": { "lat": 1.3521, "lng": 103.8198 },
-  "times": {
-    "fajr": "04:05",
-    "sunrise": "05:15",
-    "dhuhr": "11:18",
-    "asr": "15:36",
-    "sunset": "17:20",
-    "maghrib": "17:20",
-    "isha": "18:29",
-    "midnight": "22:43",
+    "fajr": "05:35",
+    "sunrise": "08:19",
+    "dhuhr": "11:21",
+    "asr": "12:34",
+    "sunset": "14:21",
+    "maghrib": "14:21",
+    "isha": "17:05",
+    "midnight": "21:58",
     "last_third": "00:30"
   }
 }
 ---
 {
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": 59.9139, "lng": 10.7522 },
+  "times": {
+    "fajr": "05:35",
+    "sunrise": "08:19",
+    "dhuhr": "11:21",
+    "asr": "12:36",
+    "sunset": "14:22",
+    "maghrib": "14:22",
+    "isha": "17:06",
+    "midnight": "21:59",
+    "last_third": "00:31"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": 59.9139, "lng": 10.7522 },
+  "times": {
+    "fajr": "03:21",
+    "sunrise": "05:42",
+    "dhuhr": "11:28",
+    "asr": "15:06",
+    "sunset": "17:13",
+    "maghrib": "17:13",
+    "isha": "19:35",
+    "midnight": "22:15",
+    "last_third": "23:56"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": 59.9139, "lng": 10.7522 },
+  "times": {
+    "fajr": "23:21",
+    "sunrise": "02:22",
+    "dhuhr": "11:24",
+    "asr": "17:12",
+    "sunset": "20:23",
+    "maghrib": "20:23",
+    "isha": "23:23",
+    "midnight": "21:52",
+    "last_third": "22:22"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": 59.9139, "lng": 10.7522 },
+  "times": {
+    "fajr": "05:28",
+    "sunrise": "08:05",
+    "dhuhr": "11:27",
+    "asr": "12:59",
+    "sunset": "14:48",
+    "maghrib": "14:48",
+    "isha": "17:25",
+    "midnight": "22:08",
+    "last_third": "00:34"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": 59.9139, "lng": 10.7522 },
+  "times": {
+    "fajr": "23:19",
+    "sunrise": "01:54",
+    "dhuhr": "11:20",
+    "asr": "17:19",
+    "sunset": "20:44",
+    "maghrib": "20:44",
+    "isha": "23:19",
+    "midnight": "22:02",
+    "last_third": "22:27"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 59.9139, "lng": 10.7522 },
+  "times": {
+    "fajr": "02:51",
+    "sunrise": "05:17",
+    "dhuhr": "11:25",
+    "asr": "15:22",
+    "sunset": "17:33",
+    "maghrib": "17:33",
+    "isha": "20:00",
+    "midnight": "22:11",
+    "last_third": "23:43"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "--:--",
+    "sunrise": "--:--",
+    "dhuhr": "10:47",
+    "asr": "17:30",
+    "sunset": "--:--",
+    "maghrib": "--:--",
+    "isha": "--:--",
+    "midnight": "--:--",
+    "last_third": "--:--"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "05:29",
+    "sunrise": "--:--",
+    "dhuhr": "10:43",
+    "asr": "11:29",
+    "sunset": "--:--",
+    "maghrib": "--:--",
+    "isha": "15:56",
+    "midnight": "--:--",
+    "last_third": "--:--"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "00:42",
+    "sunrise": "04:42",
+    "dhuhr": "10:53",
+    "asr": "14:27",
+    "sunset": "17:03",
+    "maghrib": "17:03",
+    "isha": "21:09",
+    "midnight": "20:48",
+    "last_third": "22:02"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "00:21",
+    "sunrise": "04:26",
+    "dhuhr": "10:38",
+    "asr": "14:08",
+    "sunset": "16:46",
+    "maghrib": "16:46",
+    "isha": "20:44",
+    "midnight": "20:38",
+    "last_third": "21:55"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "02:49",
+    "sunrise": "06:13",
+    "dhuhr": "10:58",
+    "asr": "13:23",
+    "sunset": "15:42",
+    "maghrib": "15:42",
+    "isha": "19:07",
+    "midnight": "21:14",
+    "last_third": "23:04"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "05:29",
+    "sunrise": "--:--",
+    "dhuhr": "10:48",
+    "asr": "11:31",
+    "sunset": "--:--",
+    "maghrib": "--:--",
+    "isha": "16:05",
+    "midnight": "--:--",
+    "last_third": "--:--"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "05:29",
+    "sunrise": "--:--",
+    "dhuhr": "10:48",
+    "asr": "11:30",
+    "sunset": "--:--",
+    "maghrib": "--:--",
+    "isha": "16:06",
+    "midnight": "--:--",
+    "last_third": "--:--"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "01:43",
+    "sunrise": "05:18",
+    "dhuhr": "10:55",
+    "asr": "14:02",
+    "sunset": "16:32",
+    "maghrib": "16:32",
+    "isha": "20:10",
+    "midnight": "21:04",
+    "last_third": "22:35"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "--:--",
+    "sunrise": "--:--",
+    "dhuhr": "10:51",
+    "asr": "17:16",
+    "sunset": "--:--",
+    "maghrib": "--:--",
+    "isha": "--:--",
+    "midnight": "--:--",
+    "last_third": "--:--"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "05:15",
+    "sunrise": "--:--",
+    "dhuhr": "10:54",
+    "asr": "11:25",
+    "sunset": "--:--",
+    "maghrib": "--:--",
+    "isha": "16:33",
+    "midnight": "--:--",
+    "last_third": "--:--"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "--:--",
+    "sunrise": "--:--",
+    "dhuhr": "10:47",
+    "asr": "17:30",
+    "sunset": "--:--",
+    "maghrib": "--:--",
+    "isha": "--:--",
+    "midnight": "--:--",
+    "last_third": "--:--"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 69.6492, "lng": 18.9553 },
+  "times": {
+    "fajr": "00:39",
+    "sunrise": "04:41",
+    "dhuhr": "10:52",
+    "asr": "14:28",
+    "sunset": "17:04",
+    "maghrib": "17:04",
+    "isha": "21:12",
+    "midnight": "20:47",
+    "last_third": "22:01"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "01:29",
+    "sunrise": "02:55",
+    "dhuhr": "13:30",
+    "asr": "19:46",
+    "sunset": "00:04",
+    "maghrib": "00:04",
+    "isha": "01:30",
+    "midnight": "00:47",
+    "last_third": "01:01"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "07:54",
+    "sunrise": "11:23",
+    "dhuhr": "13:27",
+    "asr": "13:55",
+    "sunset": "15:30",
+    "maghrib": "15:30",
+    "isha": "18:58",
+    "midnight": "23:43",
+    "last_third": "02:27"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "04:34",
+    "sunrise": "07:27",
+    "dhuhr": "13:36",
+    "asr": "17:25",
+    "sunset": "19:45",
+    "maghrib": "19:45",
+    "isha": "22:39",
+    "midnight": "00:07",
+    "last_third": "01:34"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "04:18",
+    "sunrise": "07:12",
+    "dhuhr": "13:21",
+    "asr": "17:06",
+    "sunset": "19:27",
+    "maghrib": "19:27",
+    "isha": "22:19",
+    "midnight": "23:55",
+    "last_third": "01:24"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "05:57",
+    "sunrise": "08:37",
+    "dhuhr": "13:41",
+    "asr": "16:35",
+    "sunset": "18:44",
+    "maghrib": "18:44",
+    "isha": "21:25",
+    "midnight": "00:19",
+    "last_third": "02:11"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "07:56",
+    "sunrise": "11:21",
+    "dhuhr": "13:32",
+    "asr": "14:06",
+    "sunset": "15:41",
+    "maghrib": "15:41",
+    "isha": "19:06",
+    "midnight": "23:49",
+    "last_third": "02:31"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "07:56",
+    "sunrise": "11:20",
+    "dhuhr": "13:32",
+    "asr": "14:08",
+    "sunset": "15:43",
+    "maghrib": "15:43",
+    "isha": "19:07",
+    "midnight": "23:49",
+    "last_third": "02:31"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "05:11",
+    "sunrise": "07:55",
+    "dhuhr": "13:38",
+    "asr": "17:06",
+    "sunset": "19:21",
+    "maghrib": "19:21",
+    "isha": "22:07",
+    "midnight": "00:14",
+    "last_third": "01:51"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "01:31",
+    "sunrise": "03:42",
+    "dhuhr": "13:35",
+    "asr": "19:36",
+    "sunset": "23:23",
+    "maghrib": "23:23",
+    "isha": "01:34",
+    "midnight": "00:27",
+    "last_third": "00:48"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "07:46",
+    "sunrise": "10:56",
+    "dhuhr": "13:38",
+    "asr": "14:35",
+    "sunset": "16:19",
+    "maghrib": "16:19",
+    "isha": "19:29",
+    "midnight": "00:02",
+    "last_third": "02:36"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "01:29",
+    "sunrise": "02:55",
+    "dhuhr": "13:31",
+    "asr": "19:46",
+    "sunset": "00:04",
+    "maghrib": "00:04",
+    "isha": "01:30",
+    "midnight": "00:47",
+    "last_third": "01:01"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 64.1466, "lng": -21.9426 },
+  "times": {
+    "fajr": "04:33",
+    "sunrise": "07:26",
+    "dhuhr": "13:36",
+    "asr": "17:25",
+    "sunset": "19:46",
+    "maghrib": "19:46",
+    "isha": "22:40",
+    "midnight": "00:07",
+    "last_third": "01:34"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "19:30",
+    "sunrise": "21:00",
+    "dhuhr": "01:58",
+    "asr": "05:16",
+    "sunset": "06:54",
+    "maghrib": "06:54",
+    "isha": "08:23",
+    "midnight": "13:13",
+    "last_third": "15:19"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "16:56",
+    "sunrise": "18:41",
+    "dhuhr": "01:54",
+    "asr": "06:54",
+    "sunset": "09:06",
+    "maghrib": "09:06",
+    "isha": "10:50",
+    "midnight": "13:02",
+    "last_third": "14:20"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "18:35",
+    "sunrise": "19:58",
+    "dhuhr": "02:04",
+    "asr": "06:22",
+    "sunset": "08:06",
+    "maghrib": "08:06",
+    "isha": "09:30",
+    "midnight": "13:21",
+    "last_third": "15:06"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "18:21",
+    "sunrise": "19:45",
+    "dhuhr": "01:49",
+    "asr": "06:08",
+    "sunset": "07:52",
+    "maghrib": "07:52",
+    "isha": "09:15",
+    "midnight": "13:06",
+    "last_third": "14:51"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "18:16",
+    "sunrise": "19:42",
+    "dhuhr": "02:09",
+    "asr": "06:43",
+    "sunset": "08:33",
+    "maghrib": "08:33",
+    "isha": "09:59",
+    "midnight": "13:25",
+    "last_third": "15:02"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "17:03",
+    "sunrise": "18:46",
+    "dhuhr": "01:59",
+    "asr": "06:58",
+    "sunset": "09:09",
+    "maghrib": "09:09",
+    "isha": "10:53",
+    "midnight": "13:06",
+    "last_third": "14:25"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "17:03",
+    "sunrise": "18:47",
+    "dhuhr": "01:59",
+    "asr": "06:59",
+    "sunset": "09:09",
+    "maghrib": "09:09",
+    "isha": "10:53",
+    "midnight": "13:07",
+    "last_third": "14:26"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "18:28",
+    "sunrise": "19:52",
+    "dhuhr": "02:06",
+    "asr": "06:31",
+    "sunset": "08:17",
+    "maghrib": "08:17",
+    "isha": "09:41",
+    "midnight": "13:23",
+    "last_third": "15:05"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "19:30",
+    "sunrise": "20:58",
+    "dhuhr": "02:02",
+    "asr": "05:27",
+    "sunset": "07:05",
+    "maghrib": "07:05",
+    "isha": "08:33",
+    "midnight": "13:18",
+    "last_third": "15:22"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "17:19",
+    "sunrise": "18:59",
+    "dhuhr": "02:05",
+    "asr": "07:02",
+    "sunset": "09:09",
+    "maghrib": "09:09",
+    "isha": "10:49",
+    "midnight": "13:15",
+    "last_third": "14:36"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "19:30",
+    "sunrise": "21:00",
+    "dhuhr": "01:58",
+    "asr": "05:16",
+    "sunset": "06:54",
+    "maghrib": "06:54",
+    "isha": "08:23",
+    "midnight": "13:13",
+    "last_third": "15:19"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": -33.8688, "lng": 151.2093 },
+  "times": {
+    "fajr": "18:35",
+    "sunrise": "19:59",
+    "dhuhr": "02:04",
+    "asr": "06:22",
+    "sunset": "08:06",
+    "maghrib": "08:06",
+    "isha": "09:29",
+    "midnight": "13:21",
+    "last_third": "15:06"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "04:22",
+    "sunrise": "05:51",
+    "dhuhr": "10:49",
+    "asr": "14:07",
+    "sunset": "15:45",
+    "maghrib": "15:45",
+    "isha": "17:14",
+    "midnight": "22:04",
+    "last_third": "00:10"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "01:47",
+    "sunrise": "03:32",
+    "dhuhr": "10:46",
+    "asr": "15:46",
+    "sunset": "17:57",
+    "maghrib": "17:57",
+    "isha": "19:42",
+    "midnight": "21:53",
+    "last_third": "23:11"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "03:26",
+    "sunrise": "04:50",
+    "dhuhr": "10:55",
+    "asr": "15:13",
+    "sunset": "16:57",
+    "maghrib": "16:57",
+    "isha": "18:20",
+    "midnight": "22:12",
+    "last_third": "23:57"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "03:12",
+    "sunrise": "04:35",
+    "dhuhr": "10:40",
+    "asr": "14:59",
+    "sunset": "16:43",
+    "maghrib": "16:43",
+    "isha": "18:07",
+    "midnight": "21:57",
+    "last_third": "23:41"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "03:07",
+    "sunrise": "04:34",
+    "dhuhr": "11:00",
+    "asr": "15:33",
+    "sunset": "17:23",
+    "maghrib": "17:23",
+    "isha": "18:49",
+    "midnight": "22:16",
+    "last_third": "23:53"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "01:54",
+    "sunrise": "03:38",
+    "dhuhr": "10:50",
+    "asr": "15:50",
+    "sunset": "18:00",
+    "maghrib": "18:00",
+    "isha": "19:44",
+    "midnight": "21:58",
+    "last_third": "23:17"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "01:55",
+    "sunrise": "03:38",
+    "dhuhr": "10:51",
+    "asr": "15:50",
+    "sunset": "18:01",
+    "maghrib": "18:01",
+    "isha": "19:44",
+    "midnight": "21:59",
+    "last_third": "23:18"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "03:19",
+    "sunrise": "04:44",
+    "dhuhr": "10:57",
+    "asr": "15:22",
+    "sunset": "17:08",
+    "maghrib": "17:08",
+    "isha": "18:32",
+    "midnight": "22:14",
+    "last_third": "23:56"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "04:21",
+    "sunrise": "05:49",
+    "dhuhr": "10:53",
+    "asr": "14:18",
+    "sunset": "15:56",
+    "maghrib": "15:56",
+    "isha": "17:24",
+    "midnight": "22:09",
+    "last_third": "00:13"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "02:10",
+    "sunrise": "03:50",
+    "dhuhr": "10:57",
+    "asr": "15:53",
+    "sunset": "18:00",
+    "maghrib": "18:00",
+    "isha": "19:40",
+    "midnight": "22:06",
+    "last_third": "23:27"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "04:22",
+    "sunrise": "05:51",
+    "dhuhr": "10:49",
+    "asr": "14:07",
+    "sunset": "15:45",
+    "maghrib": "15:45",
+    "isha": "17:14",
+    "midnight": "22:04",
+    "last_third": "00:10"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": -33.9249, "lng": 18.4241 },
+  "times": {
+    "fajr": "03:26",
+    "sunrise": "04:50",
+    "dhuhr": "10:55",
+    "asr": "15:13",
+    "sunset": "16:57",
+    "maghrib": "16:57",
+    "isha": "18:20",
+    "midnight": "22:12",
+    "last_third": "23:57"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "07:18",
+    "sunrise": "09:25",
+    "dhuhr": "16:59",
+    "asr": "22:12",
+    "sunset": "00:31",
+    "maghrib": "00:31",
+    "isha": "02:37",
+    "midnight": "03:55",
+    "last_third": "05:03"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "10:38",
+    "sunrise": "12:17",
+    "dhuhr": "16:55",
+    "asr": "19:51",
+    "sunset": "21:32",
+    "maghrib": "21:32",
+    "isha": "23:11",
+    "midnight": "04:05",
+    "last_third": "06:16"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "09:27",
+    "sunrise": "10:59",
+    "dhuhr": "17:04",
+    "asr": "21:21",
+    "sunset": "23:09",
+    "maghrib": "23:09",
+    "isha": "00:41",
+    "midnight": "04:17",
+    "last_third": "06:00"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "09:12",
+    "sunrise": "10:44",
+    "dhuhr": "16:49",
+    "asr": "21:04",
+    "sunset": "22:52",
+    "maghrib": "22:52",
+    "isha": "00:24",
+    "midnight": "04:03",
+    "last_third": "05:46"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "10:00",
+    "sunrise": "11:31",
+    "dhuhr": "17:09",
+    "asr": "21:04",
+    "sunset": "22:47",
+    "maghrib": "22:47",
+    "isha": "00:18",
+    "midnight": "04:23",
+    "last_third": "06:14"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "10:41",
+    "sunrise": "12:20",
+    "dhuhr": "17:00",
+    "asr": "19:58",
+    "sunset": "21:38",
+    "maghrib": "21:38",
+    "isha": "23:17",
+    "midnight": "04:10",
+    "last_third": "06:21"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "10:42",
+    "sunrise": "12:20",
+    "dhuhr": "17:00",
+    "asr": "19:59",
+    "sunset": "21:39",
+    "maghrib": "21:39",
+    "isha": "23:17",
+    "midnight": "04:11",
+    "last_third": "06:21"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "09:41",
+    "sunrise": "11:12",
+    "dhuhr": "17:07",
+    "asr": "21:15",
+    "sunset": "23:00",
+    "maghrib": "23:00",
+    "isha": "00:31",
+    "midnight": "04:20",
+    "last_third": "06:06"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "07:39",
+    "sunrise": "09:38",
+    "dhuhr": "17:03",
+    "asr": "22:12",
+    "sunset": "00:26",
+    "maghrib": "00:26",
+    "isha": "02:25",
+    "midnight": "04:03",
+    "last_third": "05:15"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "10:41",
+    "sunrise": "12:18",
+    "dhuhr": "17:06",
+    "asr": "20:12",
+    "sunset": "21:53",
+    "maghrib": "21:53",
+    "isha": "23:30",
+    "midnight": "04:17",
+    "last_third": "06:25"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "07:18",
+    "sunrise": "09:25",
+    "dhuhr": "16:59",
+    "asr": "22:12",
+    "sunset": "00:31",
+    "maghrib": "00:31",
+    "isha": "02:37",
+    "midnight": "03:55",
+    "last_third": "05:03"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 40.7128, "lng": -74.0060 },
+  "times": {
+    "fajr": "09:26",
+    "sunrise": "10:58",
+    "dhuhr": "17:04",
+    "asr": "21:21",
+    "sunset": "23:09",
+    "maghrib": "23:09",
+    "isha": "00:41",
+    "midnight": "04:17",
+    "last_third": "05:59"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "10:01",
+    "sunrise": "12:20",
+    "dhuhr": "22:02",
+    "asr": "04:06",
+    "sunset": "07:43",
+    "maghrib": "07:43",
+    "isha": "10:02",
+    "midnight": "08:52",
+    "last_third": "09:15"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "16:19",
+    "sunrise": "19:15",
+    "dhuhr": "21:59",
+    "asr": "22:57",
+    "sunset": "00:42",
+    "maghrib": "00:42",
+    "isha": "03:38",
+    "midnight": "08:31",
+    "last_third": "11:07"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "13:25",
+    "sunrise": "15:58",
+    "dhuhr": "22:08",
+    "asr": "02:03",
+    "sunset": "04:17",
+    "maghrib": "04:17",
+    "isha": "06:51",
+    "midnight": "08:49",
+    "last_third": "10:20"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "13:13",
+    "sunrise": "15:46",
+    "dhuhr": "21:53",
+    "asr": "01:43",
+    "sunset": "03:57",
+    "maghrib": "03:57",
+    "isha": "06:29",
+    "midnight": "08:37",
+    "last_third": "10:10"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "14:37",
+    "sunrise": "17:01",
+    "dhuhr": "22:13",
+    "asr": "01:20",
+    "sunset": "03:24",
+    "maghrib": "03:24",
+    "isha": "05:49",
+    "midnight": "08:59",
+    "last_third": "10:51"
+  }
+}
+---
+{
+  "date": "2023-12-31",
+  "hijri": "18 Jumada al-Akhirah 1445",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "16:20",
+    "sunrise": "19:14",
+    "dhuhr": "22:04",
+    "asr": "23:07",
+    "sunset": "00:51",
+    "maghrib": "00:51",
+    "isha": "03:45",
+    "midnight": "08:36",
+    "last_third": "11:10"
+  }
+}
+---
+{
+  "date": "2024-01-01",
+  "hijri": "19 Jumada al-Akhirah 1445",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "16:20",
+    "sunrise": "19:14",
+    "dhuhr": "22:04",
+    "asr": "23:09",
+    "sunset": "00:53",
+    "maghrib": "00:53",
+    "isha": "03:46",
+    "midnight": "08:37",
+    "last_third": "11:11"
+  }
+}
+---
+{
+  "date": "2024-03-12",
+  "hijri": "2 Ramadan 1445",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "13:56",
+    "sunrise": "16:24",
+    "dhuhr": "22:10",
+    "asr": "01:47",
+    "sunset": "03:56",
+    "maghrib": "03:56",
+    "isha": "06:24",
+    "midnight": "08:55",
+    "last_third": "10:34"
+  }
+}
+---
+{
+  "date": "2024-07-15",
+  "hijri": "8 Muharram 1446",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "10:04",
+    "sunrise": "12:53",
+    "dhuhr": "22:07",
+    "asr": "03:58",
+    "sunset": "07:17",
+    "maghrib": "07:17",
+    "isha": "10:06",
+    "midnight": "08:41",
+    "last_third": "09:08"
+  }
+}
+---
+{
+  "date": "2024-01-15",
+  "hijri": "4 Rajab 1445",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "16:12",
+    "sunrise": "18:57",
+    "dhuhr": "22:10",
+    "asr": "23:34",
+    "sunset": "01:21",
+    "maghrib": "01:21",
+    "isha": "04:06",
+    "midnight": "08:46",
+    "last_third": "11:14"
+  }
+}
+---
+{
+  "date": "2023-06-21",
+  "hijri": "2 Dhu al-Hijjah 1444",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "10:01",
+    "sunrise": "12:20",
+    "dhuhr": "22:02",
+    "asr": "04:07",
+    "sunset": "07:43",
+    "maghrib": "07:43",
+    "isha": "10:02",
+    "midnight": "08:52",
+    "last_third": "09:15"
+  }
+}
+---
+{
+  "date": "2023-03-21",
+  "hijri": "28 Sha'ban 1444",
+  "location": { "lat": 61.2181, "lng": -149.9003 },
+  "times": {
+    "fajr": "13:24",
+    "sunrise": "15:58",
+    "dhuhr": "22:08",
+    "asr": "02:04",
+    "sunset": "04:17",
+    "maghrib": "04:17",
+    "isha": "06:52",
+    "midnight": "08:49",
+    "last_third": "10:19"
+  }
+}
+---
+{
+  "date": "2024-06-20",
+  "hijri": "13 Dhu al-Hijjah 1445",
+  "location": { "lat": 1.3521, "lng": 103.8198 },
+  "times": {
+    "fajr": "21:45",
+    "sunrise": "23:00",
+    "dhuhr": "05:07",
+    "asr": "09:30",
+    "sunset": "11:12",
+    "maghrib": "11:12",
+    "isha": "12:28",
+    "midnight": "16:29",
+    "last_third": "18:14"
+  }
+}
+---
+{
+  "date": "2024-12-21",
+  "hijri": "19 Jumada al-Akhirah 1446",
+  "location": { "lat": 1.3521, "lng": 103.8198 },
+  "times": {
+    "fajr": "21:46",
+    "sunrise": "23:01",
+    "dhuhr": "05:04",
+    "asr": "09:24",
+    "sunset": "11:04",
+    "maghrib": "11:04",
+    "isha": "12:19",
+    "midnight": "16:26",
+    "last_third": "18:13"
+  }
+}
+---
+{
+  "date": "2024-03-20",
+  "hijri": "10 Ramadan 1445",
+  "location": { "lat": 1.3521, "lng": 103.8198 },
+  "times": {
+    "fajr": "22:00",
+    "sunrise": "23:09",
+    "dhuhr": "05:13",
+    "asr": "09:27",
+    "sunset": "11:15",
+    "maghrib": "11:15",
+    "isha": "12:24",
+    "midnight": "16:38",
+    "last_third": "18:25"
+  }
+}
+---
+{
+  "date": "2024-09-22",
+  "hijri": "18 Rabi' al-Awwal 1446",
+  "location": { "lat": 1.3521, "lng": 103.8198 },
+  "times": {
+    "fajr": "21:45",
+    "sunrise": "22:54",
+    "dhuhr": "04:58",
+    "asr": "09:12",
+    "sunset": "11:01",
+    "maghrib": "11:01",
+    "isha": "12:09",
+    "midnight": "16:23",
+    "last_third": "18:10"
+  }
+}
+---
+{
+  "date": "2024-02-29",
+  "hijri": "19 Sha'ban 1445",
+  "location": { "lat": 1.3521, "lng": 103.8198 },
+  "times": {
+    "fajr": "22:05",
+    "sunrise": "23:15",
+    "dhuhr": "05:18",
+    "asr": "09:36",
+    "sunset": "11:20",
+    "maghrib": "11:20",
+    "isha": "12:29",
+    "midnight": "16:43",
+    "last_third": "18:30"
+  }
+}
+---
+{
   "date": "2023-12-31",
   "hijri": "18 Jumada al-Akhirah 1445",
   "location": { "lat": 1.3521, "lng": 103.8198 },
   "times": {
-    "fajr": "03:51",
-    "sunrise": "05:06",
-    "dhuhr": "11:08",
-    "asr": "15:28",
-    "sunset": "17:09",
-    "maghrib": "17:09",
-    "isha": "18:24",
-    "midnight": "22:31",
-    "last_third": "00:18"
+    "fajr": "21:51",
+    "sunrise": "23:06",
+    "dhuhr": "05:08",
+    "asr": "09:28",
+    "sunset": "11:09",
+    "maghrib": "11:09",
+    "isha": "12:24",
+    "midnight": "16:31",
+    "last_third": "18:18"
   }
 }
 ---
@@ -2145,15 +2145,15 @@
   "hijri": "19 Jumada al-Akhirah 1445",
   "location": { "lat": 1.3521, "lng": 103.8198 },
   "times": {
-    "fajr": "03:52",
-    "sunrise": "05:06",
-    "dhuhr": "11:09",
-    "asr": "15:29",
-    "sunset": "17:09",
-    "maghrib": "17:09",
-    "isha": "18:24",
-    "midnight": "22:31",
-    "last_third": "00:18"
+    "fajr": "21:52",
+    "sunrise": "23:06",
+    "dhuhr": "05:09",
+    "asr": "09:29",
+    "sunset": "11:09",
+    "maghrib": "11:09",
+    "isha": "12:24",
+    "midnight": "16:31",
+    "last_third": "18:18"
   }
 }
 ---
@@ -2162,15 +2162,15 @@
   "hijri": "2 Ramadan 1445",
   "location": { "lat": 1.3521, "lng": 103.8198 },
   "times": {
-    "fajr": "04:03",
-    "sunrise": "05:11",
-    "dhuhr": "11:15",
-    "asr": "15:31",
-    "sunset": "17:17",
-    "maghrib": "17:17",
-    "isha": "18:26",
-    "midnight": "22:40",
-    "last_third": "00:27"
+    "fajr": "22:03",
+    "sunrise": "23:11",
+    "dhuhr": "05:15",
+    "asr": "09:31",
+    "sunset": "11:17",
+    "maghrib": "11:17",
+    "isha": "12:26",
+    "midnight": "16:40",
+    "last_third": "18:27"
   }
 }
 ---
@@ -2179,15 +2179,15 @@
   "hijri": "8 Muharram 1446",
   "location": { "lat": 1.3521, "lng": 103.8198 },
   "times": {
-    "fajr": "03:51",
-    "sunrise": "05:05",
-    "dhuhr": "11:12",
-    "asr": "15:34",
-    "sunset": "17:16",
-    "maghrib": "17:16",
-    "isha": "18:31",
-    "midnight": "22:34",
-    "last_third": "00:19"
+    "fajr": "21:51",
+    "sunrise": "23:05",
+    "dhuhr": "05:12",
+    "asr": "09:34",
+    "sunset": "11:16",
+    "maghrib": "11:16",
+    "isha": "12:31",
+    "midnight": "16:34",
+    "last_third": "18:19"
   }
 }
 ---
@@ -2196,15 +2196,15 @@
   "hijri": "4 Rajab 1445",
   "location": { "lat": 1.3521, "lng": 103.8198 },
   "times": {
-    "fajr": "03:58",
-    "sunrise": "05:12",
-    "dhuhr": "11:15",
-    "asr": "15:35",
-    "sunset": "17:15",
-    "maghrib": "17:15",
-    "isha": "18:29",
-    "midnight": "22:37",
-    "last_third": "00:24"
+    "fajr": "21:58",
+    "sunrise": "23:12",
+    "dhuhr": "05:15",
+    "asr": "09:35",
+    "sunset": "11:15",
+    "maghrib": "11:15",
+    "isha": "12:29",
+    "midnight": "16:37",
+    "last_third": "18:24"
   }
 }
 ---
@@ -2213,15 +2213,15 @@
   "hijri": "2 Dhu al-Hijjah 1444",
   "location": { "lat": 1.3521, "lng": 103.8198 },
   "times": {
-    "fajr": "03:45",
-    "sunrise": "05:00",
-    "dhuhr": "11:07",
-    "asr": "15:30",
-    "sunset": "17:12",
-    "maghrib": "17:12",
-    "isha": "18:28",
-    "midnight": "22:29",
-    "last_third": "00:14"
+    "fajr": "21:45",
+    "sunrise": "23:00",
+    "dhuhr": "05:07",
+    "asr": "09:30",
+    "sunset": "11:12",
+    "maghrib": "11:12",
+    "isha": "12:28",
+    "midnight": "16:29",
+    "last_third": "18:14"
   }
 }
 ---
@@ -2230,15 +2230,15 @@
   "hijri": "28 Sha'ban 1444",
   "location": { "lat": 1.3521, "lng": 103.8198 },
   "times": {
-    "fajr": "04:00",
-    "sunrise": "05:09",
-    "dhuhr": "11:13",
-    "asr": "15:27",
-    "sunset": "17:15",
-    "maghrib": "17:15",
-    "isha": "18:24",
-    "midnight": "22:38",
-    "last_third": "00:25"
+    "fajr": "22:00",
+    "sunrise": "23:09",
+    "dhuhr": "05:13",
+    "asr": "09:27",
+    "sunset": "11:15",
+    "maghrib": "11:15",
+    "isha": "12:24",
+    "midnight": "16:38",
+    "last_third": "18:25"
   }
 }
 ---
@@ -2247,15 +2247,15 @@
   "hijri": "13 Dhu al-Hijjah 1445",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "15:57",
-    "sunrise": "17:12",
-    "dhuhr": "23:17",
-    "asr": "03:38",
-    "sunset": "05:19",
-    "maghrib": "05:19",
-    "isha": "06:34",
-    "midnight": "10:38",
-    "last_third": "12:24"
+    "fajr": "09:57",
+    "sunrise": "11:12",
+    "dhuhr": "17:17",
+    "asr": "21:38",
+    "sunset": "23:19",
+    "maghrib": "23:19",
+    "isha": "00:34",
+    "midnight": "04:38",
+    "last_third": "06:24"
   }
 }
 ---
@@ -2264,15 +2264,15 @@
   "hijri": "19 Jumada al-Akhirah 1446",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "15:53",
-    "sunrise": "17:08",
-    "dhuhr": "23:13",
-    "asr": "03:35",
-    "sunset": "05:16",
-    "maghrib": "05:16",
-    "isha": "06:32",
-    "midnight": "10:35",
-    "last_third": "12:21"
+    "fajr": "09:53",
+    "sunrise": "11:08",
+    "dhuhr": "17:13",
+    "asr": "21:35",
+    "sunset": "23:16",
+    "maghrib": "23:16",
+    "isha": "00:32",
+    "midnight": "04:35",
+    "last_third": "06:21"
   }
 }
 ---
@@ -2281,15 +2281,15 @@
   "hijri": "10 Ramadan 1445",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "16:09",
-    "sunrise": "17:18",
-    "dhuhr": "23:22",
-    "asr": "03:35",
-    "sunset": "05:24",
-    "maghrib": "05:24",
-    "isha": "06:33",
-    "midnight": "10:47",
-    "last_third": "12:34"
+    "fajr": "10:09",
+    "sunrise": "11:18",
+    "dhuhr": "17:22",
+    "asr": "21:35",
+    "sunset": "23:24",
+    "maghrib": "23:24",
+    "isha": "00:33",
+    "midnight": "04:47",
+    "last_third": "06:34"
   }
 }
 ---
@@ -2298,15 +2298,15 @@
   "hijri": "18 Rabi' al-Awwal 1446",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "15:54",
-    "sunrise": "17:03",
-    "dhuhr": "23:07",
-    "asr": "03:20",
-    "sunset": "05:10",
-    "maghrib": "05:10",
-    "isha": "06:18",
-    "midnight": "10:32",
-    "last_third": "12:19"
+    "fajr": "09:54",
+    "sunrise": "11:03",
+    "dhuhr": "17:07",
+    "asr": "21:20",
+    "sunset": "23:10",
+    "maghrib": "23:10",
+    "isha": "00:18",
+    "midnight": "04:32",
+    "last_third": "06:19"
   }
 }
 ---
@@ -2315,15 +2315,15 @@
   "hijri": "19 Sha'ban 1445",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "16:14",
-    "sunrise": "17:23",
-    "dhuhr": "23:27",
-    "asr": "03:45",
-    "sunset": "05:30",
-    "maghrib": "05:30",
-    "isha": "06:39",
-    "midnight": "10:52",
-    "last_third": "12:39"
+    "fajr": "10:14",
+    "sunrise": "11:23",
+    "dhuhr": "17:27",
+    "asr": "21:45",
+    "sunset": "23:30",
+    "maghrib": "23:30",
+    "isha": "00:39",
+    "midnight": "04:52",
+    "last_third": "06:39"
   }
 }
 ---
@@ -2332,15 +2332,15 @@
   "hijri": "18 Jumada al-Akhirah 1445",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "15:58",
-    "sunrise": "17:13",
-    "dhuhr": "23:18",
-    "asr": "03:39",
-    "sunset": "05:21",
-    "maghrib": "05:21",
-    "isha": "06:36",
-    "midnight": "10:40",
-    "last_third": "12:26"
+    "fajr": "09:58",
+    "sunrise": "11:13",
+    "dhuhr": "17:18",
+    "asr": "21:39",
+    "sunset": "23:21",
+    "maghrib": "23:21",
+    "isha": "00:36",
+    "midnight": "04:40",
+    "last_third": "06:26"
   }
 }
 ---
@@ -2349,15 +2349,15 @@
   "hijri": "19 Jumada al-Akhirah 1445",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "15:58",
-    "sunrise": "17:13",
-    "dhuhr": "23:18",
-    "asr": "03:40",
-    "sunset": "05:21",
-    "maghrib": "05:21",
-    "isha": "06:36",
-    "midnight": "10:40",
-    "last_third": "12:26"
+    "fajr": "09:58",
+    "sunrise": "11:13",
+    "dhuhr": "17:18",
+    "asr": "21:40",
+    "sunset": "23:21",
+    "maghrib": "23:21",
+    "isha": "00:36",
+    "midnight": "04:40",
+    "last_third": "06:26"
   }
 }
 ---
@@ -2366,15 +2366,15 @@
   "hijri": "2 Ramadan 1445",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "16:11",
-    "sunrise": "17:20",
-    "dhuhr": "23:24",
-    "asr": "03:39",
-    "sunset": "05:27",
-    "maghrib": "05:27",
-    "isha": "06:35",
-    "midnight": "10:49",
-    "last_third": "12:36"
+    "fajr": "10:11",
+    "sunrise": "11:20",
+    "dhuhr": "17:24",
+    "asr": "21:39",
+    "sunset": "23:27",
+    "maghrib": "23:27",
+    "isha": "00:35",
+    "midnight": "04:49",
+    "last_third": "06:36"
   }
 }
 ---
@@ -2383,15 +2383,15 @@
   "hijri": "8 Muharram 1446",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "16:03",
-    "sunrise": "17:17",
-    "dhuhr": "23:21",
-    "asr": "03:42",
-    "sunset": "05:23",
-    "maghrib": "05:23",
-    "isha": "06:37",
-    "midnight": "10:43",
-    "last_third": "12:30"
+    "fajr": "10:03",
+    "sunrise": "11:17",
+    "dhuhr": "17:21",
+    "asr": "21:42",
+    "sunset": "23:23",
+    "maghrib": "23:23",
+    "isha": "00:37",
+    "midnight": "04:43",
+    "last_third": "06:30"
   }
 }
 ---
@@ -2400,15 +2400,15 @@
   "hijri": "4 Rajab 1445",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "16:05",
-    "sunrise": "17:19",
-    "dhuhr": "23:24",
-    "asr": "03:46",
-    "sunset": "05:27",
-    "maghrib": "05:27",
-    "isha": "06:41",
-    "midnight": "10:47",
-    "last_third": "12:33"
+    "fajr": "10:05",
+    "sunrise": "11:19",
+    "dhuhr": "17:24",
+    "asr": "21:46",
+    "sunset": "23:27",
+    "maghrib": "23:27",
+    "isha": "00:41",
+    "midnight": "04:47",
+    "last_third": "06:33"
   }
 }
 ---
@@ -2417,15 +2417,15 @@
   "hijri": "2 Dhu al-Hijjah 1444",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "15:57",
-    "sunrise": "17:12",
-    "dhuhr": "23:17",
-    "asr": "03:38",
-    "sunset": "05:19",
-    "maghrib": "05:19",
-    "isha": "06:34",
-    "midnight": "10:38",
-    "last_third": "12:24"
+    "fajr": "09:57",
+    "sunrise": "11:12",
+    "dhuhr": "17:17",
+    "asr": "21:38",
+    "sunset": "23:19",
+    "maghrib": "23:19",
+    "isha": "00:34",
+    "midnight": "04:38",
+    "last_third": "06:24"
   }
 }
 ---
@@ -2434,15 +2434,15 @@
   "hijri": "28 Sha'ban 1444",
   "location": { "lat": -0.1807, "lng": -78.4678 },
   "times": {
-    "fajr": "16:09",
-    "sunrise": "17:18",
-    "dhuhr": "23:22",
-    "asr": "03:35",
-    "sunset": "05:24",
-    "maghrib": "05:24",
-    "isha": "06:33",
-    "midnight": "10:47",
-    "last_third": "12:34"
+    "fajr": "10:09",
+    "sunrise": "11:18",
+    "dhuhr": "17:22",
+    "asr": "21:35",
+    "sunset": "23:24",
+    "maghrib": "23:24",
+    "isha": "00:33",
+    "midnight": "04:47",
+    "last_third": "06:34"
   }
 }
 ---

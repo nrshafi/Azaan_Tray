@@ -45,7 +45,7 @@ typedef enum {
 
 typedef enum {
     ROUNDING_NEAREST = 0,              /* Round to nearest minute (>= 30s rounds up) */
-    ROUNDING_UP,                       /* Round up to next minute if seconds > 0 */
+    ROUNDING_UP,                       /* Next minute; like adhan-js this adds a full minute even at :00 */
     ROUNDING_NONE                      /* Keep exact seconds */
 } rounding_rule_t;
 
