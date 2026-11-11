@@ -1,6 +1,6 @@
 param (
     [int]$ProcessId,
-    [string]$ProcessName = "AzaanTray"
+    [string]$ProcessName = "WaqtTray"
 )
 
 if (-not $ProcessId) {

@@ -105,7 +105,7 @@ int main(void) {
     double month_ns[RUNS];
     uint64_t final_checksum = 0;
 
-    printf("=== Azaan Engine Benchmark ===\n");
+    printf("=== Waqt-Tray Engine Benchmark ===\n");
     printf("Warming up...\n");
 
     /* Warm-up run */

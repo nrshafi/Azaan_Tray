@@ -1,4 +1,4 @@
-# Build Plan: Azaan Tray v1.0
+# Build Plan: Waqt-Tray v1.0
 
 This file sets the order of work. Each **unit** is sized for one agent
 session and has acceptance criteria. Do units in order unless a unit says it
@@ -22,7 +22,7 @@ checking it against official documentation (sources are in
 | 5 | `WebView2Loader` unspecified | Ship **`WebView2Loader.dll`** beside the exe | Microsoft documents shipping either the static lib or the DLL. The static lib does not link with MinGW. |
 | 6 | `QUNS_BUSY` = Do Not Disturb | `QUNS_BUSY` = **full-screen app or Presentation Settings**. Windows 11 Do Not Disturb/Focus is **not** reported by this API (open question) | Microsoft Learn enum docs. |
 | 7 | Mica/Acrylic + rounded corners everywhere | Feature-detect: corners and dark frame need Win11 **build 22000+**, system backdrop needs **22621+**. Win10 gets a solid square window | DWMWINDOWATTRIBUTE docs. |
-| 8 | `config.json` next to the exe | `%LOCALAPPDATA%\AzaanTray\` by default; **portable mode** when a `portable` marker file sits next to the exe | The MSIX install folder is read-only. |
+| 8 | `config.json` next to the exe | `%LOCALAPPDATA%\WaqtTray\` by default; **portable mode** when a `portable` marker file sits next to the exe | The MSIX install folder is read-only. |
 | 9 | HKCU Run key for startup | HKCU Run for the zip; **`desktop:StartupTask`** for MSIX | The Store build should use the packaged startup mechanism. |
 | 10 | Toast notifications | v1 uses **`Shell_NotifyIconW` balloon (`NIF_INFO`)** notifications, which Windows 10/11 render as toasts. WinRT toasts post-1.0 | No WinRT activation or AUMID shortcut setup in the resident host. |
 | 11 | GPS lookup | **Offline city search** (bundled GeoNames subset, CC BY 4.0) + manual lat/lng | Avoids WinRT Geolocation and network access. |
@@ -134,10 +134,11 @@ Linux GCC.
 
 ## Phase 2: Host Core (`native/host`)
 
-**2.1 App skeleton**: `wWinMain`, single-instance mutex (second launch
-signals the first to open the flyout), hidden message window, clean exit,
-`.rc` with version info and icon, manifest (PMv2 DPI, `supportedOS`,
-UTF-8 code page).
+**2.1 App skeleton**: `wWinMain`, single-instance mutex `Local\WaqtTray`
+(second launch signals the first to open the flyout), hidden message window
+class `WaqtTray`, clean exit, `.rc` with version info and icon, manifest
+(PMv2 DPI, `supportedOS`, UTF-8 code page). Display name is **Waqt-Tray**
+(see `project-overview.md` → Identity).
 
 **2.2 Paths + config**: portable detection, `%LOCALAPPDATA%` paths,
 `config.json` load/validate/defaults/migrate/atomic save; unknown keys
@@ -278,7 +279,7 @@ WebView2 processes remain after linger.
 Windows), host build (w64devkit on `windows-latest`), UI typecheck/test/build,
 artifact upload.
 
-**8.2 Portable zip**: `AzaanTray.exe`, `WebView2Loader.dll`, `ui/` dist,
+**8.2 Portable zip**: `WaqtTray.exe`, `WebView2Loader.dll`, `ui/` dist,
 `assets/`, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `portable` marker variant.
 
 **8.3 MSIX**: `packaging/msix/AppxManifest.xml` (`runFullTrust`,
@@ -291,6 +292,9 @@ msix to the GitHub Release, generate checksums.
 
 **8.5 Store submission**: Partner Center (free individual account), privacy
 policy page ("no data collected"), listing text and screenshots, age rating.
+Reserve the display name **Waqt-Tray** before submission. Listing title:
+`Waqt-Tray — Lightweight Taskbar Prayer Times & Adhan`. Keywords include
+both Adhan and Azaan.
 
 **8.6 winget**: manifest PR to `microsoft/winget-pkgs` for the zip (or MSIX).
 

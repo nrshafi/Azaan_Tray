@@ -2,7 +2,7 @@
 
 ## Approach
 
-Build Azaan Tray incrementally with a spec-driven workflow. The context files
+Build Waqt-Tray incrementally with a spec-driven workflow. The context files
 define what to build (`project-overview.md`, `ui-context.md`), how
 (`architecture.md`, `code-standards.md`), in what order (`build-plan.md`),
 and where things stand (`progress-tracker.md`). Always implement against

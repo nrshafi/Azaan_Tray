@@ -1,4 +1,4 @@
-# Autonomous Optimization Loop — Azaan Tray
+# Autonomous Optimization Loop — Waqt-Tray
 
 You are running unattended for several hours in the repository
 `I:\Development\Azaan_Tray` on Windows 11 (PowerShell + w64devkit GCC/Make).

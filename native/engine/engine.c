@@ -1,5 +1,5 @@
 /*
- * Azaan Tray - Core Prayer Calculation Engine
+ * Waqt-Tray - Core Prayer Calculation Engine
  * Pure C11, no OS headers, libm only.
  *
  * Citations:

@@ -1,6 +1,6 @@
-# Azaan Tray
+# Waqt-Tray
 
-A lightweight Windows taskbar widget and flyout for Islamic prayer times, built with a native resident host (C++ Win32/GDI) and an on-demand ephemeral Web UI (WebView2 + React).
+A lightweight Windows taskbar widget and flyout for Islamic prayer times, built with a native resident host (C++ Win32/GDI) and an on-demand ephemeral Web UI (WebView2 + React). The repository folder is still `Azaan_Tray`.
 
 ## Development Setup
 

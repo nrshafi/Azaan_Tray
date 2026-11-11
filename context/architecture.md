@@ -3,7 +3,7 @@
 ## Shape: Resident Native Host + Ephemeral Web UI
 
 ```
-┌──────────────────────── AzaanTray.exe (always running, ≤5 MB) ────────────────────────┐
+┌───────────────────────── WaqtTray.exe (always running, ≤5 MB) ────────────────────────┐
 │ engine/ (C11, pure)   host/ (C++ subset, Win32)                                        │
 │  prayer math  ◄────── scheduler ── alerts ── audio (miniaudio, opened only to play)   │
 │  hijri, makruh        tray icon ── taskbar widget (GDI ClearType, ADR 0003)           │
@@ -12,7 +12,7 @@
 └───────────────────────────────────────────────────────────────────────────────────┼────┘
                                    PostWebMessageAsJson / chrome.webview.postMessage │
 ┌──────────── msedgewebview2.exe process group (exists only while UI open + linger) ─▼──┐
-│ ui/ React + TypeScript + Vite + Tailwind, served from https://app.azaantray.invalid/  │
+│ ui/ React + TypeScript + Vite + Tailwind, served from https://app.waqttray.invalid/   │
 └───────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -68,20 +68,20 @@ Exact versions are pinned in manifests (`ui/package.json`,
 ## Storage Model
 
 - **Config**: one `config.json` (schema-versioned, `"schemaVersion": 1`).
-  - Installed (MSIX or zip without marker): `%LOCALAPPDATA%\AzaanTray\config.json`.
+  - Installed (MSIX or zip without marker): `%LOCALAPPDATA%\WaqtTray\config.json`.
     Under MSIX this path is package-redirected automatically.
-  - Portable: if a file named `portable` sits next to `AzaanTray.exe`, the
+  - Portable: if a file named `portable` sits next to `WaqtTray.exe`, the
     config lives in `.\data\config.json`.
   - Writes are atomic: write `config.json.tmp`, flush, `MoveFileExW(REPLACE_EXISTING)`.
   - The host owns the file. The UI never touches disk; it sends `config.set`
     over the bridge.
-- **WebView2 user data folder**: `%LOCALAPPDATA%\AzaanTray\WebView2` (portable:
+- **WebView2 user data folder**: `%LOCALAPPDATA%\WaqtTray\WebView2` (portable:
   `.\data\WebView2`). Never next to the exe (read-only under MSIX).
 - **Audio**: bundled clips in `assets/audio/` (licence-cleared only). User
   files are referenced by absolute path and never copied.
 - **City database**: bundled JSON/CSV in the UI bundle only (never loaded by
   the host).
-- **Logs**: off by default; when enabled, `%LOCALAPPDATA%\AzaanTray\log.txt`,
+- **Logs**: off by default; when enabled, `%LOCALAPPDATA%\WaqtTray\log.txt`,
   capped at 256 KB with one rollover.
 
 ## Auth and Access Model
@@ -116,7 +116,7 @@ Exact versions are pinned in manifests (`ui/package.json`,
 | Host idle CPU | ≤ 0.1 % avg; ≤ 1 wake/s with seconds shown, ≤ 1 wake/min in minutes mode | perf script over 10 min / Windows Performance Analyzer |
 | Host threads / GDI objects / handles idle | ≤ 3 / ≤ 30 / ≤ 200 | perf script |
 | Cold start to widget visible | ≤ 150 ms | ETW/timestamp log |
-| `AzaanTray.exe` size | ≤ 1.5 MB (excl. `WebView2Loader.dll`) | CI artifact |
+| `WaqtTray.exe` size | ≤ 1.5 MB (excl. `WebView2Loader.dll`) | CI artifact |
 | UI JS bundle | ≤ 250 KB gzipped (excl. city DB, lazy-loaded) | Vite build report |
 | Flyout open, cold (no WebView2 alive) | measured in Phase 0; target ≤ 600 ms | timestamps host click → UI `app.ready` |
 | Flyout open, warm (within linger) | ≤ 100 ms | same |

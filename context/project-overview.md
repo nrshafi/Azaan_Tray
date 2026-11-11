@@ -1,13 +1,34 @@
-# Azaan Tray
+# Waqt-Tray
+
+## Identity
+
+Chosen 2026-11-12. The display name is **Waqt-Tray** (hyphenated). Technical
+identifiers drop the hyphen:
+
+| Surface | Value |
+| --- | --- |
+| Display name (tray tooltip, window titles, CLI banner) | Waqt-Tray |
+| Store and GitHub release title | Waqt-Tray — Lightweight Taskbar Prayer Times & Adhan |
+| Executable / process | `WaqtTray.exe` |
+| Config, logs, WebView2 data | `%LOCALAPPDATA%\WaqtTray\` |
+| Virtual host | `https://app.waqttray.invalid/` |
+| Single-instance mutex | `Local\WaqtTray` |
+| Host window class | `WaqtTray` |
+
+Listing keywords (Store, winget, GitHub) include both **Adhan** and **Azaan**
+so South Asian and international search still find it. The repository folder
+stays `Azaan_Tray`. The Phase 1 dev CLI binary stays `native/bin/azaan.exe`
+until the host exe owns `--print`. Partner Center reservation of the display
+name is still unchecked (unit 8.5).
 
 ## Overview
 
-Azaan Tray is a free, open-source Windows 10/11 desktop app that calculates
+Waqt-Tray is a free, open-source Windows 10/11 desktop app that calculates
 Islamic prayer times offline, shows a live countdown inside the Windows
 taskbar, and plays Adhan or notification alerts. It is for desktop users
 whose existing prayer apps are either abandoned (e.g. "My Prayers", built on
 retired UWP background APIs) or heavy (e.g. Awqat Salaat at ~130 MB RAM
-because it keeps a .NET/WinUI tree resident). Azaan Tray's 24/7 background
+because it keeps a .NET/WinUI tree resident). Waqt-Tray's 24/7 background
 process targets the footprint class of TrafficMonitor (~3.5 MB): a native
 Win32 host that never loads a browser engine or XAML until the user opens
 the UI, and destroys that UI again after use.
@@ -33,7 +54,7 @@ and the SRS disagree, **the context files win**. The deltas are listed in
 ## Core User Flow
 
 1. User installs from the Store, winget, or unzips the portable build and runs
-   `AzaanTray.exe`.
+   `WaqtTray.exe`.
 2. First run: the host detects no location and opens the Settings UI on the
    Location page. The user searches a city (offline list) or types
    latitude/longitude. A calculation method is pre-selected from the region
@@ -110,7 +131,7 @@ and the SRS disagree, **the context files win**. The deltas are listed in
 
 ### CLI
 
-- `AzaanTray.exe --print [--date YYYY-MM-DD] [--json]` prints a day's times
+- `WaqtTray.exe --print [--date YYYY-MM-DD] [--json]` prints a day's times
   (for debugging and for a future Linux status bar integration).
 
 ## Scope

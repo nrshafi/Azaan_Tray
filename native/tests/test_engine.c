@@ -529,7 +529,7 @@ int main(int argc, char** argv) {
     snprintf(path_matrix, sizeof(path_matrix), "%s/prayer_fixtures.json", fixture_dir);
     snprintf(path_random, sizeof(path_random), "%s/prayer_fixtures_random.json", fixture_dir);
 
-    printf("--- Running Azaan Tray Engine Tests ---\n");
+    printf("--- Running Waqt-Tray Engine Tests ---\n");
 
     test_golden_fixture_file(path_matrix, 2016);
     test_golden_fixture_file(path_random, 1500);

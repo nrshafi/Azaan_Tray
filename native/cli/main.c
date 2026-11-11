@@ -151,7 +151,7 @@ int main(int argc, char** argv) {
         printf("}\n");
     } else {
         printf("==================================================\n");
-        printf(" Azaan Tray - Islamic Prayer Times\n");
+        printf(" Waqt-Tray - Islamic Prayer Times\n");
         printf(" Date: %04d-%02d-%02d | %d %s %d AH\n", year, month, day, hijri.day, hijri.month_name_en, hijri.year);
         printf(" Location: Lat %.4f, Lng %.4f\n", lat, lng);
         printf(" Method: Karachi | Madhab: Hanafi\n");

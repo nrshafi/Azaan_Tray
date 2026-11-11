@@ -96,6 +96,13 @@ Update this file after every meaningful implementation change with current date 
     Direct2D; `VERSIONS.md` records cJSON 1.7.19, adhan-js and SHA-256 of committed binaries.
   - Review used three Gemini 3.8 Flash (high) reviewers plus an independent pass; their findings were
     verified against the code before being recorded here.
+- 2026-11-12 00:35: **Product name locked: Waqt-Tray** (user decision).
+  Display name `Waqt-Tray`; executable `WaqtTray.exe`; data dir
+  `%LOCALAPPDATA%\WaqtTray\`; virtual host `https://app.waqttray.invalid/`;
+  mutex `Local\WaqtTray`; window class `WaqtTray`. Store title:
+  `Waqt-Tray — Lightweight Taskbar Prayer Times & Adhan`, with both Adhan and
+  Azaan as keywords. Repo folder and the Phase 1 `azaan.exe` binary name are
+  unchanged. Phase 0 spike window titles were left as recorded.
 
 ## In Progress
 
@@ -158,8 +165,9 @@ Update this file after every meaningful implementation change with current date 
 7. **Zip code signing**: SignPath Foundation (free for OSS, needs an
    application) vs Azure Trusted Signing (paid) vs unsigned zip + Store
    as the recommended path.
-8. **App name and Store reservation**: "Azaan Tray". Check that the
-   Partner Center name is available early (unit 8.5 depends on it).
+8. ~~App name~~: **Resolved 2026-11-12, Waqt-Tray** (user decision; see
+   `project-overview.md` → Identity). **Still open:** confirm the Partner
+   Center name **Waqt-Tray** is available before unit 8.5.
 
 ## Architecture Decisions
 
@@ -192,6 +200,9 @@ Update this file after every meaningful implementation change with current date 
   directories are read-only.
 - **No network access at all**: offline city DB, no telemetry. This simplifies
   the privacy policy and Store review.
+- **Product name: Waqt-Tray** (user decision, 2026-11-12). Display name keeps
+  the hyphen; executable, mutex, window class, and `%LOCALAPPDATA%\WaqtTray\`
+  do not. Listing keywords include both Adhan and Azaan.
 
 ## API Verification Log
 
