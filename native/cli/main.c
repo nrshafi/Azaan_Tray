@@ -13,7 +13,7 @@
 /*
  * Format an engine UTC time as local HH:MM using the Windows time-zone rules that apply on
  * that instant (DST and historical rule changes via the dynamic time-zone information),
- * not just today's offset. A NULL tz prints UTC (deterministic output for golden snapshots).
+ * not just today's offset. A NULL tz prints UTC (`--utc`: output independent of the machine).
  */
 static void utc_to_local_time_str(int year, int month, int day, double utc_min,
                                   const DYNAMIC_TIME_ZONE_INFORMATION* tz,

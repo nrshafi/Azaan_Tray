@@ -18,11 +18,13 @@ the log instead of guessing.
    reverted, however fast it is.
 2. **Never weaken the safety net.** Do not edit, delete, skip, or loosen
    existing tests, fixtures (`native/tests/fixtures/`), tolerances, or
-   `-Werror -Wall -Wextra -Wpedantic`. You may **add** tests.
+   `-Werror -Wall -Wextra -Wpedantic`. Never regenerate fixtures to make a
+   change pass. Do not add tests to raise a count: the test count is not a
+   metric (see `context/code-standards.md` → Testing).
 3. **Never use `-ffast-math`, `-Ofast`, `-funsafe-math-optimizations`, or
    `-ffinite-math-only`**: they change floating-point results. Individual
-   safe flags such as `-fno-math-errno` are allowed if the golden diff
-   (section 2) stays byte-identical.
+   safe flags such as `-fno-math-errno` are allowed if
+   `make -C native test` still passes.
 4. **One optimization per commit.** Small, isolated, revertable.
 5. **Stay in scope.** Optimize code that exists: `native/engine/`,
    `native/cli/`, `native/tests/`, `native/Makefile`, and the `spikes/`
@@ -66,10 +68,10 @@ the log instead of guessing.
    make -C native clean
    make -C native all
    ```
-   All tests must pass (currently 2,593 assertions). If the baseline
+   All tests must pass. If the baseline
    fails, **stop**, write the failure to the log, and end the run.
 5. **Build the measurement harness if it doesn't exist** (commit it on its
-   own as `test(bench): add engine benchmark + golden snapshot`):
+   own as `test(bench): add engine benchmark`):
    - `native/tests/bench_engine.c`: times, using
      `QueryPerformanceCounter`, (a) N = 100,000 calls to
      `engine_calculate_times` across a fixed set of cities/dates and
@@ -78,18 +80,9 @@ the log instead of guessing.
      outputs so the compiler can't dead-code-eliminate the work.
    - `make -C native bench` target that builds and runs it with the same
      `CFLAGS`.
-   - `scripts/golden-snapshot.ps1`: runs `native\bin\azaan.exe --json`
-     for a fixed grid: at least 12 cities (include Dhaka, Mecca, London,
-     Oslo, Tromsø 69.65N, Reykjavik, Sydney, Cape Town, New York,
-     Anchorage, Singapore, Quito on the equator) × at least 12 dates
-     (solstices, equinoxes, 2024-02-29, 2023-12-31→2024-01-01 boundary, a
-     Ramadan date). Concatenate everything into one file and print its
-     SHA-256.
-6. Record the **baseline** in the log (section 4): test count, bench
-   medians, golden SHA-256, and the byte sizes of `native/bin/azaan.exe`,
-   `native/bin/test_engine.exe`, and each `spikes/*.exe` you can rebuild.
-   Save the baseline golden output to
-   `native/tests/golden/baseline.json` and commit it.
+6. Record the **baseline** in the log (section 4): bench medians and the
+   byte sizes of `native/bin/azaan.exe`, `native/bin/test_engine.exe`, and
+   each `spikes/*.exe` you can rebuild.
 
 ---
 
@@ -122,9 +115,10 @@ engine_calculate_times by ≥10% with byte-identical output."*
 
 ### Step B: Implement
 - Make the smallest change that tests the hypothesis.
-- If the change touches engine math, **add a focused test first** (TDD)
-  that pins the current behaviour of the function you're touching, and
-  confirm it passes before the change.
+- The fixture tests already pin every computed time to the second against
+  adhan-js, so a math change needs no new test. Add one only when the change
+  creates a code path no fixture reaches (e.g. a new fast path): then add a
+  case to `month_equals_days` or a fixture via `scripts/gen-fixtures`.
 - Keep the code standards in `context/code-standards.md`: C11, no UB, no
   globals with hidden state, readable names, a brief comment explaining any
   non-obvious identity or algebraic trick.
@@ -134,14 +128,12 @@ engine_calculate_times by ≥10% with byte-identical output."*
 make -C native clean
 make -C native all          # zero warnings, all tests pass
 make -C native bench        # 3 runs, take the median of medians
-.\scripts\golden-snapshot.ps1
 ```
 1. **Build gate:** no warnings, no errors.
-2. **Test gate:** 100% pass; the test count is ≥ the previous count.
-3. **Golden gate:** SHA-256 identical to baseline. If not, diff against
-   `native/tests/golden/baseline.json`. **Any** difference means revert.
-   Don't "fix" it by regenerating the baseline.
-4. **Gain gate:** the change must improve at least one metric by
+2. **Correctness gate:** `make -C native test` passes. It compares every
+   output with adhan-js fixtures to the second, so **any** failure means
+   revert. Don't "fix" it by regenerating fixtures.
+3. **Gain gate:** the change must improve at least one metric by
    **≥ 3%** (time or binary size) and must not regress any other metric
    by more than 1%. If the result is within noise (< 3%), re-run the
    bench 3 more times; if it's still < 3%, revert. Exception: if a
@@ -199,12 +191,11 @@ Create it at startup and keep it current after every iteration. Structure:
 ### Baseline
 | Metric | Value |
 |---|---|
-| Tests | 2593 pass |
+| Tests | all pass |
 | calculate_times median | … ns/call |
 | calculate_month median | … ns/call |
 | azaan.exe size | … bytes |
 | test_engine.exe size | … bytes |
-| Golden SHA-256 | … |
 
 ### Backlog
 - [ ] <idea>: expected gain, risk, files
@@ -215,7 +206,7 @@ Create it at startup and keep it current after every iteration. Structure:
 - Hypothesis: …
 - Change: files, 1-2 sentences
 - Result: before → after for each metric (median of 3)
-- Golden: identical / DIFF (reverted)
+- Tests: pass / FAIL (reverted)
 - Commit: <sha> | reverted
 - Notes / next idea it suggests: …
 ```
@@ -224,8 +215,7 @@ Create it at startup and keep it current after every iteration. Structure:
 
 ## 5. Final report (end of run)
 
-1. Make sure the tree is clean, all tests pass, and golden is identical to
-   baseline.
+1. Make sure the tree is clean and all tests pass.
 2. Append a **Summary** to the log: total iterations, kept/rejected counts,
    cumulative before→after for every baseline metric, list of commits, top 5
    remaining backlog ideas ranked by expected value, and any doubts or

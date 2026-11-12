@@ -28,6 +28,13 @@ If implementation changes the architecture, scope, or
 standards documented in the context files, update the
 relevant file before continuing.
 
+## Testing
+
+Only test important things. Follow `context/code-standards.md` → "Testing":
+test behaviour users depend on against independent reference data; do not
+add tests that restate the code, duplicate existing coverage, or exist to
+raise a test count. Edge cases go into the fixture generator.
+
 ## Documentation and API Verification
 
 Never write code against an external API, library, SDK,

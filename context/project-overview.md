@@ -43,8 +43,8 @@ and the SRS disagree, **the context files win**. The deltas are listed in
    **≤ 5 MB private working set** and **≤ 10 MB private bytes** on Windows 11,
    measured as defined in `architecture.md` → Performance Budget.
 2. Prayer times match a reference implementation (adhan-js, same method and
-   settings) to **within 1 minute** for a fixed test matrix of cities, dates
-   and methods, fully offline.
+   settings) **to the second** for a fixed test matrix of cities, dates
+   and methods plus a seeded random sweep, fully offline.
 3. The flyout UI opens on click and, after closing, leaves **zero**
    `msedgewebview2.exe` processes belonging to the app once the linger
    timeout ends.
@@ -77,7 +77,14 @@ and the SRS disagree, **the context files win**. The deltas are listed in
   First and Last third of the night (Tahajjud).
 - Methods: Muslim World League, ISNA, Egypt, Umm al-Qura, Karachi, Tehran,
   Gulf, Kuwait, Qatar, Singapore, Turkey (Diyanet), Moonsighting Committee,
-  plus Custom (Fajr/Isha angle or fixed Isha interval).
+  Dubai, plus Custom (Fajr/Isha angle or fixed Isha interval).
+- Regional methods (picked 2026-11-12): Gulf (19.5°, Isha 90 min), France
+  UOIF (12°/12°), Russia (16°/15°), Malaysia JAKIM (20°/18°), Indonesia
+  Kemenag (20°/18°), Tunisia (18°/18°), Algeria (18°/17°), Morocco
+  (19°/17°), Portugal (18°, Maghrib +3 min, Isha 77 min), Jordan (18°/18°,
+  Maghrib +5 min), Germany (18°/16.5°).
+- Polar regions: above 65° a polar rule is applied automatically, so no
+  prayer shows `--:--`.
 - Asr: Standard (Shafi'i/Maliki/Hanbali) and Hanafi.
 - High-latitude rules: Middle of the night, One-seventh of the night,
   Twilight angle.
@@ -86,6 +93,24 @@ and the SRS disagree, **the context files win**. The deltas are listed in
   (default 15 min), zawal before Dhuhr (default 10 min), before sunset
   (default 15 min).
 - Hijri date (tabular calculation) with a user ±2-day adjustment.
+
+### Prayer-Time Sources (picked 2026-11-12, ADR 0008)
+
+- Default: the offline engine.
+- Optional, opt-in: **AlAdhan API** (free, no key). Fetched once per month
+  and cached; any day that can't be fetched or fails validation falls back
+  to the engine.
+- **Import a timetable from CSV** (a mosque's or authority's published
+  times, e.g. Islamic Foundation Bangladesh), for a month or a year.
+- **Compare sources**: today's times from the engine and from the chosen
+  source side by side, with the difference in minutes.
+
+### Location
+
+- Offline city search and manual latitude/longitude.
+- Optional **online place search** (Open-Meteo geocoding, opt-in) for places
+  missing from the offline list.
+- **Saved locations** (home, office, travel), switchable from the tray menu.
 
 ### Taskbar Widget and Tray
 
@@ -96,6 +121,16 @@ and the SRS disagree, **the context files win**. The deltas are listed in
 - Colour states: normal, "soon" (configurable, default ≤ 10 min), forbidden
   window (amber).
 - Tray icon with full-day tooltip and native context menu.
+- **Compact mode**: one short line that alternates prayer name and countdown.
+- **Drag to a custom position**, with "Auto position" to reset.
+- Correct placement on Windows 11 centred taskbars and beside the Widgets
+  button; moves aside for other injected widgets (TrafficMonitor, Awqat).
+- **Choose the display**: primary, a specific monitor, or all.
+- **Widget background**: transparent, solid colour or accent.
+- **"Near" indicator** with an intensity setting, and a **"just entered"**
+  highlight for N minutes after a prayer starts.
+- **Next prayer on the lock screen** (Store/MSIX build only, if Windows
+  allows it for this app type; checked in unit 8.9).
 - Survives Explorer restarts, DPI changes, monitor changes, sleep/resume,
   time-zone and DST changes.
 
@@ -110,6 +145,15 @@ and the SRS disagree, **the context files win**. The deltas are listed in
   silent notification only.
 - Missed-alert policy: after resume from sleep, prayers that started more
   than 5 min ago are not announced with audio.
+- **Rich notifications** with Stop adhan / Dismiss buttons; click opens the
+  flyout. Balloon notifications remain the fallback.
+- **Dismiss the current reminder** from the widget menu or the notification.
+- **Reminder sound**: a short chime (not adhan) with an optional repeat until
+  dismissed.
+- **Forbidden-window alert**: optional quiet notification when the sunrise,
+  zawal or pre-sunset window starts.
+- **Suhoor alarm** in Ramadan, N minutes before Fajr.
+- **Friday reminders**: Jumu'ah reminder and Surah Al-Kahf reminder.
 
 ### Iqamah / Jamaat and Jumu'ah
 
@@ -126,8 +170,21 @@ and the SRS disagree, **the context files win**. The deltas are listed in
 - Today: full schedule, progress through current prayer window, forbidden
   status, Hijri and Gregorian date.
 - Month: table for any month/year, printable.
-- Settings: Location, Calculation, Adjustments, Jamaat, Alerts and Audio,
-  Taskbar and Appearance, Startup, About/Licences.
+- Settings: Location, Calculation, Sources, Adjustments, Jamaat, Alerts and
+  Audio, Taskbar and Appearance, Startup, About/Licences.
+- **First-run setup wizard**: location, suggested method, adhan choice,
+  taskbar or tray mode.
+- **"How times are calculated"** page: methods, angles, Asr schools,
+  high-latitude rules.
+- Appearance: theme and accent colour, 12/24-hour override, show/hide
+  location, Gregorian date and Sunrise.
+
+### Maintenance and Integrations
+
+- **Update check** for the zip build (opt-in; the Store updates itself).
+- **Diagnostic log** (opt-in, local only), for bug reports.
+- **PowerToys Command Palette extension** showing the next prayer, fed by
+  `WaqtTray.exe --print --json` (separate optional package).
 
 ### CLI
 
@@ -148,17 +205,18 @@ and the SRS disagree, **the context files win**. The deltas are listed in
 - Linux and macOS builds (the engine is kept platform-neutral C so this is
   possible later).
 - Qibla compass, Quran reader, Duas or Azkar content.
-- Online timetable sync (MAWAQIT, mosque APIs) and any network access.
-- GPS/WinRT geolocation (offline city search plus manual coordinates only).
-- WinRT toast notifications with action buttons (v1 uses Shell balloon
-  notifications, which Windows 10/11 render as toasts).
+- Online sources other than AlAdhan (MAWAQIT has no public API; Diyanet
+  needs per-user credentials; JAKIM, Kemenag and MUIS sources deferred).
+  Network use is limited to the opt-in features in ADR 0008.
+- GPS/WinRT geolocation auto-detect (offline or online place search plus
+  manual coordinates only).
 - Translations other than English (structure only).
 - Telemetry or analytics of any kind.
 
 ## Success Criteria
 
-1. The golden test suite passes: every case is within ±1 min of the
-   adhan-js reference.
+1. `make -C native test` passes: every fixture case matches the adhan-js
+   reference to the second, and Hijri dates match the ICU reference.
 2. A perf script reports host private working set ≤ 5 MB after 10 minutes
    idle with the UI closed, on Windows 11 and Windows 10.
 3. After the flyout closes and the linger timeout ends, no

@@ -37,7 +37,7 @@ Project skills live in `.claude/skills/`:
 | When | Skill |
 | --- | --- |
 | Any library/SDK/API question | `find-docs`, `context7-cli` |
-| Engine, scheduler, alerts, bridge parsing (test-first) | `tdd` (+ `codebase-design` for seams) |
+| Engine, scheduler, alerts, bridge parsing (test-first, only for what `code-standards.md` → Testing lists) | `tdd` (+ `codebase-design` for seams) |
 | Designing UI views | `frontend-design`, then `ui-context.md` tokens |
 | Adding/styling components | `shadcn` |
 | React code and bundle size | `vercel-react-best-practices` (ignore Next.js-only rules) |

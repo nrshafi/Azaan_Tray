@@ -28,7 +28,9 @@
 | JSON | Small vendored C JSON library (cJSON or equivalent, chosen in Phase 0) | Config file and bridge messages. |
 | UI embedding | Microsoft Edge WebView2 (Evergreen runtime), `WebView2Loader.dll` shipped beside the exe | Renders the React UI. The static loader lib does not link with MinGW. |
 | UI | React + TypeScript (strict) + Vite + Tailwind CSS + shadcn/ui (Radix) restyled to Fluent tokens + Lucide icons | Today, Month and Settings views. |
-| Test oracle (dev only) | adhan-js (Bun script, never shipped) | Generates golden fixtures for the C engine. |
+| Network (optional, ADR 0008) | WinHTTP, loaded on demand by the host only | Opt-in AlAdhan source, Open-Meteo place search, GitHub update check. Allowlisted hosts, HTTPS only. |
+| Notifications | WinRT toasts with buttons (Stop adhan, Dismiss), Shell balloon fallback | Feasibility from a MinGW, unpackaged host is checked first (build plan unit 4.0). |
+| Test oracle (dev only) | adhan-js and ICU `islamic-civil` (Bun script, never shipped) | Generates golden fixtures for the C engine (prayer times, Hijri). |
 | Packaging | MSIX (`runFullTrust`, `StartupTask`), portable zip, winget manifest | Built by GitHub Actions on `windows-latest`. |
 
 Exact versions are pinned in manifests (`ui/package.json`,
@@ -46,18 +48,31 @@ Exact versions are pinned in manifests (`ui/package.json`,
     start/end, day rollover) and arms **one** waitable timer for it.
     Re-plans on config change, `WM_TIMECHANGE`, time-zone change and resume.
   - `widget` — taskbar embedding, layout, rendering, display-mode fallbacks.
-  - `tray` — `Shell_NotifyIconW`, tooltip, context menu, balloon notifications.
+  - `tray` — `Shell_NotifyIconW`, tooltip, context menu.
+  - `notify` — rich toasts with buttons (WinRT), balloon fallback, lock-screen
+    status where the platform allows (MSIX only).
   - `alerts` — decides what to do at an event (Meeting Guard, mute, missed
     policy) and calls `audio` / `tray`.
   - `audio` — miniaudio wrapper: play(file, volume), stop. Releases device
     and decoder after playback.
   - `config` — load/validate/migrate/save `config.json`, atomic writes.
+    Holds saved locations (profiles) and the active one.
+  - `sources` — where a day's times come from: engine (default), cached
+    AlAdhan month, or imported CSV timetable. Validates every external day
+    and falls back to the engine per day (ADR 0008).
+  - `net` — the only network client: WinHTTP loaded on demand, host
+    allowlist, timeout and size cap (ADR 0008).
   - `flyout` — WebView2 window lifecycle, bridge dispatch, linger timer.
   - `platform` — DPI, theme (light/dark, accent), taskbar geometry, startup
     registration, paths (portable vs installed vs MSIX).
-- `native/cli/` — `--print` code path (same exe, no window created).
-- `native/tests/` — engine unit tests and golden tests; host logic tests for
-  scheduler and alerts with a fake clock.
+- `native/cli/` — `--print` code path (same exe, no window created). Also the
+  data feed for the PowerToys Command Palette extension (`--print --json`).
+- `integrations/cmdpalette/` — optional PowerToys Command Palette extension
+  (separate .NET project and package). Reads `WaqtTray.exe --print --json`;
+  never links host code.
+- `native/tests/` — engine tests against generated fixtures; host logic tests
+  for the scheduler, alert decisions, config and source parsing with a fake
+  clock (scope: `code-standards.md` → Testing).
 - `ui/` — React app. Talks to the host **only** through `ui/src/bridge/`.
   Includes a mock bridge so the UI runs in a normal browser (`bun run dev`).
 - `shared/protocol/` — Bridge message schema (JSON Schema + docs). The source
@@ -83,11 +98,17 @@ Exact versions are pinned in manifests (`ui/package.json`,
   the host).
 - **Logs**: off by default; when enabled, `%LOCALAPPDATA%\WaqtTray\log.txt`,
   capped at 256 KB with one rollover.
+- **Source cache** (ADR 0008): `%LOCALAPPDATA%\WaqtTray\cache\` — one JSON
+  file per source, location, method and month. Safe to delete at any time.
+- **Imported timetables**: `%LOCALAPPDATA%\WaqtTray\timetables\`, a
+  validated copy of each imported CSV (the original file is never modified).
 
 ## Auth and Access Model
 
-- No accounts, no network, no telemetry. The app makes **zero** outbound
-  network requests. WebView2 navigation is restricted to the virtual host.
+- No accounts, no telemetry. Network use is limited to the opt-in features in
+  ADR 0008 (AlAdhan source, place search, update check), all off by default,
+  all made by the host to allowlisted HTTPS hosts. The UI never fetches;
+  WebView2 navigation and `connect-src` are restricted to the virtual host.
 - Runs as the current user. Never requests elevation.
 - Startup: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` for zip
   builds; `desktop:StartupTask` manifest extension for MSIX.
@@ -129,9 +150,9 @@ for actually freeing memory.
 
 ## Invariants
 
-1. The resident host never links or loads WebView2, the UI bundle, or the
-   audio device except while that feature is actively in use. After use,
-   all of it is released.
+1. The resident host never links or loads WebView2, the UI bundle, the
+   audio device, the network stack, or WinRT notifications except while that
+   feature is actively in use. After use, all of it is released.
 2. Prayer math exists in exactly one place: `native/engine/`. The UI never
    computes prayer times; it asks the host.
 3. `native/engine/` has no OS dependencies, no global mutable state, and is
@@ -143,6 +164,8 @@ for actually freeing memory.
    cached offset.
 6. The UI is untrusted input to the host: every bridge message is validated
    before use.
-7. The app makes no network requests and collects no data.
+7. The app collects no data. It makes network requests only for the opt-in
+   features in ADR 0008, only from the host, and only to allowlisted hosts.
+   Without network, every feature except those still works (engine fallback).
 8. A failure in WebView2 (missing runtime, crash) never affects the widget,
    tray, or alerts.

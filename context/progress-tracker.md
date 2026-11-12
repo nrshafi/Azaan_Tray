@@ -103,6 +103,27 @@ Update this file after every meaningful implementation change with current date 
   `Waqt-Tray — Lightweight Taskbar Prayer Times & Adhan`, with both Adhan and
   Azaan as keywords. Repo folder and the Phase 1 `azaan.exe` binary name are
   unchanged. Phase 0 spike window titles were left as recorded.
+- 2026-11-12 01:40: **Lean test suite + testing policy** (user decision: only test important things).
+  - `test_engine.c` cut from 14 functions / 2,659 counted assertions to 6 tests: prayer times vs
+    adhan-js to the second (2,016-case matrix; 1,500-case sweep + 3 regression inputs), Hijri vs ICU
+    `islamic-civil` for 2024–2025 with ±2 adjustments (731 days; closes unit 1.7), monthly fast path
+    equals per-day path (5 edge cases), forbidden windows follow settings, invalid input rejected.
+    Removed: Julian-day/declination sanity bounds, hand-typed Dhaka/Oslo checks, non-NaN/order checks
+    and per-field month loops, all covered by the fixtures. Regression inputs now live in
+    `scripts/gen-fixtures` (adhan-js supplies expected values). Against the pre-fix engine the new suite
+    fails (1,130 + 1,606 mismatched fields), so it still catches the bugs fixed today.
+  - Removed `scripts/golden-snapshot.ps1` and `native/tests/golden/baseline.json` (144 entries at
+    minute precision; missed real bugs). The optimization-loop prompt now gates on `make -C native test`
+    and no longer requires the test count to grow.
+  - Policy written to `context/code-standards.md` → Testing (what gets a test, what does not, rules),
+    pointer added to `AGENTS.md`; build-plan criteria that invited excess tests reworded (1.6, 1.7, 2.2,
+    4.2, Phase 5 smoke test).
+- 2026-11-12 01:40: **v1 feature picks folded into the plan** (30 items from the Awqat Salaat comparison
+  feature picker, all "v1"). ADR 0008 (optional network features: opt-in, host-only, allowlisted HTTPS,
+  WinHTTP on demand, monthly cache, engine fallback) changes invariant 7. Updated
+  `project-overview.md` (features, scope), `architecture.md` (stack, `sources`/`net`/`notify` modules,
+  storage, access model, invariants 1 and 7), `build-plan.md` (units 1.9, 1.10, 2.7–2.9, 3.6–3.10, 4.0,
+  4.5–4.7, 5.10–5.12, 8.8, 8.9, Phase 9 marked "(pick)"; change rows 10, 11, 15).
 
 ## In Progress
 
@@ -110,9 +131,11 @@ Update this file after every meaningful implementation change with current date 
 
 ## Next Up
 
+- Quick engine picks first (small, offline, fixture-tested): 1.9 regional methods, 1.10 automatic polar rule.
 - Phase 2: Host Core (`native/host/`):
   - 2.1 App skeleton: `wWinMain`, single-instance mutex, hidden message window, clean exit, manifest.
-  - 2.2 Paths + config: portable mode detection, `config.json` load/validate/migrate/atomic save.
+  - 2.2 Paths + config: portable mode detection, `config.json` load/validate/migrate/atomic save
+    (schema v1 includes saved locations and source settings).
 - **Spike-promotion checklist** (review 2026-11-12; fix when spike code moves to `native/host/`):
   - Spike B docks the *main* window (which calls `PostQuitMessage` on `WM_DESTROY`) into `Shell_TrayWnd`;
     an Explorer restart destroys it with the taskbar and ends the process, so the `TaskbarCreated`
@@ -137,7 +160,6 @@ Update this file after every meaningful implementation change with current date 
 - **Open review items** (not done in the 2026-11-12 pass):
   - Phase 1 exit gate: no CI; `native/Makefile` hardcodes `.exe` and the CLI/bench include `<windows.h>`
     (the engine + test_engine are portable C11).
-  - Unit 1.7: Hijri still tested on one date and +1 only; needs a two-year published table and ±2.
   - Unit 0.3: Win10 VM, 125/150/200 % DPI, secondary taskbar, auto-hide results never recorded;
     unit 0.4: warm-open latency not measured.
   - `scripts/perf.ps1` reads `WorkingSet64` (total, not private WS) for one process only.
@@ -146,7 +168,8 @@ Update this file after every meaningful implementation change with current date 
   - Engine API nits: forbidden-window duration 0 silently means default; `engine_utc_minutes_to_epoch_ms`
     returns -1 (a valid timestamp) for NaN; Umm al-Qura's 120-min Ramadan Isha is not automatic
     (adhan-js does not do it either; belongs to Ramadan mode).
-  - CLI uses the default `POLAR_UNRESOLVED`, so |lat| ≳ 65° prints `--:--` for most times.
+  - CLI uses the default `POLAR_UNRESOLVED`, so |lat| ≳ 65° prints `--:--` for most times (fixed by
+    unit 1.10).
 
 ## Open Questions
 
@@ -168,6 +191,20 @@ Update this file after every meaningful implementation change with current date 
 8. ~~App name~~: **Resolved 2026-11-12, Waqt-Tray** (user decision; see
    `project-overview.md` → Identity). **Still open:** confirm the Partner
    Center name **Waqt-Tray** is available before unit 8.5.
+9. **Lock-screen status (pick)**: does Windows 11 still show a third-party
+   app's status (badge/detailed status) on the lock screen, and only for
+   packaged apps? Verify before unit 8.9; drop the feature if not.
+10. **Rich toasts from a MinGW host (pick)**: WinRT `ToastNotification` with
+    buttons needs an AUMID and a COM activator (unpackaged: Start menu
+    shortcut with `System.AppUserModel.ToastActivatorCLSID`). Spike D
+    (unit 4.0) decides; balloons stay as the fallback.
+11. **Command Palette extension toolchain (pick)**: the extension is a
+    separate .NET/WinAppSDK package. Confirm the current extension template,
+    packaging and whether it can ship in the same Store listing before
+    Phase 9.
+12. **AlAdhan attribution/terms**: the site states no API terms. Ask the
+    maintainers (developer mailing list) whether attribution is wanted and
+    whether an open-source desktop client is fine, before unit 2.8 ships.
 
 ## Architecture Decisions
 
@@ -218,6 +255,10 @@ library configuration.
 | 2026-11-07 | WebView2 + MinGW | https://github.com/jchv/webview2-in-mingw, webview/webview PR #783 | Works via CINTERFACE / C++; static `WebView2Loader.lib` does not link with MinGW, so use the DLL. |
 | 2026-11-07 | Store registration | https://blogs.windows.com/windowsdeveloper/2025/09/10/free-developer-registration-for-individual-developers-on-microsoft-store/ | Free for individual developers (ID verification). Store signs and hosts MSIX. |
 | 2026-11-12 | Local time conversion (CLI) | https://learn.microsoft.com/en-us/windows/win32/api/timezoneapi/nf-timezoneapi-systemtimetotzspecificlocaltimeex, …/nf-timezoneapi-getdynamictimezoneinformation, …/nf-timezoneapi-filetimetosystemtime | `SystemTimeToTzSpecificLocalTimeEx(const DYNAMIC_TIME_ZONE_INFORMATION*, const SYSTEMTIME* utc, LPSYSTEMTIME local)` applies dynamic DST (Win7+). `GetDynamicTimeZoneInformation` returns `TIME_ZONE_ID_INVALID` on failure. FILETIME input must be < 0x8000000000000000. |
+| 2026-11-12 | ICU `islamic-civil` (Hijri reference) | `Intl.DateTimeFormat('en-u-ca-islamic-civil-nu-latn')` in Bun 1.4.4 | Same tabular civil-epoch algorithm as the engine: 731/731 days of 2024–2025 identical. Used by `scripts/gen-fixtures` for `hijri_fixtures.json`. |
+| 2026-11-12 | AlAdhan API | `GET https://api.aladhan.com/v1/methods`, response headers of `/v1/timings`; https://aladhan.com/calculation-methods | Free, no key. 23 methods (ids 0–5, 7–23) + custom 99 with `methodSettings`. `X-RateLimit-Limit-Second: 12`, `Cache-Control: public,max-age=3600`. Site states no API terms (open question 12). |
+| 2026-11-12 | Online sources survey | Mawaqit help center "Can I use your API?"; data.gov.sg MUIS dataset; api.waktusolat.app; api.myquran.com/v3; Diyanet awqatsalah clients (npm/pypi) | Mawaqit API private. Diyanet needs per-user credentials + token. MUIS under Singapore Open Data Licence (attribution). JAKIM/Kemenag via community APIs, terms unchecked. IFB Bangladesh, Qatar Calendar House, IslamicFinder, My Masjid: no public API. |
+| 2026-11-12 | Geocoding | https://operations.osmfoundation.org/policies/nominatim/ ; https://open-meteo.com/en/docs/geocoding-api | Nominatim: ≤1 req/s per app, custom User-Agent, no autocomplete, ODbL attribution. Open-Meteo geocoding: no key, `name`/`count`/`language`, free for non-commercial/open-source fair use (exact limits not confirmed on the docs page). |
 | 2026-11-12 | adhan-js 4.4.3 reference behaviour | `scripts/gen-fixtures/node_modules/adhan/lib/esm/PrayerTimes.js`, `PolarCircleResolution.js`, `DateUtils.js` | Polar resolution runs before Fajr is computed; night = tomorrow sunrise − sunset always; `roundedMinute` uses `getUTCSeconds()` (truncated) and keeps sub-second ms; AqrabBalad tests lat∓0.5 first and stops only after a failure below 65°. |
 | 2026-11-09 | `__USE_MINGW_ANSI_STDIO` | `tools/w64devkit/include/_mingw.h` lines 446-466 | When defined as 0, disables libmingwex POSIX stdio wrappers and delegates directly to msvcrt.dll, stripping ~65 KB of dead CRT formatting code. |
 

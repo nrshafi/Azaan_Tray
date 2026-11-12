@@ -157,16 +157,60 @@ and out of sync with installed package versions.
 
 ## Testing
 
-- Engine: golden tests against adhan-js fixtures (±1 min) plus unit tests
-  for edge cases (polar latitudes, DST days, date-line longitudes, leap years).
-- Host: scheduler and alerts take an injected clock and are tested without
-  a window. Win32 glue is verified manually against the checklist in
-  `build-plan.md`.
-- UI: Vitest + Testing Library for components and bridge parsing; Playwright
-  smoke test against `npm run dev` with the mock bridge.
-- Commands that must pass before a unit is complete:
-  `make -C native test`, `npm --prefix ui run typecheck`,
-  `npm --prefix ui run test`, `npm --prefix ui run build`.
+Test only what would hurt a user if it broke silently: wrong prayer times,
+wrong dates, missed or wrong-time alerts, lost or corrupted settings, and
+untrusted input crossing a boundary. Few tests that catch real bugs beat many
+that restate the code. (User decision, 2026-11-12.)
+
+**What gets a test**
+- Engine: every output compared with generated reference data
+  (`scripts/gen-fixtures`: adhan-js for prayer times, ICU `islamic-civil`
+  for Hijri) to the second, plus a check that each fast path (e.g.
+  `engine_calculate_month`) equals its reference path. Edge cases (polar,
+  date line, DST, leap years) go into the fixture generator, not into
+  hand-written tests.
+- Host: pure decision logic only, with an injected clock: the scheduler's
+  event list (order, midnight rollover, DST day, resume skips stale audio),
+  the alert decision table, and config load/migrate/save (invalid values
+  rejected, unknown keys kept, a crash mid-save loses nothing).
+- Online sources and CSV import: parsing of real captured responses/files,
+  including malformed and hostile ones; the offline fallback when a source
+  fails.
+- UI: bridge message validation (valid, invalid, oversized). One Playwright
+  smoke test that opens each view against the mock bridge.
+- A real bug: add the failing input as a fixture or table row next to the
+  existing test, not a new test function.
+
+**What does not get a test**
+- Restating the implementation (constants, formulas re-derived in the
+  test, getters, enum tables, string formats nobody parses).
+- Loose sanity bounds ("declination is near 23°", "not NaN", "Fajr before
+  Sunrise") where a reference comparison already covers the output.
+- Duplicates: a case already covered by the fixtures or another test.
+- Win32/COM glue, window layout, colours, animation, DPI: verified with the
+  manual checklist in `build-plan.md`, not automated tests.
+- Component snapshot tests and tests of third-party libraries.
+- Spikes and throwaway code.
+
+**Rules for writing tests**
+- Expected values come from an independent reference (generated fixture,
+  published table, hand-worked example with its working shown), never from
+  running the code under test and pasting its output.
+- Test through public seams (`engine.h`, the scheduler's API, the bridge
+  schema), not internals.
+- Table-driven: one test per behaviour, one row per case; report failures
+  with the input that failed.
+- The number of tests or assertions is not a measure of progress or
+  quality. Never add tests to raise a count, and never require a count
+  to grow.
+- Before adding a test, name the bug it would catch that existing tests
+  miss. If you can't, don't add it. Delete tests that no longer meet this
+  bar when you touch them.
+
+**Commands that must pass before a unit is complete:**
+`make -C native test`, `bun --cwd ui run typecheck`,
+`bun --cwd ui run test`, `bun --cwd ui run build` (UI commands once `ui/`
+exists).
 
 ## File Organization
 

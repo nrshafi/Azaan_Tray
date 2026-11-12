@@ -164,6 +164,19 @@ for (let i = 0; i < RANDOM_COUNT; i++) {
   );
 }
 
+// 3. Regressions: inputs that once exposed real engine bugs (2026-11-12 review). Expected values
+//    come from adhan-js like every other fixture, so no hand-written numbers live in the tests.
+//    Add a case here only for a real bug that the matrix and the sweep above did not catch.
+const REGRESSIONS: Array<[string, number, number, string]> = [
+  // Next-day Fajr for midnight/last third skipped the safe-Fajr bound (Fajr near solar midnight).
+  ['regression-safe-fajr-south', -52.0, 50.8, '2027-01-20'],
+  ['regression-safe-fajr-dateline', 0.0, -180.0, '2027-06-12'],
+  ['regression-safe-fajr-north', 56.0, 97.6, '2027-08-08'],
+];
+for (const [name, lat, lng, dateStr] of REGRESSIONS) {
+  randomFixtures.push(computeEntry(name, lat, lng, dateStr, 'MuslimWorldLeague', 'Shafi', 'MiddleOfTheNight', 'Unresolved'));
+}
+
 const outDir = path.resolve(__dirname, '../../native/tests/fixtures');
 if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });
@@ -175,4 +188,21 @@ console.log(`Generated ${fixtures.length} prayer time test fixtures -> ${outFile
 
 const randomFile = path.join(outDir, 'prayer_fixtures_random.json');
 fs.writeFileSync(randomFile, JSON.stringify(randomFixtures) + '\n', 'utf-8');
-console.log(`Generated ${randomFixtures.length} random prayer time test fixtures -> ${randomFile}`);
+console.log(`Generated ${randomFixtures.length} sweep + regression prayer time test fixtures -> ${randomFile}`);
+
+// 4. Hijri reference (build plan unit 1.7): every day of 2024-2025 from ICU's `islamic-civil`
+//    calendar, the same tabular (civil epoch) algorithm the engine implements. Rows are
+//    [gYear, gMonth, gDay, hYear, hMonth, hDay]; consecutive days let the test check ±2 adjustments.
+const hijriFmt = new Intl.DateTimeFormat('en-u-ca-islamic-civil-nu-latn', {
+  timeZone: 'UTC', year: 'numeric', month: 'numeric', day: 'numeric',
+});
+const hijriRows: number[][] = [];
+for (let t = Date.UTC(2024, 0, 1); t <= Date.UTC(2025, 11, 31); t += 86_400_000) {
+  const d = new Date(t);
+  const parts = Object.fromEntries(hijriFmt.formatToParts(d).map((p) => [p.type, p.value]));
+  hijriRows.push([d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate(),
+    parseInt(parts.year!, 10), parseInt(parts.month!, 10), parseInt(parts.day!, 10)]);
+}
+const hijriFile = path.join(outDir, 'hijri_fixtures.json');
+fs.writeFileSync(hijriFile, JSON.stringify(hijriRows) + '\n', 'utf-8');
+console.log(`Generated ${hijriRows.length} Hijri reference days -> ${hijriFile}`);
